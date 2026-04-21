@@ -1,0 +1,124 @@
+﻿<section class="cierre-diario-page">
+  <div class="page-header">
+    <div>
+      <h1>Cierre diario consolidado</h1>
+      <p>Consolida checklist, caja, ventas, compras y calidad técnica en un único reporte del día.</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card success"><span>Ventas</span><strong>{{ resumen().ventas }}</strong></div>
+    <div class="stat-card accent"><span>Compras</span><strong>{{ resumen().compras }}</strong></div>
+    <div class="stat-card info"><span>Utilidad</span><strong>{{ resumen().utilidad | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+    <div class="stat-card warning"><span>Checklist</span><strong>{{ resumen().checklist | number:'1.1-2' }}%</strong></div>
+    <div class="stat-card"><span>Pendientes</span><strong>{{ resumen().pendientes }}</strong></div>
+    <div class="stat-card"><span>Observaciones</span><strong>{{ resumen().observaciones }}</strong></div>
+  </div>
+
+  <div class="actions-toolbar">
+    <button type="button" class="btn-secondary" (click)="regenerar()">Regenerar</button>
+    <button type="button" class="btn-accent" (click)="guardar()">Guardar cierre</button>
+    <button type="button" class="btn-primary" (click)="exportar()">Exportar JSON</button>
+  </div>
+
+  @if (mensaje() !== '') {
+    <div class="message-box">{{ mensaje() }}</div>
+  }
+
+  <div class="layout-grid">
+    <div class="left-column">
+      <div class="card">
+        <div class="card-title">
+          <h2>Contexto y métricas</h2>
+          <p>Lectura rápida del estado consolidado del día actual.</p>
+        </div>
+
+        <div class="summary-grid">
+          <div class="summary-box"><span>Fecha</span><strong>{{ reporte().contexto.fecha }}</strong></div>
+          <div class="summary-box"><span>Responsable</span><strong>{{ reporte().contexto.responsable }}</strong></div>
+          <div class="summary-box"><span>Caja activa</span><strong>{{ reporte().contexto.cajaActiva ? 'Sí' : 'No' }}</strong></div>
+          <div class="summary-box"><span>Warnings calidad</span><strong>{{ reporte().contexto.calidadWarnings }}</strong></div>
+          <div class="summary-box"><span>Errores calidad</span><strong>{{ reporte().contexto.calidadErrores }}</strong></div>
+          <div class="summary-box"><span>Pendientes críticos checklist</span><strong>{{ reporte().contexto.checklistPendientesCriticos }}</strong></div>
+          <div class="summary-box"><span>Total ventas</span><strong>{{ reporte().metricas.ventasTotal | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+          <div class="summary-box"><span>Total compras</span><strong>{{ reporte().metricas.comprasTotal | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+          <div class="summary-box"><span>Stock crítico</span><strong>{{ reporte().metricas.productosStockCritico }}</strong></div>
+          <div class="summary-box"><span>Warnings hoy</span><strong>{{ reporte().metricas.eventosWarningHoy }}</strong></div>
+          <div class="summary-box"><span>Críticos hoy</span><strong>{{ reporte().metricas.eventosCriticosHoy }}</strong></div>
+          <div class="summary-box"><span>Diferencia caja promedio</span><strong>{{ reporte().metricas.diferenciaCajaPromedioHoy | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Observaciones del cierre</h2>
+          <p>Señales relevantes encontradas durante la consolidación.</p>
+        </div>
+
+        @if (reporte().observaciones.length === 0) {
+          <div class="empty-state success-state"><p>No se registran observaciones relevantes para el cierre del día.</p></div>
+        } @else {
+          <div class="notes-list">
+            @for (item of reporte().observaciones; track item) {
+              <div class="note-item">{{ item }}</div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Pendientes del día</h2>
+          <p>Puntos que conviene resolver antes del siguiente turno.</p>
+        </div>
+
+        @if (reporte().pendientes.length === 0) {
+          <div class="empty-state success-state"><p>No hay pendientes relevantes identificados en el cierre actual.</p></div>
+        } @else {
+          <div class="notes-list">
+            @for (item of reporte().pendientes; track item) {
+              <div class="note-item warning-item">{{ item }}</div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="card">
+        <div class="card-title">
+          <h2>Historial reciente</h2>
+          <p>Últimos cierres diarios guardados en el equipo.</p>
+        </div>
+
+        @if (historial().length === 0) {
+          <div class="empty-state"><p>Aún no hay cierres diarios guardados.</p></div>
+        } @else {
+          <div class="history-list">
+            @for (item of historial(); track item.generadoEn) {
+              <div class="history-item">
+                <div>
+                  <strong>{{ item.contexto.fecha }}</strong>
+                  <span>{{ item.contexto.responsable }} · {{ item.generadoEn | date:'medium' }}</span>
+                </div>
+                <strong>{{ item.metricas.utilidadEstimada | currency:'PEN':'symbol':'1.2-2' }}</strong>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Vista previa del JSON</h2>
+          <p>Reporte listo para exportarse o archivarse.</p>
+        </div>
+
+        <details class="json-details" open>
+          <summary>Ver JSON del cierre</summary>
+          <pre>{{ reporte() | json }}</pre>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>

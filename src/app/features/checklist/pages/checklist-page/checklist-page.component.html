@@ -1,0 +1,148 @@
+﻿<section class="checklist-page">
+  <div class="page-header">
+    <div>
+      <h1>Checklist operativo diario</h1>
+      <p>Coordina apertura, operación y cierre del turno con seguimiento persistente del día actual.</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card success"><span>Completados</span><strong>{{ progresoTotal().completados }}</strong></div>
+    <div class="stat-card accent"><span>Total</span><strong>{{ progresoTotal().total }}</strong></div>
+    <div class="stat-card info"><span>Avance</span><strong>{{ progresoTotal().porcentaje | number:'1.1-2' }}%</strong></div>
+    <div class="stat-card warning"><span>Pendientes críticos</span><strong>{{ pendientesCriticos() }}</strong></div>
+    <div class="stat-card"><span>Fecha</span><strong>{{ checklist().fecha }}</strong></div>
+    <div class="stat-card"><span>Responsable</span><strong>{{ checklist().responsable }}</strong></div>
+  </div>
+
+  <div class="context-grid">
+    <div class="card">
+      <div class="card-title">
+        <h2>Contexto del turno</h2>
+        <p>Resumen rápido del día para apoyar la operación.</p>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-box"><span>Ventas hoy</span><strong>{{ contexto().ventasHoy }}</strong></div>
+        <div class="summary-box"><span>Compras hoy</span><strong>{{ contexto().comprasHoy }}</strong></div>
+        <div class="summary-box"><span>Total ventas hoy</span><strong>S/ {{ contexto().totalVentasHoy | number:'1.2-2' }}</strong></div>
+        <div class="summary-box"><span>Stock crítico</span><strong>{{ contexto().stockCritico }}</strong></div>
+        <div class="summary-box"><span>Warnings hoy</span><strong>{{ contexto().warningsHoy }}</strong></div>
+        <div class="summary-box"><span>Críticos hoy</span><strong>{{ contexto().criticosHoy }}</strong></div>
+        <div class="summary-box"><span>Caja activa</span><strong>{{ contexto().cajaActiva ? 'Sí' : 'No' }}</strong></div>
+        <div class="summary-box"><span>Alertas descartadas</span><strong>{{ contexto().alertasDescartadas }}</strong></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <h2>Recomendaciones rápidas</h2>
+        <p>Sugerencias basadas en el estado actual del sistema.</p>
+      </div>
+
+      <div class="recommendation-list">
+        @for (item of recomendaciones(); track item) {
+          <div class="recommendation-item">{{ item }}</div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="actions-toolbar">
+    <button type="button" class="btn-primary" (click)="exportarChecklist()">Exportar checklist</button>
+    <button type="button" class="btn-secondary" (click)="reiniciarChecklist()">Reiniciar checklist</button>
+  </div>
+
+  @if (mensaje() !== '') {
+    <div class="message-box">{{ mensaje() }}</div>
+  }
+
+  <div class="blocks-grid">
+    <div class="card block-card">
+      <div class="block-header">
+        <div>
+          <span class="block-tag">APERTURA</span>
+          <h2>Apertura</h2>
+        </div>
+        <button type="button" class="btn-accent" (click)="completarBloque('APERTURA')">Completar bloque</button>
+      </div>
+
+      <div class="item-list">
+        @for (item of aperturaItems(); track item.id) {
+          <div class="item-card" [class.done]="item.completado" [class.high]="item.criticidad === 'ALTA'">
+            <div class="item-top">
+              <label class="check-row">
+                <input type="checkbox" [checked]="item.completado" (change)="alternarItem(item.id)" />
+                <div>
+                  <strong>{{ item.titulo }}</strong>
+                  <span>{{ item.detalle }}</span>
+                </div>
+              </label>
+              <span class="badge">{{ item.criticidad }}</span>
+            </div>
+            <small>Referencia: {{ item.referencia }}</small>
+            <textarea rows="2" [value]="item.observacion" (input)="actualizarObservacion(item.id, $any($event.target).value)" placeholder="Observación del responsable"></textarea>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="card block-card">
+      <div class="block-header">
+        <div>
+          <span class="block-tag">OPERACIÓN</span>
+          <h2>Operación</h2>
+        </div>
+        <button type="button" class="btn-accent" (click)="completarBloque('OPERACION')">Completar bloque</button>
+      </div>
+
+      <div class="item-list">
+        @for (item of operacionItems(); track item.id) {
+          <div class="item-card" [class.done]="item.completado" [class.high]="item.criticidad === 'ALTA'">
+            <div class="item-top">
+              <label class="check-row">
+                <input type="checkbox" [checked]="item.completado" (change)="alternarItem(item.id)" />
+                <div>
+                  <strong>{{ item.titulo }}</strong>
+                  <span>{{ item.detalle }}</span>
+                </div>
+              </label>
+              <span class="badge">{{ item.criticidad }}</span>
+            </div>
+            <small>Referencia: {{ item.referencia }}</small>
+            <textarea rows="2" [value]="item.observacion" (input)="actualizarObservacion(item.id, $any($event.target).value)" placeholder="Observación del responsable"></textarea>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="card block-card full-width">
+      <div class="block-header">
+        <div>
+          <span class="block-tag">CIERRE</span>
+          <h2>Cierre</h2>
+        </div>
+        <button type="button" class="btn-accent" (click)="completarBloque('CIERRE')">Completar bloque</button>
+      </div>
+
+      <div class="item-list">
+        @for (item of cierreItems(); track item.id) {
+          <div class="item-card" [class.done]="item.completado" [class.high]="item.criticidad === 'ALTA'">
+            <div class="item-top">
+              <label class="check-row">
+                <input type="checkbox" [checked]="item.completado" (change)="alternarItem(item.id)" />
+                <div>
+                  <strong>{{ item.titulo }}</strong>
+                  <span>{{ item.detalle }}</span>
+                </div>
+              </label>
+              <span class="badge">{{ item.criticidad }}</span>
+            </div>
+            <small>Referencia: {{ item.referencia }}</small>
+            <textarea rows="2" [value]="item.observacion" (input)="actualizarObservacion(item.id, $any($event.target).value)" placeholder="Observación del responsable"></textarea>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

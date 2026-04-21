@@ -1,0 +1,112 @@
+﻿<section class="exportaciones-page">
+  <div class="page-header">
+    <div>
+      <h1>Exportación</h1>
+      <p>Genera archivos JSON o CSV con la información crítica del sistema.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card success">
+        <span>Ventas</span>
+        <strong>{{ cantidadVentas() }}</strong>
+        <small>{{ totalVentas() | currency:'PEN':'symbol':'1.2-2' }}</small>
+      </div>
+      <div class="stat-card accent">
+        <span>Compras</span>
+        <strong>{{ cantidadCompras() }}</strong>
+        <small>{{ totalCompras() | currency:'PEN':'symbol':'1.2-2' }}</small>
+      </div>
+      <div class="stat-card info">
+        <span>Productos</span>
+        <strong>{{ cantidadProductos() }}</strong>
+      </div>
+      <div class="stat-card warning">
+        <span>Usuarios</span>
+        <strong>{{ cantidadUsuarios() }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout-grid">
+    <div class="card controls-card">
+      <div class="card-title">
+        <h2>Configuración de exportación</h2>
+        <p>Selecciona el dataset y ajusta el rango de fechas si aplica.</p>
+      </div>
+
+      <div class="dataset-grid">
+        @for (item of opciones; track item.key) {
+          <button
+            type="button"
+            class="dataset-card"
+            [class.selected]="datasetSeleccionado() === item.key"
+            (click)="actualizarDataset(item.key)">
+            <strong>{{ item.titulo }}</strong>
+            <span>{{ item.descripcion }}</span>
+          </button>
+        }
+      </div>
+
+      <div class="filters-grid">
+        <div class="campo">
+          <label for="fechaInicio">Fecha inicio</label>
+          <input id="fechaInicio" type="date" [value]="fechaInicio()" (input)="actualizarFechaInicio($any($event.target).value)" />
+        </div>
+
+        <div class="campo">
+          <label for="fechaFin">Fecha fin</label>
+          <input id="fechaFin" type="date" [value]="fechaFin()" (input)="actualizarFechaFin($any($event.target).value)" />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn-primary" (click)="exportarJson()">Exportar JSON</button>
+        <button type="button" class="btn-accent" (click)="exportarCsv()">Exportar CSV</button>
+        <button type="button" class="btn-secondary" (click)="limpiarFiltros()">Limpiar filtros</button>
+      </div>
+
+      @if (mensaje() !== '') {
+        <div class="message-box">
+          <strong>Estado:</strong> {{ mensaje() }}
+          @if (ultimoArchivo() !== '') {
+            <span>Archivo: {{ ultimoArchivo() }}</span>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="card preview-card">
+      <div class="card-title">
+        <h2>Vista previa de exportación</h2>
+        <p>Se muestran las primeras 10 filas del dataset seleccionado.</p>
+      </div>
+
+      @if (previewRows().length === 0) {
+        <div class="empty-state">
+          <p>No hay datos disponibles para el filtro actual.</p>
+        </div>
+      } @else {
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                @for (col of previewColumns(); track col) {
+                  <th>{{ col }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (fila of previewRows(); track $index) {
+                <tr>
+                  @for (col of previewColumns(); track col) {
+                    <td>{{ fila[col] }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+</section>

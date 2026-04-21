@@ -1,0 +1,93 @@
+﻿<section class="calidad-page">
+  <div class="page-header">
+    <div>
+      <h1>Calidad / Diagnóstico técnico</h1>
+      <p>Evalúa integridad referencial, consistencia de datos y señales técnicas del sistema persistido.</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card ok"><span>OK</span><strong>{{ resumen().ok }}</strong></div>
+    <div class="stat-card info"><span>Info</span><strong>{{ resumen().info }}</strong></div>
+    <div class="stat-card warning"><span>Warnings</span><strong>{{ resumen().warning }}</strong></div>
+    <div class="stat-card error"><span>Errores</span><strong>{{ resumen().error }}</strong></div>
+    <div class="stat-card"><span>Productos</span><strong>{{ resumen().productos }}</strong></div>
+    <div class="stat-card accent"><span>Ventas</span><strong>{{ resumen().ventas }}</strong></div>
+    <div class="stat-card accent"><span>Compras</span><strong>{{ resumen().compras }}</strong></div>
+    <div class="stat-card info"><span>Utilidad estimada</span><strong>{{ resumen().utilidadEstimada | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+  </div>
+
+  <div class="layout-grid">
+    <div class="left-column">
+      <div class="card">
+        <div class="card-title">
+          <h2>Hallazgos técnicos</h2>
+          <p>Resultados automáticos basados en integridad y consistencia operativa.</p>
+        </div>
+
+        <div class="hallazgo-list">
+          @for (item of hallazgos(); track item.id) {
+            <div class="hallazgo-card"
+                 [class.level-ok]="item.nivel === 'OK'"
+                 [class.level-info]="item.nivel === 'INFO'"
+                 [class.level-warning]="item.nivel === 'WARNING'"
+                 [class.level-error]="item.nivel === 'ERROR'">
+              <div class="hallazgo-top">
+                <div>
+                  <span class="categoria">{{ item.categoria }}</span>
+                  <h3>{{ item.titulo }}</h3>
+                </div>
+                <span class="badge">{{ item.nivel }}</span>
+              </div>
+              <p>{{ item.detalle }}</p>
+              <div class="hallazgo-footer">
+                <small><strong>Referencia:</strong> {{ item.referencia }}</small>
+                <small><strong>Sugerencia:</strong> {{ item.sugerencia }}</small>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="card">
+        <div class="card-title">
+          <h2>Contexto del sistema</h2>
+          <p>Lectura rápida de datasets y configuración actual.</p>
+        </div>
+
+        <div class="summary-grid">
+          <div class="summary-box"><span>Usuarios</span><strong>{{ usuarios().length }}</strong></div>
+          <div class="summary-box"><span>Proveedores</span><strong>{{ proveedores().length }}</strong></div>
+          <div class="summary-box"><span>Mov. inventario</span><strong>{{ movimientosInventario().length }}</strong></div>
+          <div class="summary-box"><span>Cierres caja</span><strong>{{ cierresCaja().length }}</strong></div>
+          <div class="summary-box"><span>Caja activa</span><strong>{{ cajaActiva() ? 'Sí' : 'No' }}</strong></div>
+          <div class="summary-box"><span>Auditoría</span><strong>{{ eventosAuditoria().length }}</strong></div>
+          <div class="summary-box"><span>Moneda</span><strong>{{ configuracion().moneda }} · {{ configuracion().simboloMoneda }}</strong></div>
+          <div class="summary-box"><span>Sesión</span><strong>{{ configuracion().sesionMinutos }} min</strong></div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn-primary" (click)="exportarDiagnostico()">Exportar diagnóstico técnico</button>
+        </div>
+
+        @if (mensaje() !== '') {
+          <div class="message-box">{{ mensaje() }}</div>
+        }
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Vista previa del reporte</h2>
+          <p>JSON listo para exportación.</p>
+        </div>
+
+        <details class="json-details" open>
+          <summary>Ver reporte JSON</summary>
+          <pre>{{ reporteJson() | json }}</pre>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>

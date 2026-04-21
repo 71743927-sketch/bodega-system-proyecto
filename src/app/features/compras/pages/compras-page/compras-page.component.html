@@ -1,0 +1,231 @@
+﻿<section class="compras-page">
+  <div class="page-header">
+    <div>
+      <h1>Compras</h1>
+      <p>Registra compras a proveedores y abastece el stock de la bodega.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span>Compras</span>
+        <strong>{{ totalCompras() }}</strong>
+      </div>
+      <div class="stat-card accent">
+        <span>Monto acumulado</span>
+        <strong>S/ {{ montoTotalComprado().toFixed(2) }}</strong>
+      </div>
+      <div class="stat-card success">
+        <span>Productos activos</span>
+        <strong>{{ productosActivos() }}</strong>
+      </div>
+      <div class="stat-card info">
+        <span>Proveedores activos</span>
+        <strong>{{ proveedoresActivos() }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout-grid">
+    <div class="left-column">
+      <div class="card form-card">
+        <div class="card-title">
+          <h2>Datos de compra</h2>
+          <p>Selecciona proveedor, usuario responsable y agrega productos al detalle.</p>
+        </div>
+
+        <form (submit)="registrarCompra($event)">
+          <div class="form-grid two-cols">
+            <div class="campo full-width">
+              <label for="proveedorId">Proveedor</label>
+              <select id="proveedorId" [value]="compraForm().proveedorId ?? ''" (change)="actualizarCompraProveedor($any($event.target).value)">
+                <option value="">Seleccione un proveedor</option>
+                @for (proveedor of proveedores(); track proveedor.id) {
+                  <option [value]="proveedor.id" [disabled]="!proveedor.activo">
+                    {{ proveedor.nombre }}@if (!proveedor.activo) { (Inactivo) }
+                  </option>
+                }
+              </select>
+              @if (enviadoCompra() && compraForm().proveedorId === null) {
+                <small class="error">Debes seleccionar un proveedor.</small>
+              }
+            </div>
+
+            <div class="campo">
+              <label for="usuario">Usuario responsable</label>
+              <input
+                id="usuario"
+                type="text"
+                [value]="compraForm().usuario"
+                (input)="actualizarCompraTexto('usuario', $any($event.target).value)"
+                placeholder="Ej. Administrador" />
+              @if (enviadoCompra() && compraForm().usuario.trim() === '') {
+                <small class="error">El usuario es obligatorio.</small>
+              }
+            </div>
+
+            <div class="campo full-width">
+              <label for="observacion">Observación</label>
+              <textarea
+                id="observacion"
+                rows="3"
+                [value]="compraForm().observacion"
+                (input)="actualizarCompraTexto('observacion', $any($event.target).value)"
+                placeholder="Ej. Compra semanal, reposición de abarrotes, promoción del proveedor, etc."></textarea>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="card-title mini">
+            <h3>Agregar producto al detalle</h3>
+          </div>
+
+          <div class="form-grid two-cols compact-grid">
+            <div class="campo full-width">
+              <label for="productoId">Producto</label>
+              <select id="productoId" [value]="itemForm().productoId ?? ''" (change)="actualizarItemProducto($any($event.target).value)">
+                <option value="">Seleccione un producto</option>
+                @for (producto of productos(); track producto.id) {
+                  <option [value]="producto.id">{{ producto.codigo }} - {{ producto.nombre }}</option>
+                }
+              </select>
+              @if (enviadoItem() && itemForm().productoId === null) {
+                <small class="error">Debes seleccionar un producto.</small>
+              }
+            </div>
+
+            <div class="campo">
+              <label for="cantidad">Cantidad</label>
+              <input
+                id="cantidad"
+                type="number"
+                min="0"
+                [value]="itemForm().cantidad"
+                (input)="actualizarItemNumero('cantidad', $any($event.target).value)" />
+              @if (enviadoItem() && itemForm().cantidad <= 0) {
+                <small class="error">La cantidad debe ser mayor a 0.</small>
+              }
+            </div>
+
+            <div class="campo">
+              <label for="costoUnitario">Costo unitario</label>
+              <input
+                id="costoUnitario"
+                type="number"
+                min="0"
+                step="0.01"
+                [value]="itemForm().costoUnitario"
+                (input)="actualizarItemNumero('costoUnitario', $any($event.target).value)" />
+              @if (enviadoItem() && itemForm().costoUnitario <= 0) {
+                <small class="error">El costo unitario debe ser mayor a 0.</small>
+              }
+            </div>
+          </div>
+
+          <div class="actions compact-actions">
+            <button type="button" class="btn-secondary" (click)="agregarItem($event)">Agregar al detalle</button>
+          </div>
+
+          @if (carrito().length === 0) {
+            <div class="empty-state small-space">
+              <p>No hay productos agregados todavía.</p>
+            </div>
+          } @else {
+            <div class="table-wrapper small-space">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Costo</th>
+                    <th>Subtotal</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of carrito(); track item.productoId) {
+                    <tr>
+                      <td>{{ item.productoNombre }}</td>
+                      <td>{{ item.cantidad }}</td>
+                      <td>S/ {{ item.costoUnitario.toFixed(2) }}</td>
+                      <td>S/ {{ item.subtotal.toFixed(2) }}</td>
+                      <td>
+                        <button type="button" class="btn-table delete" (click)="quitarItem(item.productoId)">
+                          Quitar
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <div class="summary-box">
+              <span>Total de compra</span>
+              <strong>S/ {{ totalCarrito().toFixed(2) }}</strong>
+            </div>
+          }
+
+          <div class="actions">
+            <button type="submit" class="btn-primary">Registrar compra</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="card history-card">
+        <div class="card-title">
+          <h2>Historial de compras</h2>
+          <p>Consulta compras registradas por proveedor, usuario u observación.</p>
+        </div>
+
+        <div class="toolbar">
+          <input
+            type="text"
+            [value]="busqueda()"
+            (input)="actualizarBusqueda($any($event.target).value)"
+            placeholder="Buscar compra por proveedor, usuario u observación" />
+        </div>
+
+        @if (comprasFiltradas().length === 0) {
+          <div class="empty-state">
+            <p>No hay compras registradas todavía.</p>
+          </div>
+        } @else {
+          <div class="compras-list">
+            @for (compra of comprasFiltradas(); track compra.id) {
+              <div class="compra-item">
+                <div class="compra-head">
+                  <div>
+                    <strong>Compra #{{ compra.id }}</strong>
+                    <span>{{ compra.fecha | date:'short' }}</span>
+                  </div>
+                  <div class="amount">S/ {{ compra.total.toFixed(2) }}</div>
+                </div>
+
+                <div class="compra-meta">
+                  <span><strong>Proveedor:</strong> {{ compra.proveedorNombre }}</span>
+                  <span><strong>Usuario:</strong> {{ compra.usuario }}</span>
+                </div>
+
+                <div class="compra-details">
+                  @for (detalle of compra.detalles; track detalle.productoId) {
+                    <div class="detail-row">
+                      <span>{{ detalle.productoNombre }}</span>
+                      <span>{{ detalle.cantidad }} × S/ {{ detalle.costoUnitario.toFixed(2) }}</span>
+                    </div>
+                  }
+                </div>
+
+                @if (compra.observacion !== '') {
+                  <p class="observacion">{{ compra.observacion }}</p>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,120 @@
+﻿<section class="alertas-page">
+  <div class="page-header">
+    <div>
+      <h1>Alertas / Notificaciones</h1>
+      <p>Monitorea eventos críticos del negocio, stock, caja y comportamiento operativo.</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card critical">
+      <span>Críticas</span>
+      <strong>{{ criticas() }}</strong>
+    </div>
+    <div class="stat-card high">
+      <span>Altas</span>
+      <strong>{{ altas() }}</strong>
+    </div>
+    <div class="stat-card medium">
+      <span>Medias</span>
+      <strong>{{ medias() }}</strong>
+    </div>
+    <div class="stat-card info">
+      <span>Informativas</span>
+      <strong>{{ infos() }}</strong>
+    </div>
+    <div class="stat-card total">
+      <span>Total generadas</span>
+      <strong>{{ totalAlertas() }}</strong>
+    </div>
+  </div>
+
+  <div class="card filters-card">
+    <div class="card-title">
+      <h2>Filtros</h2>
+      <p>Refina las alertas por texto, severidad, origen o alertas descartadas.</p>
+    </div>
+
+    <div class="filters-grid">
+      <input type="text" [value]="busqueda()" (input)="actualizarBusqueda($any($event.target).value)" placeholder="Buscar por título, descripción, referencia o acción sugerida" />
+
+      <select [value]="filtroSeveridad()" (change)="actualizarSeveridad($any($event.target).value)">
+        <option value="TODOS">Todas las severidades</option>
+        @for (item of severidades; track item) {
+          <option [value]="item">{{ item }}</option>
+        }
+      </select>
+
+      <select [value]="filtroOrigen()" (change)="actualizarOrigen($any($event.target).value)">
+        <option value="TODOS">Todos los orígenes</option>
+        @for (item of origenes; track item) {
+          <option [value]="item">{{ item }}</option>
+        }
+      </select>
+
+      <label class="checkbox-inline">
+        <input type="checkbox" [checked]="incluirDescartadas()" (change)="actualizarIncluirDescartadas($any($event.target).checked)" />
+        Incluir descartadas
+      </label>
+
+      <button type="button" class="btn-secondary" (click)="limpiarFiltros()">Limpiar filtros</button>
+      <button type="button" class="btn-accent" (click)="limpiarDescartes()">Restaurar descartes</button>
+    </div>
+  </div>
+
+  <div class="card list-card">
+    <div class="card-title">
+      <h2>Listado de alertas</h2>
+      <p>Alertas activas y notificables para supervisión del negocio.</p>
+    </div>
+
+    @if (alertas().length === 0) {
+      <div class="empty-state"><p>No hay alertas que coincidan con los filtros actuales.</p></div>
+    } @else {
+      <div class="alert-list">
+        @for (alerta of alertas(); track alerta.id) {
+          <div class="alert-card"
+               [class.sev-critical]="alerta.severidad === 'CRITICA'"
+               [class.sev-high]="alerta.severidad === 'ALTA'"
+               [class.sev-medium]="alerta.severidad === 'MEDIA'"
+               [class.sev-info]="alerta.severidad === 'INFO'"
+               [class.discarded]="alerta.descartada">
+            <div class="alert-top">
+              <div>
+                <div class="badges-row">
+                  <span class="badge origin">{{ alerta.origen }}</span>
+                  <span class="badge severity">{{ alerta.severidad }}</span>
+                  @if (alerta.descartada) {
+                    <span class="badge discarded-badge">Descartada</span>
+                  }
+                </div>
+                <h3>{{ alerta.titulo }}</h3>
+                <p class="meta">{{ alerta.fecha | date:'full' }}</p>
+              </div>
+              <div class="actions-inline">
+                @if (!alerta.descartada) {
+                  <button type="button" class="btn-secondary" (click)="descartar(alerta)">Descartar</button>
+                } @else {
+                  <button type="button" class="btn-accent" (click)="restaurar(alerta)">Restaurar</button>
+                }
+              </div>
+            </div>
+
+            <p class="description">{{ alerta.descripcion }}</p>
+
+            <div class="alert-footer">
+              <div>
+                <span class="footer-label">Acción sugerida</span>
+                <strong>{{ alerta.accionSugerida }}</strong>
+              </div>
+              <div>
+                <span class="footer-label">Referencia</span>
+                <strong>{{ alerta.referencia }}</strong>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>

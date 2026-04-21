@@ -1,0 +1,33 @@
+﻿<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <h2>BodegaSys</h2>
+      <p>Control de bodega mediana</p>
+    </div>
+
+    <div class="user-panel">
+      <span class="user-label">Sesión activa</span>
+      <strong>{{ nombreActual() }}</strong>
+      <small>{{ etiquetaRol(rolActual()) }}</small>
+    </div>
+
+    <nav class="menu">
+      @for (item of menuFiltrado(); track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          class="menu-link">
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+
+    <button type="button" class="logout-btn" (click)="logout()">
+      Cerrar sesión
+    </button>
+  </aside>
+
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

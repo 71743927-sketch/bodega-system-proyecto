@@ -1,0 +1,300 @@
+﻿<section class="dashboard-page">
+  <div class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Vista ejecutiva del negocio para supervisar ventas, stock, caja y abastecimiento.</p>
+    </div>
+
+    <div class="badge-status" [class.open]="cajaResumen().abierta" [class.closed]="!cajaResumen().abierta">
+      @if (cajaResumen().abierta) {
+        Caja abierta
+      } @else {
+        Caja cerrada
+      }
+    </div>
+  </div>
+
+  <div class="stats-grid primary-grid">
+    <div class="stat-card sales">
+      <span>Ventas de hoy</span>
+      <strong>{{ totalVentasHoy() | currency:'PEN':'symbol':'1.2-2' }}</strong>
+      <small>{{ ventasHoy().length }} ventas registradas</small>
+    </div>
+
+    <div class="stat-card purchases">
+      <span>Compras de hoy</span>
+      <strong>{{ totalComprasHoy() | currency:'PEN':'symbol':'1.2-2' }}</strong>
+      <small>{{ comprasHoy().length }} compras registradas</small>
+    </div>
+
+    <div class="stat-card avg-ticket">
+      <span>Ticket promedio de hoy</span>
+      <strong>{{ ticketPromedioHoy() | currency:'PEN':'symbol':'1.2-2' }}</strong>
+      <small>Promedio de ventas diarias</small>
+    </div>
+
+    <div class="stat-card gross-profit">
+      <span>Utilidad bruta aprox.</span>
+      <strong>{{ utilidadBrutaAprox() | currency:'PEN':'symbol':'1.2-2' }}</strong>
+      <small>Ventas generales menos compras generales</small>
+    </div>
+  </div>
+
+  <div class="stats-grid secondary-grid">
+    <div class="mini-card">
+      <span>Productos activos</span>
+      <strong>{{ productosActivos().length }}</strong>
+    </div>
+    <div class="mini-card warning">
+      <span>Stock bajo</span>
+      <strong>{{ productosStockBajo().length }}</strong>
+    </div>
+    <div class="mini-card danger">
+      <span>Agotados</span>
+      <strong>{{ productosAgotados().length }}</strong>
+    </div>
+    <div class="mini-card info">
+      <span>Usuarios activos</span>
+      <strong>{{ usuariosActivos().length }}</strong>
+    </div>
+  </div>
+
+  <div class="layout-grid">
+    <div class="left-column">
+      <div class="card caja-card">
+        <div class="card-title">
+          <h2>Resumen de caja</h2>
+          <p>Control del flujo en efectivo del turno actual.</p>
+        </div>
+
+        <div class="summary-list">
+          <div class="summary-item">
+            <span>Monto inicial</span>
+            <strong>{{ cajaResumen().montoInicial | currency:'PEN':'symbol':'1.2-2' }}</strong>
+          </div>
+          <div class="summary-item success">
+            <span>Ventas en efectivo</span>
+            <strong>{{ cajaResumen().ventasEfectivo | currency:'PEN':'symbol':'1.2-2' }}</strong>
+          </div>
+          <div class="summary-item info">
+            <span>Ingresos manuales</span>
+            <strong>{{ cajaResumen().ingresosManual | currency:'PEN':'symbol':'1.2-2' }}</strong>
+          </div>
+          <div class="summary-item warning">
+            <span>Egresos manuales</span>
+            <strong>{{ cajaResumen().egresosManual | currency:'PEN':'symbol':'1.2-2' }}</strong>
+          </div>
+          <div class="summary-item accent">
+            <span>Saldo esperado</span>
+            <strong>{{ cajaResumen().saldoEsperado | currency:'PEN':'symbol':'1.2-2' }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="card stock-card">
+        <div class="card-title">
+          <h2>Alertas de stock</h2>
+          <p>Productos que requieren atención inmediata.</p>
+        </div>
+
+        @if (productosStockBajo().length === 0 && productosAgotados().length === 0) {
+          <div class="empty-state success-state">
+            <p>No hay alertas críticas de stock por ahora.</p>
+          </div>
+        } @else {
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Producto</th>
+                  <th>Categoría</th>
+                  <th>Stock</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (producto of [...productosAgotados(), ...productosStockBajo()]; track producto.id) {
+                  <tr>
+                    <td>{{ producto.codigo }}</td>
+                    <td>{{ producto.nombre }}</td>
+                    <td>{{ producto.categoria }}</td>
+                    <td>
+                      <span class="stock-badge" [class.stock-empty]="producto.stockActual === 0" [class.stock-alert]="producto.stockActual > 0 && producto.stockActual <= producto.stockMinimo">
+                        {{ producto.stockActual }}
+                      </span>
+                    </td>
+                    <td>
+                      @if (producto.stockActual === 0) {
+                        <span class="badge danger">Agotado</span>
+                      } @else {
+                        <span class="badge warning">Stock bajo</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+
+      <div class="card rankings-card">
+        <div class="card-title">
+          <h2>Productos más vendidos</h2>
+          <p>Ranking basado en la cantidad total vendida.</p>
+        </div>
+
+        @if (topProductosVendidos().length === 0) {
+          <div class="empty-state">
+            <p>Aún no hay ventas registradas para generar un ranking.</p>
+          </div>
+        } @else {
+          <div class="ranking-list">
+            @for (item of topProductosVendidos(); track item.nombre) {
+              <div class="ranking-item">
+                <div>
+                  <strong>{{ item.nombre }}</strong>
+                  <span>Unidades vendidas</span>
+                </div>
+                <span class="ranking-value">{{ item.cantidad }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="card history-card">
+        <div class="card-title">
+          <h2>Últimas ventas</h2>
+          <p>Movimientos recientes de salida comercial.</p>
+        </div>
+
+        @if (ultimasVentas().length === 0) {
+          <div class="empty-state">
+            <p>No hay ventas registradas todavía.</p>
+          </div>
+        } @else {
+          <div class="list-stack">
+            @for (venta of ultimasVentas(); track venta.id) {
+              <div class="stack-item">
+                <div>
+                  <strong>Venta #{{ venta.id }}</strong>
+                  <span>{{ venta.fecha | date:'short' }} · {{ venta.metodoPago }}</span>
+                </div>
+                <strong>{{ venta.total | currency:'PEN':'symbol':'1.2-2' }}</strong>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="card history-card">
+        <div class="card-title">
+          <h2>Últimas compras</h2>
+          <p>Abastecimientos recientes registrados en el sistema.</p>
+        </div>
+
+        @if (ultimasCompras().length === 0) {
+          <div class="empty-state">
+            <p>No hay compras registradas todavía.</p>
+          </div>
+        } @else {
+          <div class="list-stack">
+            @for (compra of ultimasCompras(); track compra.id) {
+              <div class="stack-item">
+                <div>
+                  <strong>Compra #{{ compra.id }}</strong>
+                  <span>{{ compra.fecha | date:'short' }} · {{ compra.proveedorNombre }}</span>
+                </div>
+                <strong>{{ compra.total | currency:'PEN':'symbol':'1.2-2' }}</strong>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="card history-card">
+        <div class="card-title">
+          <h2>Últimos movimientos de inventario</h2>
+          <p>Trazabilidad rápida del stock.</p>
+        </div>
+
+        @if (ultimosMovimientos().length === 0) {
+          <div class="empty-state">
+            <p>No hay movimientos de inventario registrados todavía.</p>
+          </div>
+        } @else {
+          <div class="list-stack">
+            @for (mov of ultimosMovimientos(); track mov.id) {
+              <div class="stack-item movement-item">
+                <div>
+                  <strong>{{ mov.productoNombre }}</strong>
+                  <span>{{ mov.fecha | date:'short' }} · {{ mov.usuario }}</span>
+                </div>
+                <span class="badge" [class.info]="mov.tipo === 'ENTRADA'" [class.warning]="mov.tipo === 'SALIDA'" [class.accent]="mov.tipo === 'AJUSTE'">
+                  {{ etiquetaTipoMovimiento(mov.tipo) }}
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="card roles-card">
+        <div class="card-title">
+          <h2>Distribución de roles</h2>
+          <p>Resumen del personal registrado en el sistema.</p>
+        </div>
+
+        <div class="roles-grid">
+          <div class="role-box role-dueno">
+            <span>{{ etiquetaRol('DUENO') }}</span>
+            <strong>{{ conteoPorRol().DUENO }}</strong>
+          </div>
+          <div class="role-box role-cajero">
+            <span>{{ etiquetaRol('CAJERO') }}</span>
+            <strong>{{ conteoPorRol().CAJERO }}</strong>
+          </div>
+          <div class="role-box role-almacenero">
+            <span>{{ etiquetaRol('ALMACENERO') }}</span>
+            <strong>{{ conteoPorRol().ALMACENERO }}</strong>
+          </div>
+          <div class="role-box role-supervisor">
+            <span>{{ etiquetaRol('SUPERVISOR') }}</span>
+            <strong>{{ conteoPorRol().SUPERVISOR }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="card history-card">
+        <div class="card-title">
+          <h2>Últimos cierres de caja</h2>
+          <p>Referencia histórica de cierres recientes.</p>
+        </div>
+
+        @if (ultimosCierres().length === 0) {
+          <div class="empty-state">
+            <p>No hay cierres de caja registrados todavía.</p>
+          </div>
+        } @else {
+          <div class="list-stack">
+            @for (cierre of ultimosCierres(); track cierre.id) {
+              <div class="stack-item closure-item">
+                <div>
+                  <strong>Cierre #{{ cierre.id }}</strong>
+                  <span>{{ cierre.fechaCierre | date:'short' }}</span>
+                </div>
+                <strong [class.negative]="cierre.diferencia < 0" [class.positive]="cierre.diferencia >= 0">
+                  {{ cierre.diferencia | currency:'PEN':'symbol':'1.2-2' }}
+                </strong>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

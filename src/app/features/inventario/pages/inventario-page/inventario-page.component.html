@@ -1,0 +1,248 @@
+﻿<section class="inventario-page">
+  <div class="page-header">
+    <div>
+      <h1>Inventario</h1>
+      <p>Gestiona stock, movimientos y alertas de productos de la bodega.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span>Productos</span>
+        <strong>{{ totalProductos() }}</strong>
+      </div>
+      <div class="stat-card accent">
+        <span>Movimientos</span>
+        <strong>{{ totalMovimientos() }}</strong>
+      </div>
+      <div class="stat-card warning">
+        <span>Stock bajo</span>
+        <strong>{{ stockBajo() }}</strong>
+      </div>
+      <div class="stat-card danger">
+        <span>Agotados</span>
+        <strong>{{ agotados() }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout-grid">
+    <div class="card form-card">
+      <div class="card-title">
+        <h2>Registrar movimiento</h2>
+        <p>Actualiza el stock mediante entradas, salidas o ajustes controlados.</p>
+      </div>
+
+      <form (submit)="registrarMovimiento($event)">
+        <div class="form-grid two-cols">
+          <div class="campo full-width">
+            <label for="productoId">Producto</label>
+            <select id="productoId" [value]="formulario().productoId ?? ''" (change)="actualizarProducto($any($event.target).value)">
+              <option value="">Seleccione un producto</option>
+              @for (producto of productos(); track producto.id) {
+                <option [value]="producto.id">{{ producto.codigo }} - {{ producto.nombre }}</option>
+              }
+            </select>
+            @if (enviado() && formulario().productoId === null) {
+              <small class="error">Debes seleccionar un producto.</small>
+            }
+          </div>
+
+          <div class="campo">
+            <label for="tipo">Tipo</label>
+            <select id="tipo" [value]="formulario().tipo" (change)="actualizarTipo($any($event.target).value)">
+              <option value="ENTRADA">Entrada</option>
+              <option value="SALIDA">Salida</option>
+              <option value="AJUSTE">Ajuste</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label for="cantidad">{{ tituloCantidad() }}</label>
+            <input
+              id="cantidad"
+              type="number"
+              min="0"
+              [value]="formulario().cantidad"
+              (input)="actualizarCantidad($any($event.target).value)" />
+            @if (enviado() && formulario().cantidad < 0) {
+              <small class="error">La cantidad no puede ser negativa.</small>
+            }
+            @if (enviado() && formulario().tipo === 'SALIDA' && productoSeleccionado() && formulario().cantidad > productoSeleccionado()!.stockActual) {
+              <small class="error">No puedes retirar más de lo disponible en stock.</small>
+            }
+          </div>
+
+          <div class="campo">
+            <label for="usuario">Usuario responsable</label>
+            <input
+              id="usuario"
+              type="text"
+              [value]="formulario().usuario"
+              (input)="actualizarTexto('usuario', $any($event.target).value)"
+              placeholder="Ej. Administrador" />
+            @if (enviado() && formulario().usuario.trim() === '') {
+              <small class="error">El usuario es obligatorio.</small>
+            }
+          </div>
+
+          <div class="campo full-width">
+            <label for="observacion">Observación</label>
+            <textarea
+              id="observacion"
+              rows="4"
+              [value]="formulario().observacion"
+              (input)="actualizarTexto('observacion', $any($event.target).value)"
+              placeholder="Ej. Reposición de mercadería, merma, corrección de inventario, etc."></textarea>
+          </div>
+        </div>
+
+        @if (productoSeleccionado()) {
+          <div class="product-summary">
+            <div>
+              <span>Stock actual</span>
+              <strong>{{ productoSeleccionado()!.stockActual }}</strong>
+            </div>
+            <div>
+              <span>Stock mínimo</span>
+              <strong>{{ productoSeleccionado()!.stockMinimo }}</strong>
+            </div>
+            <div>
+              <span>Categoría</span>
+              <strong>{{ productoSeleccionado()!.categoria }}</strong>
+            </div>
+          </div>
+        }
+
+        <div class="actions">
+          <button type="submit" class="btn-primary">Guardar movimiento</button>
+          <button type="button" class="btn-secondary" (click)="limpiarFormulario()">Limpiar</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card stock-card">
+      <div class="card-title">
+        <h2>Stock de productos</h2>
+        <p>Consulta rápida del stock actual y alertas.</p>
+      </div>
+
+      <div class="toolbar">
+        <input
+          type="text"
+          [value]="busqueda()"
+          (input)="actualizarBusqueda($any($event.target).value)"
+          placeholder="Buscar producto por nombre, código o categoría" />
+
+        <select [value]="filtroStock()" (change)="actualizarFiltroStock($any($event.target).value)">
+          <option value="TODOS">Todos</option>
+          <option value="BAJO">Stock bajo</option>
+          <option value="AGOTADO">Agotados</option>
+        </select>
+      </div>
+
+      @if (productosFiltrados().length === 0) {
+        <div class="empty-state">
+          <p>No hay productos que coincidan con el filtro actual.</p>
+        </div>
+      } @else {
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Stock</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (producto of productosFiltrados(); track producto.id) {
+                <tr>
+                  <td>{{ producto.codigo }}</td>
+                  <td>{{ producto.nombre }}</td>
+                  <td>{{ producto.categoria }}</td>
+                  <td>
+                    <span class="stock-badge" [class.stock-alert]="producto.stockActual > 0 && producto.stockActual <= producto.stockMinimo" [class.stock-empty]="producto.stockActual === 0">
+                      {{ producto.stockActual }}
+                    </span>
+                  </td>
+                  <td>
+                    @if (producto.stockActual === 0) {
+                      <span class="badge danger">Agotado</span>
+                    } @else if (producto.stockActual <= producto.stockMinimo) {
+                      <span class="badge warning">Stock bajo</span>
+                    } @else {
+                      <span class="badge success">Normal</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="card history-card">
+    <div class="card-title">
+      <h2>Historial de movimientos</h2>
+      <p>Consulta entradas, salidas y ajustes registrados en el inventario.</p>
+    </div>
+
+    <div class="toolbar toolbar-history">
+      <input
+        type="text"
+        [value]="busqueda()"
+        (input)="actualizarBusqueda($any($event.target).value)"
+        placeholder="Buscar por producto, usuario u observación" />
+
+      <select [value]="filtroTipo()" (change)="actualizarFiltroTipo($any($event.target).value)">
+        <option value="TODOS">Todos los tipos</option>
+        <option value="ENTRADA">Entradas</option>
+        <option value="SALIDA">Salidas</option>
+        <option value="AJUSTE">Ajustes</option>
+      </select>
+    </div>
+
+    @if (movimientosFiltrados().length === 0) {
+      <div class="empty-state">
+        <p>No hay movimientos registrados todavía.</p>
+      </div>
+    } @else {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Producto</th>
+              <th>Tipo</th>
+              <th>Cantidad</th>
+              <th>Stock</th>
+              <th>Usuario</th>
+              <th>Observación</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (mov of movimientosFiltrados(); track mov.id) {
+              <tr>
+                <td>{{ mov.fecha | date:'short' }}</td>
+                <td>{{ mov.productoNombre }}</td>
+                <td>
+                  <span class="badge" [class.info]="mov.tipo === 'ENTRADA'" [class.warning]="mov.tipo === 'SALIDA'" [class.accent]="mov.tipo === 'AJUSTE'">
+                    {{ etiquetaTipo(mov.tipo) }}
+                  </span>
+                </td>
+                <td>{{ mov.cantidad }}</td>
+                <td>{{ mov.stockAnterior }} → {{ mov.stockNuevo }}</td>
+                <td>{{ mov.usuario }}</td>
+                <td>{{ mov.observacion === '' ? '-' : mov.observacion }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>

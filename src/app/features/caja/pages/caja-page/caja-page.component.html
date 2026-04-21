@@ -1,0 +1,276 @@
+﻿<section class="caja-page">
+  <div class="page-header">
+    <div>
+      <h1>Caja</h1>
+      <p>Controla apertura, movimientos manuales, ventas en efectivo y cierre de caja.</p>
+    </div>
+  </div>
+
+  @if (cajaActiva() === null) {
+    <div class="card form-card">
+      <div class="card-title">
+        <h2>Apertura de caja</h2>
+        <p>Inicia el turno indicando el usuario y el monto inicial disponible.</p>
+      </div>
+
+      <form (submit)="abrirCaja($event)">
+        <div class="form-grid two-cols">
+          <div class="campo">
+            <label for="usuarioApertura">Usuario de apertura</label>
+            <input
+              id="usuarioApertura"
+              type="text"
+              [value]="aperturaForm().usuarioApertura"
+              (input)="actualizarAperturaTexto('usuarioApertura', $any($event.target).value)"
+              placeholder="Ej. Administrador" />
+            @if (enviadoApertura() && aperturaForm().usuarioApertura.trim() === '') {
+              <small class="error">El usuario es obligatorio.</small>
+            }
+          </div>
+
+          <div class="campo">
+            <label for="montoInicial">Monto inicial</label>
+            <input
+              id="montoInicial"
+              type="number"
+              min="0"
+              step="0.01"
+              [value]="aperturaForm().montoInicial"
+              (input)="actualizarAperturaNumero('montoInicial', $any($event.target).value)" />
+            @if (enviadoApertura() && aperturaForm().montoInicial < 0) {
+              <small class="error">El monto inicial no puede ser negativo.</small>
+            }
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn-primary">Abrir caja</button>
+        </div>
+      </form>
+    </div>
+  } @else {
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span>Monto inicial</span>
+        <strong>S/ {{ cajaActiva()!.montoInicial.toFixed(2) }}</strong>
+      </div>
+      <div class="stat-card success">
+        <span>Ventas en efectivo</span>
+        <strong>S/ {{ ventasEfectivo().toFixed(2) }}</strong>
+      </div>
+      <div class="stat-card info">
+        <span>Ingresos manuales</span>
+        <strong>S/ {{ ingresosManual().toFixed(2) }}</strong>
+      </div>
+      <div class="stat-card warning">
+        <span>Egresos manuales</span>
+        <strong>S/ {{ egresosManual().toFixed(2) }}</strong>
+      </div>
+      <div class="stat-card accent">
+        <span>Saldo esperado</span>
+        <strong>S/ {{ saldoEsperado().toFixed(2) }}</strong>
+      </div>
+    </div>
+
+    <div class="grid-main">
+      <div class="left-column">
+        <div class="card form-card">
+          <div class="card-title">
+            <h2>Caja activa</h2>
+            <p>
+              Abierta por <strong>{{ cajaActiva()!.usuarioApertura }}</strong>
+              el {{ cajaActiva()!.fechaApertura | date:'short' }}
+            </p>
+          </div>
+
+          <form (submit)="registrarMovimiento($event)">
+            <div class="form-grid two-cols">
+              <div class="campo">
+                <label for="tipoMovimiento">Tipo de movimiento</label>
+                <select
+                  id="tipoMovimiento"
+                  [value]="movimientoForm().tipo"
+                  (change)="actualizarMovimientoTipo($any($event.target).value)">
+                  <option value="INGRESO">Ingreso</option>
+                  <option value="EGRESO">Egreso</option>
+                </select>
+              </div>
+
+              <div class="campo">
+                <label for="montoMovimiento">Monto</label>
+                <input
+                  id="montoMovimiento"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  [value]="movimientoForm().monto"
+                  (input)="actualizarMovimientoNumero('monto', $any($event.target).value)" />
+                @if (enviadoMovimiento() && movimientoForm().monto <= 0) {
+                  <small class="error">El monto debe ser mayor a 0.</small>
+                }
+              </div>
+            </div>
+
+            <div class="campo full-width">
+              <label for="conceptoMovimiento">Concepto</label>
+              <input
+                id="conceptoMovimiento"
+                type="text"
+                [value]="movimientoForm().concepto"
+                (input)="actualizarMovimientoTexto('concepto', $any($event.target).value)"
+                placeholder="Ej. Cambio inicial, pago de movilidad, ingreso adicional" />
+              @if (enviadoMovimiento() && movimientoForm().concepto.trim() === '') {
+                <small class="error">El concepto es obligatorio.</small>
+              }
+            </div>
+
+            <div class="actions">
+              <button type="submit" class="btn-primary">Registrar movimiento</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card history-card">
+          <div class="card-title">
+            <h2>Movimientos manuales</h2>
+            <p>Historial de ingresos y egresos registrados en la caja activa.</p>
+          </div>
+
+          @if (cajaActiva()!.movimientos.length === 0) {
+            <div class="empty-state">
+              <p>No hay movimientos manuales registrados todavía.</p>
+            </div>
+          } @else {
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Concepto</th>
+                    <th>Monto</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (mov of cajaActiva()!.movimientos; track mov.id) {
+                    <tr>
+                      <td>{{ mov.fecha | date:'short' }}</td>
+                      <td>
+                        @if (mov.tipo === 'INGRESO') {
+                          <span class="badge ingreso">Ingreso</span>
+                        } @else {
+                          <span class="badge egreso">Egreso</span>
+                        }
+                      </td>
+                      <td>{{ mov.concepto }}</td>
+                      <td>S/ {{ mov.monto.toFixed(2) }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="right-column">
+        <div class="card close-card">
+          <div class="card-title">
+            <h2>Cierre de caja</h2>
+            <p>Ingresa el efectivo contado para cerrar el turno.</p>
+          </div>
+
+          <form (submit)="cerrarCaja($event)">
+            <div class="form-grid one-col">
+              <div class="campo">
+                <label for="usuarioCierre">Usuario de cierre</label>
+                <input
+                  id="usuarioCierre"
+                  type="text"
+                  [value]="cierreForm().usuarioCierre"
+                  (input)="actualizarCierreTexto('usuarioCierre', $any($event.target).value)"
+                  placeholder="Ej. Administrador" />
+                @if (enviadoCierre() && cierreForm().usuarioCierre.trim() === '') {
+                  <small class="error">El usuario de cierre es obligatorio.</small>
+                }
+              </div>
+
+              <div class="campo">
+                <label for="efectivoContado">Efectivo contado</label>
+                <input
+                  id="efectivoContado"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  [value]="cierreForm().efectivoContado"
+                  (input)="actualizarCierreNumero('efectivoContado', $any($event.target).value)" />
+                @if (enviadoCierre() && cierreForm().efectivoContado < 0) {
+                  <small class="error">El efectivo contado no puede ser negativo.</small>
+                }
+              </div>
+
+              <div class="campo">
+                <label for="observacion">Observación</label>
+                <textarea
+                  id="observacion"
+                  rows="4"
+                  [value]="cierreForm().observacion"
+                  (input)="actualizarCierreTexto('observacion', $any($event.target).value)"
+                  placeholder="Ej. Caja cuadrada, faltante por redondeo, sobrante por propina, etc."></textarea>
+              </div>
+            </div>
+
+            <div class="summary-box">
+              <div>
+                <span>Saldo esperado</span>
+                <strong>S/ {{ saldoEsperado().toFixed(2) }}</strong>
+              </div>
+              <div>
+                <span>Diferencia proyectada</span>
+                <strong>
+                  S/ {{ (cierreForm().efectivoContado - saldoEsperado()).toFixed(2) }}
+                </strong>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button type="submit" class="btn-danger">Cerrar caja</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card history-card">
+          <div class="card-title">
+            <h2>Historial de cierres</h2>
+            <p>Últimos cierres realizados en el sistema.</p>
+          </div>
+
+          @if (cierres().length === 0) {
+            <div class="empty-state">
+              <p>No hay cierres registrados todavía.</p>
+            </div>
+          } @else {
+            <div class="cierres-list">
+              @for (cierre of cierres(); track cierre.id) {
+                <div class="cierre-item">
+                  <div class="cierre-head">
+                    <strong>Cierre #{{ cierre.id }}</strong>
+                    <span>{{ cierre.fechaCierre | date:'short' }}</span>
+                  </div>
+                  <div class="cierre-body">
+                    <span>Saldo esperado: <strong>S/ {{ cierre.saldoEsperado.toFixed(2) }}</strong></span>
+                    <span>Efectivo contado: <strong>S/ {{ cierre.efectivoContado.toFixed(2) }}</strong></span>
+                    <span>Diferencia: <strong [class.negative]="cierre.diferencia < 0" [class.positive]="cierre.diferencia >= 0">S/ {{ cierre.diferencia.toFixed(2) }}</strong></span>
+                  </div>
+                  @if (cierre.observacion !== '') {
+                    <p class="observacion">{{ cierre.observacion }}</p>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</section>

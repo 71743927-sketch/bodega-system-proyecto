@@ -1,0 +1,232 @@
+﻿<section class="configuracion-page">
+  <div class="page-header">
+    <div>
+      <h1>Configuración general</h1>
+      <p>Centraliza parámetros del negocio, moneda, tickets, alertas y sesión del sistema.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span>Negocio</span>
+        <strong>{{ formulario().nombreNegocio }}</strong>
+      </div>
+      <div class="stat-card accent">
+        <span>Moneda</span>
+        <strong>{{ resumenMoneda() }}</strong>
+      </div>
+      <div class="stat-card info">
+        <span>IGV</span>
+        <strong>{{ formulario().igvPorcentaje }}%</strong>
+      </div>
+      <div class="stat-card warning">
+        <span>Sesión</span>
+        <strong>{{ formulario().sesionMinutos }} min</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout-grid">
+    <div class="card form-card">
+      <div class="card-title">
+        <h2>Parámetros del sistema</h2>
+        <p>Edita los valores base del negocio y guarda los cambios persistentes.</p>
+      </div>
+
+      <form (submit)="guardar($event)">
+        <div class="section-block">
+          <h3>Negocio</h3>
+          <div class="form-grid two-cols">
+            <div class="campo full-width">
+              <label for="nombreNegocio">Nombre del negocio</label>
+              <input id="nombreNegocio" type="text" [value]="formulario().nombreNegocio" (input)="actualizarTexto('nombreNegocio', $any($event.target).value)" placeholder="Ej. BodegaSys Demo" />
+              @if (enviado() && formulario().nombreNegocio.trim() === '') {
+                <small class="error">El nombre del negocio es obligatorio.</small>
+              }
+            </div>
+
+            <div class="campo">
+              <label for="ruc">RUC</label>
+              <input id="ruc" type="text" [value]="formulario().ruc" (input)="actualizarTexto('ruc', $any($event.target).value)" placeholder="Ej. 00000000000" />
+            </div>
+
+            <div class="campo">
+              <label for="telefono">Teléfono</label>
+              <input id="telefono" type="text" [value]="formulario().telefono" (input)="actualizarTexto('telefono', $any($event.target).value)" placeholder="Ej. 999999999" />
+              @if (enviado() && formulario().telefono.trim() === '') {
+                <small class="error">El teléfono es obligatorio.</small>
+              }
+            </div>
+
+            <div class="campo full-width">
+              <label for="direccion">Dirección</label>
+              <textarea id="direccion" rows="3" [value]="formulario().direccion" (input)="actualizarTexto('direccion', $any($event.target).value)" placeholder="Ej. Huancayo - Perú"></textarea>
+              @if (enviado() && formulario().direccion.trim() === '') {
+                <small class="error">La dirección es obligatoria.</small>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h3>Moneda y tributos</h3>
+          <div class="form-grid two-cols">
+            <div class="campo">
+              <label for="moneda">Moneda</label>
+              <select id="moneda" [value]="formulario().moneda" (change)="actualizarMoneda($any($event.target).value)">
+                @for (item of monedas; track item) {
+                  <option [value]="item">{{ item }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="campo">
+              <label for="simboloMoneda">Símbolo</label>
+              <input id="simboloMoneda" type="text" [value]="formulario().simboloMoneda" (input)="actualizarTexto('simboloMoneda', $any($event.target).value)" placeholder="Ej. S/" />
+              @if (enviado() && formulario().simboloMoneda.trim() === '') {
+                <small class="error">El símbolo de moneda es obligatorio.</small>
+              }
+            </div>
+
+            <div class="campo">
+              <label for="igvPorcentaje">IGV (%)</label>
+              <input id="igvPorcentaje" type="number" min="0" max="100" [value]="formulario().igvPorcentaje" (input)="actualizarNumero('igvPorcentaje', $any($event.target).value)" />
+              @if (enviado() && (formulario().igvPorcentaje < 0 || formulario().igvPorcentaje > 100)) {
+                <small class="error">El IGV debe estar entre 0 y 100.</small>
+              }
+            </div>
+
+            <div class="campo">
+              <label for="zonaHoraria">Zona horaria</label>
+              <input id="zonaHoraria" type="text" [value]="formulario().zonaHoraria" (input)="actualizarTexto('zonaHoraria', $any($event.target).value)" placeholder="Ej. America/Lima" />
+              @if (enviado() && formulario().zonaHoraria.trim() === '') {
+                <small class="error">La zona horaria es obligatoria.</small>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h3>Operación</h3>
+          <div class="form-grid two-cols">
+            <div class="campo">
+              <label for="diasAlertaCompra">Días para alerta de compra</label>
+              <input id="diasAlertaCompra" type="number" min="0" [value]="formulario().diasAlertaCompra" (input)="actualizarNumero('diasAlertaCompra', $any($event.target).value)" />
+            </div>
+
+            <div class="campo">
+              <label for="sesionMinutos">Duración de sesión (min)</label>
+              <input id="sesionMinutos" type="number" min="5" [value]="formulario().sesionMinutos" (input)="actualizarNumero('sesionMinutos', $any($event.target).value)" />
+              @if (enviado() && formulario().sesionMinutos < 5) {
+                <small class="error">La sesión debe durar al menos 5 minutos.</small>
+              }
+            </div>
+
+            <div class="campo toggle-field">
+              <label>Permitir stock negativo</label>
+              <select [value]="formulario().permitirStockNegativo ? 'true' : 'false'" (change)="actualizarBooleano('permitirStockNegativo', $any($event.target).value === 'true')">
+                <option value="false">No</option>
+                <option value="true">Sí</option>
+              </select>
+            </div>
+
+            <div class="campo toggle-field">
+              <label>Mostrar alertas en dashboard</label>
+              <select [value]="formulario().mostrarAlertasDashboard ? 'true' : 'false'" (change)="actualizarBooleano('mostrarAlertasDashboard', $any($event.target).value === 'true')">
+                <option value="true">Sí</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+
+            <div class="campo toggle-field full-width">
+              <label>Mostrar módulo de auditoría</label>
+              <select [value]="formulario().mostrarModuloAuditoria ? 'true' : 'false'" (change)="actualizarBooleano('mostrarModuloAuditoria', $any($event.target).value === 'true')">
+                <option value="true">Sí</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h3>Tickets y comprobantes</h3>
+          <div class="form-grid one-col">
+            <div class="campo">
+              <label for="mensajeTicket">Mensaje del ticket</label>
+              <textarea id="mensajeTicket" rows="3" [value]="formulario().mensajeTicket" (input)="actualizarTexto('mensajeTicket', $any($event.target).value)" placeholder="Ej. Gracias por su compra."></textarea>
+            </div>
+
+            <div class="campo">
+              <label for="pieTicket">Pie del ticket</label>
+              <textarea id="pieTicket" rows="3" [value]="formulario().pieTicket" (input)="actualizarTexto('pieTicket', $any($event.target).value)" placeholder="Ej. Documento interno generado por el sistema."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn-primary">Guardar configuración</button>
+          <button type="button" class="btn-secondary" (click)="recargarDesdePersistencia()">Recargar aplicada</button>
+          <button type="button" class="btn-accent" (click)="restablecer()">Cargar por defecto</button>
+          <button type="button" class="btn-danger" (click)="aplicarRestablecerDirecto()">Restablecer y aplicar</button>
+        </div>
+
+        @if (mensaje() !== '') {
+          <div class="message-box">
+            {{ mensaje() }}
+          </div>
+        }
+      </form>
+    </div>
+
+    <div class="card preview-card">
+      <div class="card-title">
+        <h2>Vista previa / resumen</h2>
+        <p>Verifica rápidamente cómo quedará la configuración antes de guardarla.</p>
+      </div>
+
+      <div class="summary-stack">
+        <div class="summary-box">
+          <span>Negocio</span>
+          <strong>{{ resumenNegocio() }}</strong>
+        </div>
+        <div class="summary-box">
+          <span>Dirección</span>
+          <strong>{{ formulario().direccion }}</strong>
+        </div>
+        <div class="summary-box">
+          <span>Moneda</span>
+          <strong>{{ formulario().moneda }} · {{ formulario().simboloMoneda }}</strong>
+        </div>
+        <div class="summary-box">
+          <span>IGV</span>
+          <strong>{{ formulario().igvPorcentaje }}%</strong>
+        </div>
+        <div class="summary-box">
+          <span>Días alerta compra</span>
+          <strong>{{ formulario().diasAlertaCompra }}</strong>
+        </div>
+        <div class="summary-box">
+          <span>Sesión</span>
+          <strong>{{ formulario().sesionMinutos }} minutos</strong>
+        </div>
+        <div class="summary-box">
+          <span>Stock negativo</span>
+          <strong>{{ formulario().permitirStockNegativo ? 'Permitido' : 'Bloqueado' }}</strong>
+        </div>
+        <div class="summary-box">
+          <span>Alertas dashboard</span>
+          <strong>{{ formulario().mostrarAlertasDashboard ? 'Visibles' : 'Ocultas' }}</strong>
+        </div>
+        <div class="summary-box">
+          <span>Auditoría</span>
+          <strong>{{ formulario().mostrarModuloAuditoria ? 'Visible' : 'Oculta' }}</strong>
+        </div>
+      </div>
+
+      <div class="ticket-preview-box">
+        <h3>Vista de mensaje de ticket</h3>
+        <p>{{ formulario().mensajeTicket }}</p>
+        <small>{{ formulario().pieTicket }}</small>
+      </div>
+    </div>
+  </div>
+</section>

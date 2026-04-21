@@ -1,0 +1,129 @@
+﻿<section class="reposicion-page">
+  <div class="page-header">
+    <div>
+      <h1>Planificador de reposición / abastecimiento</h1>
+      <p>Genera sugerencias de compra según stock, consumo reciente, cobertura proyectada y compras anteriores.</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card urgent"><span>Urgentes</span><strong>{{ resumen().urgentes }}</strong></div>
+    <div class="stat-card high"><span>Altas</span><strong>{{ resumen().altas }}</strong></div>
+    <div class="stat-card medium"><span>Medias</span><strong>{{ resumen().medias }}</strong></div>
+    <div class="stat-card low"><span>Bajas</span><strong>{{ resumen().bajas }}</strong></div>
+    <div class="stat-card"><span>Unidades sugeridas</span><strong>{{ resumen().unidadesTotalesSugeridas }}</strong></div>
+    <div class="stat-card accent"><span>Costo estimado</span><strong>{{ resumen().costoTotalEstimado | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+  </div>
+
+  <div class="card filters-card">
+    <div class="card-title">
+      <h2>Filtros</h2>
+      <p>Busca, prioriza y segmenta el plan de reposición.</p>
+    </div>
+
+    <div class="filters-grid">
+      <input type="text" [value]="busqueda()" (input)="actualizarBusqueda($any($event.target).value)" placeholder="Buscar por producto, código, categoría o motivo" />
+
+      <select [value]="filtroPrioridad()" (change)="actualizarPrioridad($any($event.target).value)">
+        <option value="TODOS">Todas las prioridades</option>
+        <option value="URGENTE">URGENTE</option>
+        <option value="ALTA">ALTA</option>
+        <option value="MEDIA">MEDIA</option>
+        <option value="BAJA">BAJA</option>
+      </select>
+
+      <select [value]="filtroEstado()" (change)="actualizarEstadoFiltro($any($event.target).value)">
+        <option value="TODOS">Todos los estados</option>
+        <option value="PENDIENTE">PENDIENTE</option>
+        <option value="APROBADA">APROBADA</option>
+        <option value="POSTERGADA">POSTERGADA</option>
+        <option value="DESCARTADA">DESCARTADA</option>
+      </select>
+
+      <button type="button" class="btn-secondary" (click)="limpiarFiltros()">Limpiar filtros</button>
+      <button type="button" class="btn-primary" (click)="exportar()">Exportar plan</button>
+    </div>
+
+    @if (mensaje() !== '') {
+      <div class="message-box">{{ mensaje() }}</div>
+    }
+  </div>
+
+  <div class="layout-grid">
+    <div class="card">
+      <div class="card-title">
+        <h2>Sugerencias de reposición</h2>
+        <p>Lista priorizada para abastecimiento.</p>
+      </div>
+
+      @if (sugerencias().length === 0) {
+        <div class="empty-state success-state"><p>No hay sugerencias para los filtros actuales.</p></div>
+      } @else {
+        <div class="suggestion-list">
+          @for (item of sugerencias(); track item.id) {
+            <div class="suggestion-card"
+                 [class.priority-urgent]="item.prioridad === 'URGENTE'"
+                 [class.priority-high]="item.prioridad === 'ALTA'"
+                 [class.priority-medium]="item.prioridad === 'MEDIA'"
+                 [class.priority-low]="item.prioridad === 'BAJA'">
+              <div class="suggestion-top">
+                <div>
+                  <div class="badge-row">
+                    <span class="badge code">{{ item.codigo }}</span>
+                    <span class="badge category">{{ item.categoria }}</span>
+                    <span class="badge priority">{{ item.prioridad }}</span>
+                  </div>
+                  <h3>{{ item.nombre }}</h3>
+                  <p>{{ item.motivo }}</p>
+                </div>
+                <div class="metric-box">
+                  <span>Costo estimado</span>
+                  <strong>{{ item.costoEstimado | currency:'PEN':'symbol':'1.2-2' }}</strong>
+                </div>
+              </div>
+
+              <div class="summary-grid compact">
+                <div class="summary-box"><span>Stock actual</span><strong>{{ item.stockActual }}</strong></div>
+                <div class="summary-box"><span>Mínimo</span><strong>{{ item.stockMinimo }}</strong></div>
+                <div class="summary-box"><span>Objetivo</span><strong>{{ item.stockObjetivo }}</strong></div>
+                <div class="summary-box"><span>Sugerido</span><strong>{{ item.cantidadSugerida }}</strong></div>
+                <div class="summary-box"><span>Ventas 30d</span><strong>{{ item.frecuenciaVentas30d }}</strong></div>
+                <div class="summary-box"><span>Cobertura</span><strong>{{ item.diasCobertura | number:'1.1-2' }} días</strong></div>
+                <div class="summary-box"><span>Última compra</span><strong>{{ item.ultimaCompraFecha ? (item.ultimaCompraFecha | date:'mediumDate') : 'Sin compras' }}</strong></div>
+                <div class="summary-box"><span>Cantidad última compra</span><strong>{{ item.ultimaCompraCantidad }}</strong></div>
+              </div>
+
+              <div class="controls-grid">
+                <div class="campo">
+                  <label>Estado</label>
+                  <select [value]="item.estado" (change)="actualizarEstado(item.id, $any($event.target).value)">
+                    <option value="PENDIENTE">PENDIENTE</option>
+                    <option value="APROBADA">APROBADA</option>
+                    <option value="POSTERGADA">POSTERGADA</option>
+                    <option value="DESCARTADA">DESCARTADA</option>
+                  </select>
+                </div>
+                <div class="campo full-width">
+                  <label>Observación</label>
+                  <textarea rows="2" [value]="item.observacion" (input)="actualizarObservacion(item.id, $any($event.target).value)" placeholder="Observación para compras o abastecimiento"></textarea>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <h2>Vista previa del JSON</h2>
+        <p>Plan listo para exportarse o archivarse.</p>
+      </div>
+
+      <details class="json-details" open>
+        <summary>Ver JSON del plan</summary>
+        <pre>{{ reporteJson() | json }}</pre>
+      </details>
+    </div>
+  </div>
+</section>

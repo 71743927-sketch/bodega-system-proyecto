@@ -1,0 +1,137 @@
+﻿<section class="mantenimiento-page">
+  <div class="page-header">
+    <div>
+      <h1>Mantenimiento / Utilidades</h1>
+      <p>Ejecuta tareas administrativas internas, sanea datos persistidos y exporta diagnósticos del sistema.</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><span>Productos</span><strong>{{ resumen().productos }}</strong></div>
+    <div class="stat-card success"><span>Ventas</span><strong>{{ resumen().ventas }}</strong></div>
+    <div class="stat-card accent"><span>Compras</span><strong>{{ resumen().compras }}</strong></div>
+    <div class="stat-card info"><span>Usuarios</span><strong>{{ resumen().usuarios }}</strong></div>
+    <div class="stat-card warning"><span>Stock crítico</span><strong>{{ resumen().stockCritico }}</strong></div>
+    <div class="stat-card"><span>Auditoría</span><strong>{{ resumen().auditoria }}</strong></div>
+  </div>
+
+  <div class="layout-grid">
+    <div class="left-column">
+      <div class="card">
+        <div class="card-title">
+          <h2>Acciones de mantenimiento</h2>
+          <p>Herramientas administrativas para limpiar o restablecer datos persistidos.</p>
+        </div>
+
+        <div class="action-list">
+          <div class="action-card">
+            <div>
+              <strong>Limpiar operaciones</strong>
+              <span>Elimina ventas, compras, caja e inventario persistidos.</span>
+            </div>
+            <button type="button" class="btn-secondary" (click)="limpiarOperaciones()">Ejecutar</button>
+          </div>
+
+          <div class="action-card">
+            <div>
+              <strong>Restablecer catálogos base</strong>
+              <span>Reinicia productos, usuarios y proveedores a sus datos por defecto.</span>
+            </div>
+            <button type="button" class="btn-accent" (click)="restablecerCatalogos()">Ejecutar</button>
+          </div>
+
+          <div class="action-card">
+            <div>
+              <strong>Limpiar trazabilidad</strong>
+              <span>Elimina auditoría, alertas descartadas y el último respaldo cacheado.</span>
+            </div>
+            <button type="button" class="btn-secondary" (click)="limpiarTrazabilidad()">Ejecutar</button>
+          </div>
+
+          <div class="action-card danger-card">
+            <div>
+              <strong>Reinicio controlado</strong>
+              <span>Vacía el sistema pero conserva configuración persistida.</span>
+            </div>
+            <button type="button" class="btn-danger" (click)="reinicioControlado()">Ejecutar</button>
+          </div>
+
+          <div class="action-card danger-card">
+            <div>
+              <strong>Reinicio total</strong>
+              <span>Elimina toda persistencia local, incluida la configuración.</span>
+            </div>
+            <button type="button" class="btn-danger" (click)="reinicioTotal()">Ejecutar</button>
+          </div>
+
+          <div class="action-card">
+            <div>
+              <strong>Exportar diagnóstico</strong>
+              <span>Descarga un JSON con resumen, hallazgos y configuración actual.</span>
+            </div>
+            <button type="button" class="btn-primary" (click)="exportarDiagnostico()">Exportar</button>
+          </div>
+        </div>
+
+        @if (mensaje() !== '') {
+          <div class="message-box">{{ mensaje() }}</div>
+        }
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Diagnóstico automático</h2>
+          <p>Hallazgos básicos de integridad y presión operativa.</p>
+        </div>
+
+        <div class="diagnostic-list">
+          @for (item of diagnosticos(); track item.id) {
+            <div class="diagnostic-card"
+                 [class.level-info]="item.nivel === 'INFO'"
+                 [class.level-warning]="item.nivel === 'WARNING'"
+                 [class.level-error]="item.nivel === 'ERROR'">
+              <div class="diagnostic-top">
+                <strong>{{ item.titulo }}</strong>
+                <span class="badge">{{ item.nivel }}</span>
+              </div>
+              <p>{{ item.detalle }}</p>
+              <small>Referencia: {{ item.referencia }}</small>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="card">
+        <div class="card-title">
+          <h2>Resumen operativo</h2>
+          <p>Lectura rápida del estado del sistema persistido.</p>
+        </div>
+
+        <div class="summary-grid">
+          <div class="summary-box"><span>Utilidad estimada</span><strong>{{ resumen().utilidadEstimada | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+          <div class="summary-box"><span>Proveedores</span><strong>{{ resumen().proveedores }}</strong></div>
+          <div class="summary-box"><span>Mov. inventario</span><strong>{{ resumen().movimientosInventario }}</strong></div>
+          <div class="summary-box"><span>Cierres caja</span><strong>{{ resumen().cierresCaja }}</strong></div>
+          <div class="summary-box"><span>Caja activa</span><strong>{{ cajaActiva() ? 'Sí' : 'No' }}</strong></div>
+          <div class="summary-box"><span>Moneda</span><strong>{{ configuracion().moneda }} · {{ configuracion().simboloMoneda }}</strong></div>
+          <div class="summary-box"><span>Sesión</span><strong>{{ configuracion().sesionMinutos }} min</strong></div>
+          <div class="summary-box"><span>Zona horaria</span><strong>{{ configuracion().zonaHoraria }}</strong></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Vista previa del reporte</h2>
+          <p>JSON que se exportará al generar el diagnóstico.</p>
+        </div>
+
+        <details class="json-details" open>
+          <summary>Ver reporte JSON</summary>
+          <pre>{{ reporteJson() | json }}</pre>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>

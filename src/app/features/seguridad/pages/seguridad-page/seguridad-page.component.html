@@ -1,0 +1,85 @@
+﻿<section class="seguridad-page">
+  <div class="page-header">
+    <div>
+      <h1>Seguridad / Sesión avanzada</h1>
+      <p>Supervisa la sesión activa, la política de expiración y los eventos recientes de autenticación.</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card success">
+      <span>Sesión</span>
+      <strong>{{ authService.autenticado() ? 'Activa' : 'Inactiva' }}</strong>
+    </div>
+    <div class="stat-card accent">
+      <span>Tiempo restante</span>
+      <strong>{{ tiempoRestanteSegundos() }} s</strong>
+    </div>
+    <div class="stat-card info">
+      <span>Duración configurada</span>
+      <strong>{{ configuracion().sesionMinutos }} min</strong>
+    </div>
+    <div class="stat-card warning">
+      <span>Zona horaria</span>
+      <strong>{{ configuracion().zonaHoraria }}</strong>
+    </div>
+  </div>
+
+  <div class="layout-grid">
+    <div class="card">
+      <div class="card-title">
+        <h2>Estado de la sesión</h2>
+        <p>Información actual de autenticación y expiración.</p>
+      </div>
+
+      @if (sesionActiva() === null) {
+        <div class="empty-state"><p>No existe una sesión activa en este momento.</p></div>
+      } @else {
+        <div class="summary-grid">
+          <div class="summary-box"><span>Usuario</span><strong>{{ sesionActiva()!.username }}</strong></div>
+          <div class="summary-box"><span>Nombre</span><strong>{{ sesionActiva()!.nombre }}</strong></div>
+          <div class="summary-box"><span>Rol</span><strong>{{ sesionActiva()!.rol }}</strong></div>
+          <div class="summary-box"><span>Ingreso</span><strong>{{ sesionActiva()!.loginAt | date:'medium' }}</strong></div>
+          <div class="summary-box"><span>Última actividad</span><strong>{{ sesionActiva()!.lastActivityAt | date:'medium' }}</strong></div>
+          <div class="summary-box"><span>Expira</span><strong>{{ sesionActiva()!.expiresAt | date:'medium' }}</strong></div>
+        </div>
+      }
+
+      <div class="actions">
+        <button type="button" class="btn-primary" (click)="renovarSesion()">Renovar sesión</button>
+        <button type="button" class="btn-secondary" (click)="validarSesionAhora()">Validar ahora</button>
+        <button type="button" class="btn-danger" (click)="cerrarSesion()">Cerrar sesión</button>
+      </div>
+
+      @if (mensaje() !== '') {
+        <div class="message-box">{{ mensaje() }}</div>
+      }
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <h2>Eventos AUTH (7 días)</h2>
+        <p>Resumen rápido del comportamiento reciente de autenticación.</p>
+      </div>
+
+      <div class="summary-grid compact">
+        <div class="summary-box"><span>Total</span><strong>{{ authResumen().total }}</strong></div>
+        <div class="summary-box"><span>Fallidos</span><strong>{{ authResumen().fallidos }}</strong></div>
+        <div class="summary-box"><span>Bloqueados</span><strong>{{ authResumen().bloqueados }}</strong></div>
+        <div class="summary-box"><span>Expiradas</span><strong>{{ authResumen().expiradas }}</strong></div>
+        <div class="summary-box"><span>Renovadas</span><strong>{{ authResumen().renovadas }}</strong></div>
+      </div>
+
+      <div class="policy-box">
+        <h3>Política aplicada</h3>
+        <ul>
+          <li>Duración de sesión: <strong>{{ configuracion().sesionMinutos }} minutos</strong></li>
+          <li>Moneda del sistema: <strong>{{ configuracion().moneda }}</strong></li>
+          <li>Auditoría visible: <strong>{{ configuracion().mostrarModuloAuditoria ? 'Sí' : 'No' }}</strong></li>
+          <li>Alertas en dashboard: <strong>{{ configuracion().mostrarAlertasDashboard ? 'Sí' : 'No' }}</strong></li>
+          <li>Stock negativo: <strong>{{ configuracion().permitirStockNegativo ? 'Permitido' : 'Bloqueado' }}</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

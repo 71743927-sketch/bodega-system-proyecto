@@ -1,0 +1,115 @@
+﻿<section class="respaldo-page">
+  <div class="page-header">
+    <div>
+      <h1>Respaldo / Restauración</h1>
+      <p>Exporta el estado actual del sistema y carga respaldos JSON para restauración asistida.</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><span>Productos</span><strong>{{ resumenActual().productos }}</strong></div>
+    <div class="stat-card success"><span>Ventas</span><strong>{{ resumenActual().ventas }}</strong></div>
+    <div class="stat-card accent"><span>Compras</span><strong>{{ resumenActual().compras }}</strong></div>
+    <div class="stat-card info"><span>Usuarios</span><strong>{{ resumenActual().usuarios }}</strong></div>
+    <div class="stat-card warning"><span>Auditoría</span><strong>{{ resumenActual().auditoria }}</strong></div>
+  </div>
+
+  <div class="layout-grid">
+    <div class="card controls-card">
+      <div class="card-title">
+        <h2>Generar respaldo</h2>
+        <p>Descarga un archivo JSON con el estado actual del sistema.</p>
+      </div>
+
+      <div class="campo">
+        <label for="notas">Notas del respaldo</label>
+        <textarea id="notas" rows="4" [value]="notas()" (input)="actualizarNotas($any($event.target).value)" placeholder="Describe el motivo del respaldo"></textarea>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn-primary" (click)="exportarRespaldo()">Descargar respaldo</button>
+      </div>
+
+      <div class="card-title secondary-title">
+        <h2>Importar respaldo</h2>
+        <p>Carga un archivo JSON generado previamente.</p>
+      </div>
+
+      <div class="campo">
+        <label for="archivoRespaldo">Archivo JSON</label>
+        <input id="archivoRespaldo" type="file" accept="application/json,.json" (change)="importarArchivo($event)" />
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn-accent" (click)="aplicarRespaldo()">Aplicar respaldo cargado</button>
+        <button type="button" class="btn-secondary" (click)="limpiarImportado()">Limpiar importado</button>
+      </div>
+
+      @if (mensaje() !== '') {
+        <div class="message-box">
+          <strong>Estado:</strong> {{ mensaje() }}
+          @if (ultimoArchivo() !== '') {
+            <span>Archivo: {{ ultimoArchivo() }}</span>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="card preview-card">
+      <div class="card-title">
+        <h2>Vista previa del respaldo cargado</h2>
+        <p>Revisa el contenido antes de restaurarlo.</p>
+      </div>
+
+      @if (respaldoImportado() === null) {
+        <div class="empty-state">
+          <p>No hay respaldo cargado en este momento.</p>
+        </div>
+      } @else {
+        <div class="summary-stack">
+          <div class="summary-box">
+            <span>Generado en</span>
+            <strong>{{ respaldoImportado()!.meta.generadoEn | date:'full' }}</strong>
+          </div>
+          <div class="summary-box">
+            <span>Generado por</span>
+            <strong>{{ respaldoImportado()!.meta.generadoPor }}</strong>
+          </div>
+          <div class="summary-box full-width">
+            <span>Notas</span>
+            <strong>{{ respaldoImportado()!.meta.notas }}</strong>
+          </div>
+        </div>
+
+        @if (resumenImportado()) {
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Dataset</th>
+                  <th>Cantidad</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Productos</td><td>{{ resumenImportado()!.productos }}</td></tr>
+                <tr><td>Ventas</td><td>{{ resumenImportado()!.ventas }}</td></tr>
+                <tr><td>Compras</td><td>{{ resumenImportado()!.compras }}</td></tr>
+                <tr><td>Proveedores</td><td>{{ resumenImportado()!.proveedores }}</td></tr>
+                <tr><td>Usuarios</td><td>{{ resumenImportado()!.usuarios }}</td></tr>
+                <tr><td>Movimientos inventario</td><td>{{ resumenImportado()!.movimientos }}</td></tr>
+                <tr><td>Cierres caja</td><td>{{ resumenImportado()!.cierresCaja }}</td></tr>
+                <tr><td>Auditoría</td><td>{{ resumenImportado()!.auditoria }}</td></tr>
+                <tr><td>Alertas descartadas</td><td>{{ resumenImportado()!.alertasDescartadas }}</td></tr>
+              </tbody>
+            </table>
+          </div>
+        }
+
+        <details class="json-details">
+          <summary>Ver JSON del respaldo</summary>
+          <pre>{{ respaldoImportado() | json }}</pre>
+        </details>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,418 @@
+﻿.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 34px;
+  color: #0f172a;
+}
+
+.page-header p {
+  margin: 6px 0 0;
+  color: #475569;
+}
+
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.badge-status.open {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-status.closed {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.stats-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.primary-grid {
+  grid-template-columns: repeat(4, minmax(170px, 1fr));
+}
+
+.secondary-grid {
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+}
+
+.stat-card,
+.mini-card,
+.card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+}
+
+.stat-card {
+  padding: 18px;
+}
+
+.stat-card span,
+.mini-card span {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.stat-card strong {
+  display: block;
+  font-size: 26px;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.stat-card small {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.stat-card.sales strong {
+  color: #16a34a;
+}
+
+.stat-card.purchases strong {
+  color: #7c3aed;
+}
+
+.stat-card.avg-ticket strong {
+  color: #0369a1;
+}
+
+.stat-card.gross-profit strong {
+  color: #b45309;
+}
+
+.mini-card {
+  padding: 16px;
+}
+
+.mini-card strong {
+  font-size: 24px;
+  color: #0f172a;
+}
+
+.mini-card.warning strong {
+  color: #b45309;
+}
+
+.mini-card.danger strong {
+  color: #b91c1c;
+}
+
+.mini-card.info strong {
+  color: #0369a1;
+}
+
+.layout-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.left-column,
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card {
+  padding: 22px;
+}
+
+.card-title h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #0f172a;
+}
+
+.card-title p {
+  margin: 6px 0 0;
+  color: #64748b;
+}
+
+.summary-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.summary-item {
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #f8fafc;
+}
+
+.summary-item span {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.summary-item strong {
+  color: #0f172a;
+  font-size: 20px;
+}
+
+.summary-item.success strong {
+  color: #15803d;
+}
+
+.summary-item.info strong {
+  color: #0369a1;
+}
+
+.summary-item.warning strong {
+  color: #b45309;
+}
+
+.summary-item.accent strong {
+  color: #7c3aed;
+}
+
+.table-wrapper {
+  margin-top: 18px;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead th {
+  text-align: left;
+  font-size: 13px;
+  color: #475569;
+  font-weight: 700;
+  padding: 12px 10px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+tbody td {
+  padding: 14px 10px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #0f172a;
+  font-size: 14px;
+}
+
+tbody tr:hover {
+  background: #f8fafc;
+}
+
+.stock-badge,
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.stock-badge {
+  min-width: 34px;
+  background: #dcfce7;
+  color: #166534;
+}
+
+.stock-badge.stock-alert {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.stock-badge.stock-empty {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.badge.success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge.warning {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.badge.danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.badge.info {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.badge.accent {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.empty-state {
+  margin-top: 18px;
+  padding: 20px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 14px;
+  color: #64748b;
+  background: #f8fafc;
+}
+
+.success-state {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.ranking-list,
+.list-stack {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.ranking-item,
+.stack-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #f8fafc;
+}
+
+.ranking-item strong,
+.stack-item strong {
+  color: #0f172a;
+}
+
+.ranking-item span,
+.stack-item span {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.ranking-value {
+  font-weight: 800;
+  color: #2563eb !important;
+  font-size: 20px !important;
+}
+
+.movement-item,
+.closure-item {
+  align-items: center;
+}
+
+.roles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.role-box {
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid transparent;
+}
+
+.role-box span {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.role-box strong {
+  font-size: 24px;
+}
+
+.role-dueno {
+  background: #f5f3ff;
+  border-color: #ddd6fe;
+  color: #6d28d9;
+}
+
+.role-cajero {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.role-almacenero {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #166534;
+}
+
+.role-supervisor {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #b45309;
+}
+
+.positive {
+  color: #15803d !important;
+}
+
+.negative {
+  color: #b91c1c !important;
+}
+
+@media (max-width: 1200px) {
+  .primary-grid,
+  .secondary-grid {
+    grid-template-columns: repeat(2, minmax(170px, 1fr));
+  }
+
+  .layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .primary-grid,
+  .secondary-grid,
+  .summary-list,
+  .roles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ranking-item,
+  .stack-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

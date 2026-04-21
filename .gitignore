@@ -1,0 +1,10 @@
+﻿node_modules/
+dist/
+.angular/
+.sonar-local/
+.vscode/
+*.bak
+*.bak_*
+*.log
+SONARQUBE_UBICACIONES*.txt
+REPORTE_PROYECTO_BODEGASYS*.txt

@@ -1,0 +1,88 @@
+﻿<section class="auditoria-page">
+  <div class="page-header">
+    <div>
+      <h1>Auditoría / Bitácora</h1>
+      <p>Revisa eventos críticos del sistema para controlar operaciones y trazabilidad.</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><span>Total eventos</span><strong>{{ totalEventos() }}</strong></div>
+    <div class="stat-card info"><span>Eventos AUTH</span><strong>{{ totalAuth() }}</strong></div>
+    <div class="stat-card warning"><span>Warnings</span><strong>{{ totalWarnings() }}</strong></div>
+    <div class="stat-card danger"><span>Eventos críticos</span><strong>{{ totalDanger() }}</strong></div>
+  </div>
+
+  <div class="card filters-card">
+    <div class="card-title">
+      <h2>Filtros</h2>
+      <p>Busca por detalle, usuario o acción y filtra por módulo, nivel o fechas.</p>
+    </div>
+
+    <div class="filters-grid">
+      <input type="text" [value]="busqueda()" (input)="actualizarBusqueda($any($event.target).value)" placeholder="Buscar por acción, detalle, usuario o metadata" />
+      <select [value]="filtroModulo()" (change)="actualizarModulo($any($event.target).value)">
+        <option value="TODOS">Todos los módulos</option>
+        @for (modulo of modulos; track modulo) { <option [value]="modulo">{{ modulo }}</option> }
+      </select>
+      <select [value]="filtroNivel()" (change)="actualizarNivel($any($event.target).value)">
+        <option value="TODOS">Todos los niveles</option>
+        @for (nivel of niveles; track nivel) { <option [value]="nivel">{{ nivel }}</option> }
+      </select>
+      <input type="date" [value]="fechaInicio()" (input)="actualizarFechaInicio($any($event.target).value)" />
+      <input type="date" [value]="fechaFin()" (input)="actualizarFechaFin($any($event.target).value)" />
+      <div class="actions-inline">
+        <button type="button" class="btn-secondary" (click)="limpiarFiltros()">Limpiar filtros</button>
+        <button type="button" class="btn-danger" (click)="limpiarBitacora()">Vaciar bitácora</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card history-card">
+    <div class="card-title">
+      <h2>Eventos registrados</h2>
+      <p>Historial cronológico de acciones importantes del sistema.</p>
+    </div>
+
+    @if (eventosFiltrados().length === 0) {
+      <div class="empty-state"><p>No hay eventos que coincidan con los filtros actuales.</p></div>
+    } @else {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Módulo</th>
+              <th>Nivel</th>
+              <th>Acción</th>
+              <th>Detalle</th>
+              <th>Usuario</th>
+              <th>Metadata</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (evento of eventosFiltrados(); track evento.id) {
+              <tr>
+                <td>{{ evento.fecha | date:'short' }}</td>
+                <td><span class="badge modulo">{{ evento.modulo }}</span></td>
+                <td>
+                  <span class="badge"
+                    [class.info]="evento.nivel === 'INFO'"
+                    [class.success]="evento.nivel === 'SUCCESS'"
+                    [class.warning]="evento.nivel === 'WARNING'"
+                    [class.danger]="evento.nivel === 'DANGER'">
+                    {{ evento.nivel }}
+                  </span>
+                </td>
+                <td>{{ evento.accion }}</td>
+                <td>{{ evento.detalle }}</td>
+                <td>{{ evento.usuario }}</td>
+                <td>{{ evento.metadata === '' ? '-' : evento.metadata }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>

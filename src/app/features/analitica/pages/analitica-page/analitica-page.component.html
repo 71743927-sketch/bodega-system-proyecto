@@ -1,0 +1,222 @@
+﻿<section class="analitica-page">
+  <div class="page-header">
+    <div>
+      <h1>Analítica / KPIs avanzados</h1>
+      <p>Analiza desempeño comercial, presión operativa y señales gerenciales del negocio.</p>
+    </div>
+  </div>
+
+  <div class="card filters-card">
+    <div class="card-title">
+      <h2>Filtro de periodo</h2>
+      <p>Aplica un rango de fechas para recalcular todas las métricas visibles.</p>
+    </div>
+
+    <div class="filters-grid">
+      <div class="campo">
+        <label for="fechaInicio">Fecha inicio</label>
+        <input id="fechaInicio" type="date" [value]="fechaInicio()" (input)="actualizarFechaInicio($any($event.target).value)" />
+      </div>
+      <div class="campo">
+        <label for="fechaFin">Fecha fin</label>
+        <input id="fechaFin" type="date" [value]="fechaFin()" (input)="actualizarFechaFin($any($event.target).value)" />
+      </div>
+      <div class="actions-inline">
+        <button type="button" class="btn-secondary" (click)="limpiarFiltros()">Limpiar filtros</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card success"><span>Ingresos</span><strong>{{ ingresosVentas() | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+    <div class="stat-card accent"><span>Egresos</span><strong>{{ egresosCompras() | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+    <div class="stat-card info"><span>Utilidad estimada</span><strong>{{ utilidadEstimada() | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+    <div class="stat-card warning"><span>Margen</span><strong>{{ margenEstimadoPorcentaje() | number:'1.1-2' }}%</strong></div>
+    <div class="stat-card"><span>Ticket promedio</span><strong>{{ ticketPromedio() | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+    <div class="stat-card"><span>Rotación simple</span><strong>{{ rotacionSimple() | number:'1.1-2' }}</strong></div>
+    <div class="stat-card"><span>Usuarios activos</span><strong>{{ usuariosActivos() }}</strong></div>
+    <div class="stat-card"><span>Eventos críticos</span><strong>{{ eventosCriticos() }}</strong></div>
+  </div>
+
+  <div class="health-banner"
+       [class.health-high]="saludOperacion().estado === 'Riesgo alto'"
+       [class.health-medium]="saludOperacion().estado === 'Monitoreo'"
+       [class.health-ok]="saludOperacion().estado === 'Estable'">
+    <div>
+      <span>Salud operativa</span>
+      <strong>{{ saludOperacion().estado }}</strong>
+    </div>
+    <p>{{ saludOperacion().descripcion }}</p>
+  </div>
+
+  <div class="layout-grid">
+    <div class="left-column">
+      <div class="card">
+        <div class="card-title">
+          <h2>Serie temporal ventas vs compras</h2>
+          <p>Últimos 12 puntos del periodo seleccionado.</p>
+        </div>
+
+        @if (serieTemporal().length === 0) {
+          <div class="empty-state"><p>No hay información temporal suficiente para el periodo seleccionado.</p></div>
+        } @else {
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Ventas</th>
+                  <th>Compras</th>
+                  <th>Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of serieTemporal(); track item.fecha) {
+                  <tr>
+                    <td>{{ item.fecha | date:'mediumDate' }}</td>
+                    <td>{{ item.ventas | currency:'PEN':'symbol':'1.2-2' }}</td>
+                    <td>{{ item.compras | currency:'PEN':'symbol':'1.2-2' }}</td>
+                    <td>
+                      <strong [class.positive]="item.balance >= 0" [class.negative]="item.balance < 0">
+                        {{ item.balance | currency:'PEN':'symbol':'1.2-2' }}
+                      </strong>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Top productos por ingreso</h2>
+          <p>Productos con mejor aporte económico en el periodo.</p>
+        </div>
+
+        @if (topProductos().length === 0) {
+          <div class="empty-state"><p>Aún no hay ventas suficientes para calcular el ranking.</p></div>
+        } @else {
+          <div class="ranking-list">
+            @for (item of topProductos(); track item.nombre) {
+              <div class="ranking-item">
+                <div>
+                  <strong>{{ item.nombre }}</strong>
+                  <span>{{ item.unidades }} unidades</span>
+                </div>
+                <strong>{{ item.ingreso | currency:'PEN':'symbol':'1.2-2' }}</strong>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Presión de stock por categoría</h2>
+          <p>Categorías con mayor concentración de productos críticos.</p>
+        </div>
+
+        @if (categoriasCriticas().length === 0) {
+          <div class="empty-state success-state"><p>No se detectan categorías con stock crítico.</p></div>
+        } @else {
+          <div class="bars-list">
+            @for (item of categoriasCriticas(); track item.categoria) {
+              <div class="bar-item">
+                <div class="bar-header">
+                  <strong>{{ item.categoria }}</strong>
+                  <span>{{ item.cantidad }} productos · {{ item.porcentaje | number:'1.1-2' }}%</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill danger" [style.width.%]="item.porcentaje"></div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="card">
+        <div class="card-title">
+          <h2>Ventas por método de pago</h2>
+          <p>Participación de ingresos por método.</p>
+        </div>
+
+        @if (resumenMetodosPago().length === 0) {
+          <div class="empty-state"><p>No hay ventas en el periodo seleccionado.</p></div>
+        } @else {
+          <div class="bars-list compact-bars">
+            @for (item of resumenMetodosPago(); track item.nombre) {
+              <div class="bar-item">
+                <div class="bar-header">
+                  <strong>{{ item.nombre }}</strong>
+                  <span>{{ item.total | currency:'PEN':'symbol':'1.2-2' }} · {{ item.porcentaje | number:'1.1-2' }}%</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill primary" [style.width.%]="item.porcentaje"></div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Composición del equipo</h2>
+          <p>Distribución de usuarios por rol.</p>
+        </div>
+
+        <div class="summary-grid compact">
+          @for (item of resumenRoles(); track item.rol) {
+            <div class="summary-box">
+              <span>{{ item.rol }}</span>
+              <strong>{{ item.cantidad }}</strong>
+            </div>
+          }
+          <div class="summary-box">
+            <span>Inactivos</span>
+            <strong>{{ usuariosInactivos() }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Calidad operativa</h2>
+          <p>Indicadores sensibles del periodo.</p>
+        </div>
+
+        <div class="summary-grid compact">
+          <div class="summary-box">
+            <span>Warnings auditoría</span>
+            <strong>{{ warningsAuditoria() }}</strong>
+          </div>
+          <div class="summary-box">
+            <span>Diferencia promedio caja</span>
+            <strong>{{ promedioDiferenciaCaja() | currency:'PEN':'symbol':'1.2-2' }}</strong>
+          </div>
+          <div class="summary-box">
+            <span>Ventas analizadas</span>
+            <strong>{{ ventasFiltradas().length }}</strong>
+          </div>
+          <div class="summary-box">
+            <span>Compras analizadas</span>
+            <strong>{{ comprasFiltradas().length }}</strong>
+          </div>
+          <div class="summary-box">
+            <span>Cierres analizados</span>
+            <strong>{{ cierresFiltrados().length }}</strong>
+          </div>
+          <div class="summary-box">
+            <span>Eventos analizados</span>
+            <strong>{{ eventosFiltrados().length }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

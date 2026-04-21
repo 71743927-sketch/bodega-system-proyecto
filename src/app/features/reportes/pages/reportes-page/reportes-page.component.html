@@ -1,0 +1,288 @@
+﻿<section class="reportes-page">
+  <div class="page-header">
+    <div>
+      <h1>Reportes</h1>
+      <p>Consulta indicadores clave del negocio y filtra la información por rango de fechas.</p>
+    </div>
+  </div>
+
+  <div class="card filters-card">
+    <div class="card-title">
+      <h2>Filtros</h2>
+      <p>Selecciona un rango de fechas para actualizar todos los reportes visibles.</p>
+    </div>
+
+    <div class="filters-grid">
+      <div class="campo">
+        <label for="fechaInicio">Fecha inicio</label>
+        <input id="fechaInicio" type="date" [value]="fechaInicio()" (input)="actualizarFechaInicio($any($event.target).value)" />
+      </div>
+
+      <div class="campo">
+        <label for="fechaFin">Fecha fin</label>
+        <input id="fechaFin" type="date" [value]="fechaFin()" (input)="actualizarFechaFin($any($event.target).value)" />
+      </div>
+
+      <div class="actions-inline">
+        <button type="button" class="btn-secondary" (click)="limpiarFiltros()">Limpiar filtros</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card sales">
+      <span>Ventas</span>
+      <strong>{{ totalVentas() | currency:'PEN':'symbol':'1.2-2' }}</strong>
+      <small>{{ ventasFiltradas().length }} ventas</small>
+    </div>
+    <div class="stat-card purchases">
+      <span>Compras</span>
+      <strong>{{ totalCompras() | currency:'PEN':'symbol':'1.2-2' }}</strong>
+      <small>{{ comprasFiltradas().length }} compras</small>
+    </div>
+    <div class="stat-card profit">
+      <span>Utilidad aprox.</span>
+      <strong>{{ utilidadAproximada() | currency:'PEN':'symbol':'1.2-2' }}</strong>
+      <small>Ventas menos compras</small>
+    </div>
+    <div class="stat-card average">
+      <span>Ticket promedio</span>
+      <strong>{{ ticketPromedio() | currency:'PEN':'symbol':'1.2-2' }}</strong>
+      <small>Promedio por venta</small>
+    </div>
+    <div class="stat-card info">
+      <span>Cierres de caja</span>
+      <strong>{{ totalCierres() }}</strong>
+      <small>Dentro del rango</small>
+    </div>
+    <div class="stat-card accent">
+      <span>Mov. inventario</span>
+      <strong>{{ totalMovimientosInventario() }}</strong>
+      <small>Dentro del rango</small>
+    </div>
+  </div>
+
+  <div class="layout-grid">
+    <div class="left-column">
+      <div class="card">
+        <div class="card-title">
+          <h2>Ventas por método de pago</h2>
+          <p>Distribución resumida del ingreso por método de cobro.</p>
+        </div>
+
+        <div class="summary-list three-cols">
+          <div class="summary-item success">
+            <span>Efectivo</span>
+            <strong>{{ ventasPorMetodo().EFECTIVO | currency:'PEN':'symbol':'1.2-2' }}</strong>
+          </div>
+          <div class="summary-item info">
+            <span>Yape</span>
+            <strong>{{ ventasPorMetodo().YAPE | currency:'PEN':'symbol':'1.2-2' }}</strong>
+          </div>
+          <div class="summary-item accent">
+            <span>Plin</span>
+            <strong>{{ ventasPorMetodo().PLIN | currency:'PEN':'symbol':'1.2-2' }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Productos más vendidos</h2>
+          <p>Ranking por cantidad vendida dentro del periodo filtrado.</p>
+        </div>
+
+        @if (topProductosVendidos().length === 0) {
+          <div class="empty-state"><p>No hay ventas suficientes para calcular el ranking.</p></div>
+        } @else {
+          <div class="ranking-list">
+            @for (item of topProductosVendidos(); track item.nombre) {
+              <div class="ranking-item">
+                <div>
+                  <strong>{{ item.nombre }}</strong>
+                  <span>Unidades vendidas</span>
+                </div>
+                <span class="ranking-value">{{ item.cantidad }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Stock crítico</h2>
+          <p>Productos con stock igual o menor al stock mínimo.</p>
+        </div>
+
+        @if (stockCritico().length === 0) {
+          <div class="empty-state success-state"><p>No hay productos críticos de stock actualmente.</p></div>
+        } @else {
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Producto</th>
+                  <th>Categoría</th>
+                  <th>Stock</th>
+                  <th>Mínimo</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (producto of stockCritico(); track producto.id) {
+                  <tr>
+                    <td>{{ producto.codigo }}</td>
+                    <td>{{ producto.nombre }}</td>
+                    <td>{{ producto.categoria }}</td>
+                    <td><span class="stock-badge">{{ producto.stockActual }}</span></td>
+                    <td>{{ producto.stockMinimo }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Últimos cierres de caja</h2>
+          <p>Revisión rápida de cierres registrados en el periodo.</p>
+        </div>
+
+        @if (cierresFiltrados().length === 0) {
+          <div class="empty-state"><p>No hay cierres de caja dentro del rango seleccionado.</p></div>
+        } @else {
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Usuario cierre</th>
+                  <th>Saldo esperado</th>
+                  <th>Contado</th>
+                  <th>Diferencia</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (cierre of cierresFiltrados(); track cierre.id) {
+                  <tr>
+                    <td>{{ cierre.fechaCierre | date:'short' }}</td>
+                    <td>{{ cierre.usuarioCierre }}</td>
+                    <td>{{ cierre.saldoEsperado | currency:'PEN':'symbol':'1.2-2' }}</td>
+                    <td>{{ cierre.efectivoContado | currency:'PEN':'symbol':'1.2-2' }}</td>
+                    <td>
+                      <strong [class.positive]="cierre.diferencia >= 0" [class.negative]="cierre.diferencia < 0">
+                        {{ cierre.diferencia | currency:'PEN':'symbol':'1.2-2' }}
+                      </strong>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="card">
+        <div class="card-title">
+          <h2>Últimas ventas</h2>
+          <p>Detalle resumido de ventas dentro del periodo.</p>
+        </div>
+
+        @if (ventasFiltradas().length === 0) {
+          <div class="empty-state"><p>No hay ventas dentro del rango seleccionado.</p></div>
+        } @else {
+          <div class="list-stack">
+            @for (venta of ventasFiltradas().slice(0, 8); track venta.id) {
+              <div class="stack-item">
+                <div>
+                  <strong>Venta #{{ venta.id }}</strong>
+                  <span>{{ venta.fecha | date:'short' }} · {{ venta.metodoPago }}</span>
+                </div>
+                <strong>{{ venta.total | currency:'PEN':'symbol':'1.2-2' }}</strong>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Últimas compras</h2>
+          <p>Detalle resumido de compras dentro del periodo.</p>
+        </div>
+
+        @if (comprasFiltradas().length === 0) {
+          <div class="empty-state"><p>No hay compras dentro del rango seleccionado.</p></div>
+        } @else {
+          <div class="list-stack">
+            @for (compra of comprasFiltradas().slice(0, 8); track compra.id) {
+              <div class="stack-item">
+                <div>
+                  <strong>Compra #{{ compra.id }}</strong>
+                  <span>{{ compra.fecha | date:'short' }} · {{ compra.proveedorNombre }}</span>
+                </div>
+                <strong>{{ compra.total | currency:'PEN':'symbol':'1.2-2' }}</strong>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Movimientos de inventario</h2>
+          <p>Últimos movimientos dentro del periodo filtrado.</p>
+        </div>
+
+        @if (movimientosFiltrados().length === 0) {
+          <div class="empty-state"><p>No hay movimientos de inventario dentro del rango seleccionado.</p></div>
+        } @else {
+          <div class="list-stack">
+            @for (mov of movimientosFiltrados().slice(0, 10); track mov.id) {
+              <div class="stack-item movement-item">
+                <div>
+                  <strong>{{ mov.productoNombre }}</strong>
+                  <span>{{ mov.fecha | date:'short' }} · {{ mov.usuario }}</span>
+                </div>
+                <span class="badge" [class.info]="mov.tipo === 'ENTRADA'" [class.warning]="mov.tipo === 'SALIDA'" [class.accent]="mov.tipo === 'AJUSTE'">
+                  {{ etiquetaTipoMovimiento(mov.tipo) }}
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Resumen de roles</h2>
+          <p>Cantidad total de usuarios registrados por rol.</p>
+        </div>
+
+        <div class="roles-grid">
+          <div class="role-box role-dueno">
+            <span>Dueño</span>
+            <strong>{{ resumenRoles().DUENO }}</strong>
+          </div>
+          <div class="role-box role-cajero">
+            <span>Cajero</span>
+            <strong>{{ resumenRoles().CAJERO }}</strong>
+          </div>
+          <div class="role-box role-almacenero">
+            <span>Almacenero</span>
+            <strong>{{ resumenRoles().ALMACENERO }}</strong>
+          </div>
+          <div class="role-box role-supervisor">
+            <span>Supervisor</span>
+            <strong>{{ resumenRoles().SUPERVISOR }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
