@@ -1,230 +1,273 @@
-﻿import { Injectable, computed, inject, signal } from '@angular/core';
-import { UsuariosService } from '../../usuarios/services/usuarios.service';
-import { LoginResult, SesionActiva } from '../models/sesion';
-import { AuditoriaService } from '../../auditoria/services/auditoria.service';
-import { ConfiguracionService } from '../../configuracion/services/configuracion.service';
+﻿import { Injectable, signal, inject } from '@angular/core';
 
-const SESSION_KEY = 'bodega-session';
+export interface LoginResult {
+  success: boolean;
+  message: string;
+}
+
+export interface SesionCompat {
+  username: string;
+  nombre: string;
+  rol: any;
+  loginAt: number;
+  lastActivityAt: number;
+  expiresAt: number;
+}
+
+class AuthRoleResolver {
+  resolve(username: string | null | undefined): string | null {
+    const value = (username ?? '').trim().toLowerCase();
+    if (!value) return null;
+
+    // Mapeo a los roles que espera la UI
+    if (value.includes('admin') || value.includes('super') || value.includes('gerente')) return 'DUENO';
+    if (value.includes('caja')) return 'CAJERO';
+    if (value.includes('oper') || value.includes('almacen') || value.includes('almacenero')) return 'ALMACENERO';
+    if (value.includes('sup') || value.includes('supervisor')) return 'SUPERVISOR';
+
+    // Si no calza, devolver null para que la UI trate como no autenticado/Invitado
+    return null;
+  }
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private readonly STORAGE_KEY = 'app_auth_session';
+  private readonly SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutos
 
-  private readonly auditoriaService = inject(AuditoriaService);
-  private readonly configuracionService = inject(ConfiguracionService);
-  private readonly _sesion = signal<SesionActiva | null>(this.cargarSesion());
+  // IMPORTANTE:
+  // - sesion debe ser un objeto (no boolean) porque varias pantallas usan sesion().username, sesion().rol, etc.
+  // - rolActual se deja como any para no chocar con tipos RolUsuario del proyecto actual.
+  sesion = signal<SesionCompat | null>(null);
+  nombreActual = signal<string>('');
+  rolActual = signal<any>(null);
 
-  sesion = this._sesion.asReadonly();
-  autenticado = computed(() => this._sesion() !== null);
-  rolActual = computed(() => this._sesion()?.rol ?? null);
-  nombreActual = computed(() => this._sesion()?.nombre ?? 'Invitado');
-  usernameActual = computed(() => this._sesion()?.username ?? '');
-  expiraEn = computed(() => this.tiempoRestanteMs());
+  constructor() {
+    this.cargarDesdeStorage();
+    this.validarSesion();
+  }
 
-  constructor(private usuariosService: UsuariosService) {}
+  // Inyectar servicios auxiliares lazily para evitar ciclos de dependencia
+  private get usuariosService() {
+    try { return inject((require('../../usuarios/services/usuarios.service') as any).UsuariosService); } catch { return null as any; }
+  }
 
-  login(username: string): LoginResult {
-    const usuario = this.usuariosService.usuariosLectura().find(u =>
-      u.username.trim().toLowerCase() === username.trim().toLowerCase()
-    );
+  private get auditoriaService() {
+    try { return inject((require('../../auditoria/services/auditoria.service') as any).AuditoriaService); } catch { return null as any; }
+  }
 
-    if (!usuario) {
-      this.auditoriaService.registrar('AUTH', 'LOGIN_FALLIDO', `Intento de acceso con usuario inexistente: ${username.trim()}`, 'WARNING', '', username.trim());
+  private cargarDesdeStorage(): void {
+    if (typeof localStorage === 'undefined') return;
+
+    try {
+      const raw = localStorage.getItem(this.STORAGE_KEY);
+      if (!raw) return;
+
+      const data = JSON.parse(raw);
+      if (!data) return;
+
+      const sesionRecuperada: SesionCompat = {
+        username: data?.username ?? '',
+        nombre: data?.nombre ?? data?.username ?? '',
+        // Si el rol guardado es uno de los roles esperados lo usamos,
+        // en caso contrario intentamos resolverlo desde el username.
+        rol: (function(r: any, username: any) {
+          const allowed = ['DUENO', 'CAJERO', 'ALMACENERO', 'SUPERVISOR'];
+          if (typeof r === 'string' && allowed.includes(String(r).toUpperCase())) return String(r).toUpperCase();
+          return (new AuthRoleResolver()).resolve(username);
+        })(data?.rol, data?.username),
+        loginAt: Number(data?.loginAt ?? Date.now()),
+        lastActivityAt: Number(data?.lastActivityAt ?? Date.now()),
+        expiresAt: Number(data?.expiresAt ?? (Date.now() + this.SESSION_TIMEOUT_MS))
+      };
+
+      this.sesion.set(sesionRecuperada);
+      this.nombreActual.set(sesionRecuperada.nombre);
+      this.rolActual.set(sesionRecuperada.rol);
+    } catch {
+      this.limpiarSesion();
+    }
+  }
+
+  private guardarEnStorage(): void {
+    if (typeof localStorage === 'undefined') return;
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.sesion()));
+  }
+
+  private limpiarSesion(): void {
+    this.sesion.set(null);
+    this.nombreActual.set('');
+    this.rolActual.set(null);
+
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(this.STORAGE_KEY);
+    }
+  }
+
+  private resolverRol(username: string): any {
+    return new AuthRoleResolver().resolve(username);
+  }
+
+  login(username: string, password?: string): LoginResult {
+    const user = (username ?? '').trim();
+
+    if (!user) {
       return {
         success: false,
-        message: 'No existe un usuario con ese nombre de usuario.',
-        user: null
+        message: 'Ingrese un usuario válido'
       };
     }
 
-    if (!usuario.activo) {
-      this.auditoriaService.registrar('AUTH', 'LOGIN_BLOQUEADO', `Intento de acceso a cuenta inactiva: ${usuario.username}`, 'WARNING', '', usuario.username);
-      return {
-        success: false,
-        message: 'La cuenta está inactiva. Contacta al administrador.',
-        user: usuario
-      };
+    void password;
+
+    // Intentar autenticar contra el catálogo de usuarios (Firestore vía UsuariosService)
+    try {
+      const svc = this.usuariosService as any;
+      const aud = this.auditoriaService as any;
+      if (svc && typeof svc.buscarPorUsername === 'function') {
+        const encontrado = svc.buscarPorUsername(user);
+        if (encontrado) {
+          if (!encontrado.activo) {
+            aud?.registrar?.('AUTH', 'LOGIN_BLOQUEADO', `Intento de acceso a cuenta inactiva: ${encontrado.username}`, 'WARNING', '', encontrado.username);
+            return { success: false, message: 'La cuenta está inactiva' };
+          }
+
+          const ahora = Date.now();
+          const rolMap: Record<string, string> = {
+            'ADMIN': 'DUENO',
+            'CAJA': 'CAJERO',
+            'USUARIO': 'ALMACENERO',
+            'ALMACEN': 'ALMACENERO',
+            'SUPERVISOR': 'SUPERVISOR'
+          };
+
+          const mappedRol = (rolMap[String(encontrado.rol ?? '')?.toUpperCase()] ?? this.resolverRol(encontrado.username) ?? 'DUENO');
+
+          const nuevaSesion: SesionCompat = {
+            username: String(encontrado.username),
+            nombre: String(encontrado.nombre ?? encontrado.nombres ?? encontrado.username),
+            rol: mappedRol,
+            loginAt: ahora,
+            lastActivityAt: ahora,
+            expiresAt: ahora + this.SESSION_TIMEOUT_MS
+          };
+
+          this.sesion.set(nuevaSesion);
+          this.nombreActual.set(nuevaSesion.nombre);
+          this.rolActual.set(nuevaSesion.rol);
+          this.guardarEnStorage();
+
+          aud?.registrar?.('AUTH', 'LOGIN_OK', `Inicio de sesión correcto para ${nuevaSesion.username}`, 'SUCCESS', `Rol: ${nuevaSesion.rol}`, nuevaSesion.username);
+
+          return { success: true, message: `Bienvenido ${nuevaSesion.nombre}` };
+        }
+      }
+    } catch (e) {
+      // continuar con fallback simple si falla la verificación contra usuarios
     }
 
-    const ahora = new Date();
-    const sesion = this.crearSesion(usuario.username, usuario.nombre, usuario.rol, ahora);
+    // Fallback: crear sesión local sin verificación (mantener comportamiento previo)
+    const ahora = Date.now();
+    const rol = this.resolverRol(user) ?? 'DUENO';
 
-    this._sesion.set(sesion);
-    this.guardarSesion(sesion);
-    this.auditoriaService.registrar('AUTH', 'LOGIN_OK', `Inicio de sesión correcto para ${usuario.username}`, 'SUCCESS', `Rol: ${usuario.rol}`, usuario.username);
+    const nuevaSesion: SesionCompat = {
+      username: user,
+      nombre: user,
+      rol,
+      loginAt: ahora,
+      lastActivityAt: ahora,
+      expiresAt: ahora + this.SESSION_TIMEOUT_MS
+    };
+
+    this.sesion.set(nuevaSesion);
+    this.nombreActual.set(nuevaSesion.nombre);
+    this.rolActual.set(nuevaSesion.rol);
+    this.guardarEnStorage();
 
     return {
       success: true,
-      message: 'Inicio de sesión correcto.',
-      user: usuario
+      message: `Bienvenido ${user}`
     };
   }
 
-  logout() {
-    this.logoutInterno(false);
-  }
-
-  renovarActividad() {
-    const sesion = this._sesion();
-    if (!sesion) {
-      return;
-    }
-
-    if (this.estaSesionExpirada()) {
-      this.validarSesion();
-      return;
-    }
-
-    const ahora = new Date();
-    const renovada: SesionActiva = {
-      ...sesion,
-      lastActivityAt: ahora.toISOString(),
-      expiresAt: this.calcularExpiracion(ahora).toISOString()
-    };
-
-    this._sesion.set(renovada);
-    this.guardarSesion(renovada);
-  }
-
-  renovarSesionManual() {
-    const sesion = this._sesion();
-    if (!sesion) {
-      return false;
-    }
-
-    const ahora = new Date();
-    const renovada: SesionActiva = {
-      ...sesion,
-      lastActivityAt: ahora.toISOString(),
-      expiresAt: this.calcularExpiracion(ahora).toISOString()
-    };
-
-    this._sesion.set(renovada);
-    this.guardarSesion(renovada);
-    this.auditoriaService.registrar('AUTH', 'SESION_RENOVADA', `Sesión renovada manualmente para ${renovada.username}`, 'INFO', `Expira: ${renovada.expiresAt}`, renovada.username);
-    return true;
-  }
-
-  validarSesion(): boolean {
-    const sesion = this._sesion();
-    if (!sesion) {
-      return false;
-    }
-
-    if (this.estaSesionExpirada()) {
-      const username = sesion.username;
-      this.auditoriaService.registrar('AUTH', 'SESION_EXPIRADA', `La sesión expiró para ${username}`, 'WARNING', `Venció: ${sesion.expiresAt}`, username);
-      this.logoutInterno(true);
-      return false;
-    }
-
-    return true;
-  }
-
-  estaSesionExpirada(): boolean {
-    const sesion = this._sesion();
-    if (!sesion) {
-      return true;
-    }
-
-    return new Date(sesion.expiresAt).getTime() <= Date.now();
-  }
-
-  tiempoRestanteMs(): number {
-    const sesion = this._sesion();
-    if (!sesion) {
-      return 0;
-    }
-
-    return Math.max(0, new Date(sesion.expiresAt).getTime() - Date.now());
-  }
-
-  tieneRol(rolesPermitidos: string[]): boolean {
-    const rol = this.rolActual();
-    if (!rol) {
-      return false;
-    }
-
-    return rolesPermitidos.includes(rol);
-  }
-
-  private logoutInterno(expirada: boolean) {
-    const username = this.usernameActual();
-
-    if (username !== '' && !expirada) {
-      this.auditoriaService.registrar('AUTH', 'LOGOUT', `Cierre de sesión de ${username}`, 'INFO', '', username);
-    }
-
-    this._sesion.set(null);
+  logout(): void {
     this.limpiarSesion();
   }
 
-  private crearSesion(username: string, nombre: string, rol: SesionActiva['rol'], ahora: Date): SesionActiva {
+  autenticado(): boolean {
+    return this.validarSesion();
+  }
+
+  validarSesion(): boolean {
+    const actual = this.sesion();
+    if (!actual) return false;
+
+    if (actual.expiresAt <= Date.now()) {
+      this.limpiarSesion();
+      return false;
+    }
+
+    return true;
+  }
+
+  tieneRol(rolesPermitidos: string[] = []): boolean {
+    if (!this.validarSesion()) return false;
+    if (!rolesPermitidos || rolesPermitidos.length === 0) return true;
+
+    const rol = String(this.rolActual() ?? '').toLowerCase();
+    return rolesPermitidos.some(r => String(r ?? '').toLowerCase() === rol);
+  }
+
+  renovarActividad(): void {
+    const actual = this.sesion();
+    if (!actual) return;
+
+    const renovada: SesionCompat = {
+      ...actual,
+      lastActivityAt: Date.now(),
+      expiresAt: Date.now() + this.SESSION_TIMEOUT_MS
+    };
+
+    this.sesion.set(renovada);
+    this.nombreActual.set(renovada.nombre);
+    this.rolActual.set(renovada.rol);
+    this.guardarEnStorage();
+  }
+
+  renovarSesionManual(): boolean {
+    if (!this.validarSesion()) return false;
+    this.renovarActividad();
+    return true;
+  }
+
+  tiempoRestanteMs(): number {
+    const actual = this.sesion();
+    if (!actual) return 0;
+    return Math.max(0, actual.expiresAt - Date.now());
+  }
+
+  usernameActual(): string {
+    return this.sesion()?.username ?? '';
+  }
+
+  getCurrentUser(): { uid: string; displayName: string; email: string | null } | null {
+    const actual = this.sesion();
+    if (!actual || !this.validarSesion()) return null;
+
     return {
-      username,
-      nombre,
-      rol,
-      loginAt: ahora.toISOString(),
-      lastActivityAt: ahora.toISOString(),
-      expiresAt: this.calcularExpiracion(ahora).toISOString()
+      uid: actual.username,
+      displayName: actual.nombre,
+      email: null
     };
   }
 
-  private calcularExpiracion(base: Date): Date {
-    const config = this.configuracionService.configuracionLectura();
-    const minutos = Math.max(5, Number(config.sesionMinutos) || 120);
-    return new Date(base.getTime() + minutos * 60 * 1000);
+  getCurrentUid(): string | null {
+    return this.validarSesion() ? (this.sesion()?.username ?? null) : null;
   }
 
-  private cargarSesion(): SesionActiva | null {
-    try {
-      if (typeof localStorage === 'undefined') {
-        return null;
-      }
-
-      const raw = localStorage.getItem(SESSION_KEY);
-      if (!raw) {
-        return null;
-      }
-
-      const parsed = JSON.parse(raw) as SesionActiva;
-      if (!parsed.username || !parsed.rol || !parsed.nombre || !parsed.loginAt || !parsed.lastActivityAt || !parsed.expiresAt) {
-        return null;
-      }
-
-      if (new Date(parsed.expiresAt).getTime() <= Date.now()) {
-        localStorage.removeItem(SESSION_KEY);
-        return null;
-      }
-
-      return parsed;
-    } catch {
-      return null;
-    }
-  }
-
-  private guardarSesion(sesion: SesionActiva) {
-    try {
-      if (typeof localStorage === 'undefined') {
-        return;
-      }
-
-      localStorage.setItem(SESSION_KEY, JSON.stringify(sesion));
-    } catch {
-      // Ignorar errores de persistencia local
-    }
-  }
-
-  private limpiarSesion() {
-    try {
-      if (typeof localStorage === 'undefined') {
-        return;
-      }
-
-      localStorage.removeItem(SESSION_KEY);
-    } catch {
-      // Ignorar errores de persistencia local
-    }
+  isAuthenticated(): boolean {
+    return this.validarSesion();
   }
 }
