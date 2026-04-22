@@ -38,6 +38,12 @@ export class UsuariosService {
         this.usuarios.set(this.ordenarUsuarios(local));
       }
     });
+
+    if (typeof window !== 'undefined') {
+      (window as any).migrarUsuariosLocalToFirestore = async () => {
+        return await this.migrarLocalToFirestore();
+      };
+    }
   }
 
   // ==========================================================

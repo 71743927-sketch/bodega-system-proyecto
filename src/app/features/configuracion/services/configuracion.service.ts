@@ -42,6 +42,11 @@ export class ConfiguracionService {
     if (this.db) {
       void this.loadRemoteConfig();
     }
+    if (typeof window !== 'undefined') {
+      (window as any).syncConfigToFirestore = async () => {
+        return await this.sincronizarLocalAFirestore();
+      };
+    }
   }
 
   obtenerConfiguracionPorDefecto(): ConfiguracionGeneral {
