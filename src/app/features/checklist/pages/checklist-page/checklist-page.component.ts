@@ -50,7 +50,7 @@ export class ChecklistPageComponent {
 
   progresoTotal = computed(() => {
     const total = this.checklist().items.length;
-    const completados = this.checklist().items.filter(item => item.completado).length;
+    const completados = this.checklist().items.filter((item: any) => item.completado).length;
     return {
       total,
       completados,
@@ -59,15 +59,15 @@ export class ChecklistPageComponent {
   });
 
   pendientesCriticos = computed(() =>
-    this.checklist().items.filter(item => item.criticidad === 'ALTA' && !item.completado).length
+    this.checklist().items.filter((item: any) => item.criticidad === 'ALTA' && !item.completado).length
   );
 
   contexto = computed(() => {
     const hoy = this.obtenerFechaLocal();
-    const ventasHoy = this.ventas().filter(item => this.normalizarFecha(item.fecha) === hoy);
-    const comprasHoy = this.compras().filter(item => this.normalizarFecha(item.fecha) === hoy);
-    const eventosHoy = this.eventosAuditoria().filter(item => this.normalizarFecha(item.fecha) === hoy);
-    const stockCritico = this.productos().filter(item => item.stockActual <= item.stockMinimo);
+    const ventasHoy = this.ventas().filter((item: any) => this.normalizarFecha(item.fecha) === hoy);
+    const comprasHoy = this.compras().filter((item: any) => this.normalizarFecha(item.fecha) === hoy);
+    const eventosHoy = this.eventosAuditoria().filter((item: any) => this.normalizarFecha(item.fecha) === hoy);
+    const stockCritico = this.productos().filter((item: any) => item.stockActual <= item.stockMinimo);
 
     return {
       hoy,
@@ -75,10 +75,10 @@ export class ChecklistPageComponent {
       comprasHoy: comprasHoy.length,
       totalVentasHoy: ventasHoy.reduce((sum, item) => sum + item.total, 0),
       stockCritico: stockCritico.length,
-      warningsHoy: eventosHoy.filter(item => item.nivel === 'WARNING').length,
-      criticosHoy: eventosHoy.filter(item => item.nivel === 'DANGER').length,
+      warningsHoy: eventosHoy.filter((item: any) => item.nivel === 'WARNING').length,
+      criticosHoy: eventosHoy.filter((item: any) => item.nivel === 'DANGER').length,
       cajaActiva: this.cajaActiva() !== null,
-      cierreRecienteConDiferencia: this.cierresCaja().slice(0, 1).some(item => item.diferencia !== 0),
+      cierreRecienteConDiferencia: this.cierresCaja().slice(0, 1).some((item: any) => item.diferencia !== 0),
       alertasDescartadas: this.alertasDescartadas().length
     };
   });
@@ -145,7 +145,7 @@ export class ChecklistPageComponent {
 
   private ordenarBloque(bloque: BloqueChecklist) {
     return this.checklist().items
-      .filter(item => item.bloque === bloque)
+      .filter((item: any) => item.bloque === bloque)
       .sort((a, b) => a.orden - b.orden);
   }
 
@@ -165,5 +165,6 @@ export class ChecklistPageComponent {
     return `${y}-${m}-${day}`;
   }
 }
+
 
 

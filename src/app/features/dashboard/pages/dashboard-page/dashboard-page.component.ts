@@ -95,12 +95,12 @@ export class DashboardPageComponent {
       .reduce((sum, venta) => sum + venta.total, 0);
 
     const ingresosManual = activa.movimientos
-      .filter(mov => mov.tipo === 'INGRESO')
-      .reduce((sum, mov) => sum + mov.monto, 0);
+      .filter((mov: any) => mov.tipo === 'INGRESO')
+      .reduce((sum: number, mov: any) => sum + mov.monto, 0);
 
     const egresosManual = activa.movimientos
-      .filter(mov => mov.tipo === 'EGRESO')
-      .reduce((sum, mov) => sum + mov.monto, 0);
+      .filter((mov: any) => mov.tipo === 'EGRESO')
+      .reduce((sum: number, mov: any) => sum + mov.monto, 0);
 
     return {
       abierta: true,
@@ -148,7 +148,10 @@ export class DashboardPageComponent {
     };
 
     this.usuarios().forEach(usuario => {
-      conteo[usuario.rol] += 1;
+      const rol = String(usuario.rol || '').toUpperCase() as keyof typeof conteo;
+      if (rol in conteo) {
+        conteo[rol] += 1;
+      }
     });
 
     return conteo;
@@ -182,4 +185,6 @@ export class DashboardPageComponent {
     }
   }
 }
+
+
 

@@ -1,4 +1,4 @@
-﻿import { Injectable, signal, inject } from '@angular/core';
+﻿import { Injectable, signal } from '@angular/core';
 
 export interface LoginResult {
   success: boolean;
@@ -47,15 +47,6 @@ export class AuthService {
   constructor() {
     this.cargarDesdeStorage();
     this.validarSesion();
-  }
-
-  // Inyectar servicios auxiliares lazily para evitar ciclos de dependencia
-  private get usuariosService() {
-    try { return inject((require('../../usuarios/services/usuarios.service') as any).UsuariosService); } catch { return null as any; }
-  }
-
-  private get auditoriaService() {
-    try { return inject((require('../../auditoria/services/auditoria.service') as any).AuditoriaService); } catch { return null as any; }
   }
 
   private cargarDesdeStorage(): void {
@@ -122,55 +113,8 @@ export class AuthService {
 
     void password;
 
-    // Intentar autenticar contra el catálogo de usuarios (Firestore vía UsuariosService)
-    try {
-      const svc = this.usuariosService as any;
-      const aud = this.auditoriaService as any;
-      if (svc && typeof svc.buscarPorUsername === 'function') {
-        const encontrado = svc.buscarPorUsername(user);
-        if (encontrado) {
-          if (!encontrado.activo) {
-            aud?.registrar?.('AUTH', 'LOGIN_BLOQUEADO', `Intento de acceso a cuenta inactiva: ${encontrado.username}`, 'WARNING', '', encontrado.username);
-            return { success: false, message: 'La cuenta está inactiva' };
-          }
-
-          const ahora = Date.now();
-          const rolMap: Record<string, string> = {
-            'ADMIN': 'DUENO',
-            'CAJA': 'CAJERO',
-            'USUARIO': 'ALMACENERO',
-            'ALMACEN': 'ALMACENERO',
-            'SUPERVISOR': 'SUPERVISOR'
-          };
-
-          const mappedRol = (rolMap[String(encontrado.rol ?? '')?.toUpperCase()] ?? this.resolverRol(encontrado.username) ?? 'DUENO');
-
-          const nuevaSesion: SesionCompat = {
-            username: String(encontrado.username),
-            nombre: String(encontrado.nombre ?? encontrado.nombres ?? encontrado.username),
-            rol: mappedRol,
-            loginAt: ahora,
-            lastActivityAt: ahora,
-            expiresAt: ahora + this.SESSION_TIMEOUT_MS
-          };
-
-          this.sesion.set(nuevaSesion);
-          this.nombreActual.set(nuevaSesion.nombre);
-          this.rolActual.set(nuevaSesion.rol);
-          this.guardarEnStorage();
-
-          aud?.registrar?.('AUTH', 'LOGIN_OK', `Inicio de sesión correcto para ${nuevaSesion.username}`, 'SUCCESS', `Rol: ${nuevaSesion.rol}`, nuevaSesion.username);
-
-          return { success: true, message: `Bienvenido ${nuevaSesion.nombre}` };
-        }
-      }
-    } catch (e) {
-      // continuar con fallback simple si falla la verificación contra usuarios
-    }
-
-    // Fallback: crear sesión local sin verificación (mantener comportamiento previo)
     const ahora = Date.now();
-    const rol = this.resolverRol(user) ?? 'DUENO';
+    const rol = this.resolverRol(user);
 
     const nuevaSesion: SesionCompat = {
       username: user,

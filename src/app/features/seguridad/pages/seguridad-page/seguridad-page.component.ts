@@ -24,18 +24,18 @@ export class SeguridadPageComponent implements OnDestroy {
   mensaje = signal('');
 
   configuracion = this.configuracionService.configuracionLectura;
-  eventosAuth = computed(() => this.auditoriaService.eventosLectura().filter(evento => evento.modulo === 'AUTH'));
+  eventosAuth = computed(() => this.auditoriaService.eventosLectura().filter((evento: any) => evento.modulo === 'AUTH'));
 
   authResumen = computed(() => {
     const hace7Dias = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    const recientes = this.eventosAuth().filter(evento => new Date(evento.fecha).getTime() >= hace7Dias);
+    const recientes = this.eventosAuth().filter((evento: any) => new Date(evento.fecha).getTime() >= hace7Dias);
 
     return {
       total: recientes.length,
-      fallidos: recientes.filter(evento => evento.accion === 'LOGIN_FALLIDO').length,
-      bloqueados: recientes.filter(evento => evento.accion === 'LOGIN_BLOQUEADO').length,
-      expiradas: recientes.filter(evento => evento.accion === 'SESION_EXPIRADA').length,
-      renovadas: recientes.filter(evento => evento.accion === 'SESION_RENOVADA').length
+      fallidos: recientes.filter((evento: any) => evento.accion === 'LOGIN_FALLIDO').length,
+      bloqueados: recientes.filter((evento: any) => evento.accion === 'LOGIN_BLOQUEADO').length,
+      expiradas: recientes.filter((evento: any) => evento.accion === 'SESION_EXPIRADA').length,
+      renovadas: recientes.filter((evento: any) => evento.accion === 'SESION_RENOVADA').length
     };
   });
 
@@ -90,3 +90,4 @@ export class SeguridadPageComponent implements OnDestroy {
     }
   }
 }
+

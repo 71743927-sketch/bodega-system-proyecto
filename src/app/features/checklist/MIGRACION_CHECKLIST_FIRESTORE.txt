@@ -1,0 +1,55 @@
+﻿FASE 3 COMPLETADA: CHECKLIST CON FIRESTORE + FALLBACK LOCAL
+
+Qué quedó listo:
+- checklist.service.ts ahora usa el SDK 'firebase' oficial
+- No depende de @angular/fire
+- Si Firestore está disponible en runtime, sincroniza con la colección: checklists
+- Si Firestore no está disponible o falla, usa localStorage sin romper la UI
+- Se creó el modelo: src/app/features/checklist/models/checklist.model.ts
+
+Métodos principales disponibles:
+- listarChecklists()
+- obtenerChecklists()
+- listarHistorial()
+- obtenerChecklistPorFecha(fecha)
+- obtenerChecklistDelDia(usuario?)
+- iniciarChecklist(usuario?)
+- crearChecklist(input)
+- actualizarItem(checklistId, itemId, changes, usuario?)
+- marcarItem(checklistId, itemId, completado, usuario?)
+- toggleItem(checklistId, itemId, usuario?)
+- actualizarChecklist(id, changes)
+- finalizarChecklist(id, usuario?)
+- cerrarChecklist(id, usuario?)
+- reemplazarDesdeRespaldo(items)
+- eliminarChecklist(id)
+- sincronizarLocalAFirestore()
+
+Sugerencia de integración en página/componente:
+
+1) Obtener checklist del día:
+   this.checklist$ = this.checklistService.obtenerChecklistDelDia(this.authService.usernameActual() || 'Sistema');
+
+2) Iniciar checklist del día:
+   await this.checklistService.iniciarChecklist(this.authService.usernameActual() || 'Sistema');
+
+3) Marcar un ítem:
+   await this.checklistService.marcarItem(checklistId, itemId, true, this.authService.usernameActual() || 'Sistema');
+
+4) Finalizar checklist:
+   await this.checklistService.finalizarChecklist(checklistId, this.authService.usernameActual() || 'Sistema');
+
+5) Sincronizar datos antiguos de localStorage a Firestore:
+   await this.checklistService.sincronizarLocalAFirestore();
+
+Prueba recomendada:
+1) ng build
+2) ng serve
+3) entra a la pantalla Checklist
+4) inicia el checklist del día
+5) marca / desmarca ítems
+6) finaliza checklist
+7) revisa si aparecen documentos en la colección 'checklists' de Firestore
+
+Si el build falla por nombres específicos de métodos esperados por tu componente,
+me pegas el error y te preparo un HOTFIX DE COMPATIBILIDAD para checklist.

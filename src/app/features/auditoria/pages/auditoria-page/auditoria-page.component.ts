@@ -26,9 +26,9 @@ export class AuditoriaPageComponent {
   niveles: NivelAuditoria[] = ['INFO', 'SUCCESS', 'WARNING', 'DANGER'];
 
   totalEventos = computed(() => this.eventos().length);
-  totalWarnings = computed(() => this.eventos().filter(e => e.nivel === 'WARNING').length);
-  totalDanger = computed(() => this.eventos().filter(e => e.nivel === 'DANGER').length);
-  totalAuth = computed(() => this.eventos().filter(e => e.modulo === 'AUTH').length);
+  totalWarnings = computed(() => this.eventos().filter((e: any) => e.nivel === 'WARNING').length);
+  totalDanger = computed(() => this.eventos().filter((e: any) => e.nivel === 'DANGER').length);
+  totalAuth = computed(() => this.eventos().filter((e: any) => e.modulo === 'AUTH').length);
 
   private normalizarInicio(fecha: string): number | null {
     if (fecha.trim() === '') {
@@ -65,7 +65,7 @@ export class AuditoriaPageComponent {
     const modulo = this.filtroModulo();
     const nivel = this.filtroNivel();
 
-    return this.eventos().filter(evento => {
+    return this.eventos().filter((evento: any) => {
       const coincideTexto =
         texto === '' ||
         evento.accion.toLowerCase().includes(texto) ||
@@ -98,3 +98,4 @@ export class AuditoriaPageComponent {
     this.auditoriaService.limpiarEventos();
   }
 }
+

@@ -1,0 +1,23 @@
+﻿HOTFIX CIERRE DIARIO V3 APLICADO
+
+Qué corrige:
+- cierre-diario-report.ts pasa a ser el modelo canónico usado por la UI
+- cierre-diario-reporte.ts ahora reexporta desde cierre-diario-report.ts
+- cierre-diario.model.ts también reexporta desde cierre-diario-report.ts
+- generarReporte(usuario?) ahora devuelve CierreDiarioReporte del archivo correcto
+- generadoEn ahora es string (ISO), no number
+- guardarReporte(...) ahora acepta el objeto que entrega tu componente
+- Se mantiene Firestore + fallback localStorage
+- Se mantiene integración con ChecklistService
+
+Problema real que resuelve:
+- Tu componente usa cierre-diario-report.ts, no cierre-diario-reporte.ts
+- El tipo esperado tiene generadoEn: string
+- El objeto de reporte del componente no coincidía con el del servicio anterior
+
+Ahora ejecuta:
+1) ng build
+2) si compila, ng serve
+3) prueba Cierre diario
+
+Si sale otro error, probablemente ya será un ajuste pequeño del componente.

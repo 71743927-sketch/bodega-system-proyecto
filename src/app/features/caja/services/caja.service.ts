@@ -1,122 +1,299 @@
-﻿import { Injectable, signal, inject } from '@angular/core';
-import { CajaActiva, CierreCaja, MovimientoCaja } from '../models/caja';
-import { AuditoriaService } from '../../auditoria/services/auditoria.service';
+﻿import { Injectable, signal } from '@angular/core';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { firestoreDb } from '../../../core/firebase/firebase.config';
+
+const STORAGE_KEY = 'bodega-caja-compatible';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CajaService {
+  readonly cajaActiva = signal<any | null>(null);
+  readonly cierres = signal<any[]>([]);
 
-  private readonly auditoriaService = inject(AuditoriaService);
-  private readonly _cajaActiva = signal<CajaActiva | null>(null);
-  private readonly _cierres = signal<CierreCaja[]>([]);
-
-  cajaActiva = this._cajaActiva.asReadonly();
-  cierres = this._cierres.asReadonly();
-
-  obtenerSiguienteIdCaja(): number {
-    const activa = this._cajaActiva();
-    const cierres = this._cierres();
-    const ids = [
-      ...(activa ? [activa.id] : []),
-      ...cierres.map(c => c.id)
-    ];
-
-    return ids.length === 0 ? 1 : Math.max(...ids) + 1;
-  }
-
-  obtenerSiguienteIdMovimiento(): number {
-    const activa = this._cajaActiva();
-    if (!activa || activa.movimientos.length === 0) {
-      return 1;
+  constructor() {
+    if (typeof window === 'undefined') {
+      return;
     }
 
-    return Math.max(...activa.movimientos.map(m => m.id)) + 1;
+    const activaRef = doc(firestoreDb, 'caja', 'activa');
+    const cierresRef = doc(firestoreDb, 'caja', 'cierres');
+
+    onSnapshot(
+      activaRef,
+      snapshot => {
+        if (snapshot.exists()) {
+          const data = snapshot.data() as { value?: unknown };
+          this.cajaActiva.set(data?.value ? this.sanearCajaActiva(data.value) : null);
+        } else {
+          this.cajaActiva.set(null);
+        }
+      },
+      () => {
+        const local = this.cargarDesdeStorage();
+        this.cajaActiva.set(local.cajaActiva);
+      }
+    );
+
+    onSnapshot(
+      cierresRef,
+      snapshot => {
+        if (snapshot.exists()) {
+          const data = snapshot.data() as { items?: unknown[] };
+          const items = Array.isArray(data?.items)
+            ? data.items.map(item => this.sanearCierre(item))
+            : [];
+          this.cierres.set(this.ordenarCierres(items));
+        } else {
+          this.cierres.set([]);
+        }
+      },
+      () => {
+        const local = this.cargarDesdeStorage();
+        this.cierres.set(this.ordenarCierres(local.cierres));
+      }
+    );
   }
 
   abrirCaja(montoInicial: number, usuarioApertura: string) {
-    if (this._cajaActiva()) {
-      return;
-    }
-
-    this._cajaActiva.set({
-      id: this.obtenerSiguienteIdCaja(),
+    const nuevaCaja = {
+      id: Date.now(),
       fechaApertura: new Date().toISOString(),
-      usuarioApertura,
-      montoInicial,
-      movimientos: []
-    });
-
-    this.auditoriaService.registrar('CAJA', 'APERTURA', `Caja abierta por ${usuarioApertura}`, 'SUCCESS', `Monto inicial: S/ ${montoInicial.toFixed(2)}`);
-  }
-
-  registrarMovimiento(tipo: 'INGRESO' | 'EGRESO', concepto: string, monto: number) {
-    const activa = this._cajaActiva();
-    if (!activa) {
-      return;
-    }
-
-    const movimiento: MovimientoCaja = {
-      id: this.obtenerSiguienteIdMovimiento(),
-      fecha: new Date().toISOString(),
-      tipo,
-      concepto,
-      monto
+      usuarioApertura: usuarioApertura?.trim() || 'Sistema',
+      montoInicial: Number(montoInicial) || 0,
+      movimientos: [],
+      estado: 'ABIERTA'
     };
 
-    this._cajaActiva.set({
-      ...activa,
-      movimientos: [...activa.movimientos, movimiento]
-    });
-
-    this.auditoriaService.registrar('CAJA', 'MOVIMIENTO', `${tipo} manual registrado`, tipo === 'INGRESO' ? 'INFO' : 'WARNING', `${concepto} · S/ ${monto.toFixed(2)}`);
+    this.cajaActiva.set(nuevaCaja);
+    this.persistirCajaActiva(nuevaCaja);
   }
 
-  cerrarCaja(params: {
-    usuarioCierre: string;
-    ventasEfectivo: number;
-    efectivoContado: number;
-    observacion: string;
-  }) {
-    const activa = this._cajaActiva();
-    if (!activa) {
+  registrarMovimiento(tipo: string, concepto: string, monto: number) {
+    const actual = this.cajaActiva();
+    if (!actual) {
       return;
     }
 
-    const ingresosManual = activa.movimientos
-      .filter(m => m.tipo === 'INGRESO')
-      .reduce((sum, m) => sum + m.monto, 0);
+    const movimiento = {
+      id: Date.now(),
+      fecha: new Date().toISOString(),
+      tipo: String(tipo || '').toUpperCase() === 'EGRESO' ? 'EGRESO' : 'INGRESO',
+      concepto: concepto?.trim() || 'Sin concepto',
+      monto: Number(monto) || 0
+    };
 
-    const egresosManual = activa.movimientos
-      .filter(m => m.tipo === 'EGRESO')
-      .reduce((sum, m) => sum + m.monto, 0);
+    const actualizada = {
+      ...actual,
+      movimientos: [...(Array.isArray(actual.movimientos) ? actual.movimientos : []), movimiento]
+    };
 
-    const saldoEsperado =
-      activa.montoInicial +
-      params.ventasEfectivo +
-      ingresosManual -
-      egresosManual;
+    this.cajaActiva.set(actualizada);
+    this.persistirCajaActiva(actualizada);
+  }
 
-    const cierre: CierreCaja = {
-      id: activa.id,
-      fechaApertura: activa.fechaApertura,
+  cerrarCaja(payload: {
+    ventasEfectivo?: number;
+    ingresosManual?: number;
+    egresosManual?: number;
+    efectivoContado?: number;
+    montoReal?: number;
+    montoFisico?: number;
+    observacion?: string;
+    usuarioCierre?: string;
+  }) {
+    const actual = this.cajaActiva();
+    if (!actual) {
+      return;
+    }
+
+    const movimientos = Array.isArray(actual.movimientos) ? actual.movimientos : [];
+
+    const ingresosMov = movimientos
+      .filter((m: any) => String(m?.tipo || '').toUpperCase() === 'INGRESO')
+      .reduce((sum: number, m: any) => sum + (Number(m?.monto) || 0), 0);
+
+    const egresosMov = movimientos
+      .filter((m: any) => String(m?.tipo || '').toUpperCase() === 'EGRESO')
+      .reduce((sum: number, m: any) => sum + (Number(m?.monto) || 0), 0);
+
+    const ventasEfectivo = Number(payload?.ventasEfectivo) || 0;
+    const ingresosManual = Number(payload?.ingresosManual) || 0;
+    const egresosManual = Number(payload?.egresosManual) || 0;
+
+    const totalIngresos = ingresosMov + ventasEfectivo + ingresosManual;
+    const totalEgresos = egresosMov + egresosManual;
+
+    const saldoEsperado = (Number(actual.montoInicial) || 0) + totalIngresos - totalEgresos;
+
+    const efectivoContado =
+      Number(payload?.efectivoContado ?? payload?.montoReal ?? payload?.montoFisico ?? saldoEsperado) || 0;
+
+    const cierre = {
+      id: Date.now(),
+      fechaApertura: actual.fechaApertura,
       fechaCierre: new Date().toISOString(),
-      usuarioApertura: activa.usuarioApertura,
-      usuarioCierre: params.usuarioCierre,
-      montoInicial: activa.montoInicial,
-      ventasEfectivo: params.ventasEfectivo,
+      usuarioApertura: actual.usuarioApertura,
+      usuarioCierre: payload?.usuarioCierre?.trim() || 'Sistema',
+      montoInicial: Number(actual.montoInicial) || 0,
+      ventasEfectivo,
       ingresosManual,
       egresosManual,
+      totalIngresos,
+      totalEgresos,
       saldoEsperado,
-      efectivoContado: params.efectivoContado,
-      diferencia: params.efectivoContado - saldoEsperado,
-      observacion: params.observacion.trim()
+      efectivoContado,
+      diferencia: efectivoContado - saldoEsperado,
+      observacion: payload?.observacion?.trim() || ''
     };
 
-    this._cierres.update(lista => [cierre, ...lista]);
-    this._cajaActiva.set(null);
+    const nuevosCierres = this.ordenarCierres([cierre, ...this.cierres()]);
 
-    const nivel = cierre.diferencia === 0 ? 'SUCCESS' : (cierre.diferencia > 0 ? 'INFO' : 'WARNING');
-    this.auditoriaService.registrar('CAJA', 'CIERRE', `Caja cerrada por ${params.usuarioCierre}`, nivel, `Diferencia: S/ ${cierre.diferencia.toFixed(2)}`);
+    this.cierres.set(nuevosCierres);
+    this.cajaActiva.set(null);
+
+    this.persistirCajaActiva(null);
+    this.persistirCierres(nuevosCierres);
+  }
+
+  obtenerSaldoActual(): number {
+    const actual = this.cajaActiva();
+    if (!actual) {
+      return 0;
+    }
+
+    const movimientos = Array.isArray(actual.movimientos) ? actual.movimientos : [];
+
+    const ingresos = movimientos
+      .filter((m: any) => String(m?.tipo || '').toUpperCase() === 'INGRESO')
+      .reduce((sum: number, m: any) => sum + (Number(m?.monto) || 0), 0);
+
+    const egresos = movimientos
+      .filter((m: any) => String(m?.tipo || '').toUpperCase() === 'EGRESO')
+      .reduce((sum: number, m: any) => sum + (Number(m?.monto) || 0), 0);
+
+    return (Number(actual.montoInicial) || 0) + ingresos - egresos;
+  }
+
+  private persistirCajaActiva(caja: any | null) {
+    try {
+      setDoc(doc(firestoreDb, 'caja', 'activa'), { value: caja }, { merge: false }).catch(() => {});
+      this.guardarEnStorage();
+    } catch {
+      this.guardarEnStorage();
+    }
+  }
+
+  private persistirCierres(cierres: any[]) {
+    try {
+      setDoc(doc(firestoreDb, 'caja', 'cierres'), { items: cierres }, { merge: false }).catch(() => {});
+      this.guardarEnStorage();
+    } catch {
+      this.guardarEnStorage();
+    }
+  }
+
+  private guardarEnStorage() {
+    try {
+      if (typeof localStorage === 'undefined') {
+        return;
+      }
+
+      const payload = {
+        cajaActiva: this.cajaActiva(),
+        cierres: this.cierres()
+      };
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch {
+      // ignorar
+    }
+  }
+
+  private cargarDesdeStorage(): { cajaActiva: any | null; cierres: any[] } {
+    try {
+      if (typeof localStorage === 'undefined') {
+        return { cajaActiva: null, cierres: [] };
+      }
+
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        return { cajaActiva: null, cierres: [] };
+      }
+
+      const parsed = JSON.parse(raw) as {
+        cajaActiva?: unknown;
+        cierres?: unknown[];
+      };
+
+      return {
+        cajaActiva: parsed.cajaActiva ? this.sanearCajaActiva(parsed.cajaActiva) : null,
+        cierres: Array.isArray(parsed.cierres) ? parsed.cierres.map(item => this.sanearCierre(item)) : []
+      };
+    } catch {
+      return { cajaActiva: null, cierres: [] };
+    }
+  }
+
+  private sanearCajaActiva(data: unknown): any {
+    const raw = this.asRecord(data);
+    const movimientos = Array.isArray(raw['movimientos'])
+      ? (raw['movimientos'] as unknown[]).map(item => this.sanearMovimiento(item))
+      : [];
+
+    return {
+      id: Number(raw['id']) || Date.now(),
+      fechaApertura: raw['fechaApertura'] ? String(raw['fechaApertura']) : new Date().toISOString(),
+      usuarioApertura: raw['usuarioApertura'] ? String(raw['usuarioApertura']) : 'Sistema',
+      montoInicial: Number(raw['montoInicial']) || 0,
+      movimientos,
+      estado: 'ABIERTA'
+    };
+  }
+
+  private sanearMovimiento(data: unknown): any {
+    const raw = this.asRecord(data);
+
+    return {
+      id: Number(raw['id']) || Date.now(),
+      fecha: raw['fecha'] ? String(raw['fecha']) : new Date().toISOString(),
+      tipo: String(raw['tipo'] || '').toUpperCase() === 'EGRESO' ? 'EGRESO' : 'INGRESO',
+      concepto: raw['concepto'] ? String(raw['concepto']) : 'Sin concepto',
+      monto: Number(raw['monto']) || 0
+    };
+  }
+
+  private sanearCierre(data: unknown): any {
+    const raw = this.asRecord(data);
+
+    return {
+      id: Number(raw['id']) || Date.now(),
+      fechaApertura: raw['fechaApertura'] ? String(raw['fechaApertura']) : new Date().toISOString(),
+      fechaCierre: raw['fechaCierre'] ? String(raw['fechaCierre']) : new Date().toISOString(),
+      usuarioApertura: raw['usuarioApertura'] ? String(raw['usuarioApertura']) : 'Sistema',
+      usuarioCierre: raw['usuarioCierre'] ? String(raw['usuarioCierre']) : 'Sistema',
+      montoInicial: Number(raw['montoInicial']) || 0,
+      ventasEfectivo: Number(raw['ventasEfectivo']) || 0,
+      ingresosManual: Number(raw['ingresosManual']) || 0,
+      egresosManual: Number(raw['egresosManual']) || 0,
+      totalIngresos: Number(raw['totalIngresos']) || 0,
+      totalEgresos: Number(raw['totalEgresos']) || 0,
+      saldoEsperado: Number(raw['saldoEsperado']) || 0,
+      efectivoContado: Number(raw['efectivoContado']) || 0,
+      diferencia: Number(raw['diferencia']) || 0,
+      observacion: raw['observacion'] ? String(raw['observacion']) : ''
+    };
+  }
+
+  private ordenarCierres(items: any[]): any[] {
+    return [...items].sort(
+      (a, b) => new Date(String(b?.fechaCierre || '')).getTime() - new Date(String(a?.fechaCierre || '')).getTime()
+    );
+  }
+
+  private asRecord(value: unknown): Record<string, unknown> {
+    return typeof value === 'object' && value !== null
+      ? { ...(value as Record<string, unknown>) }
+      : {};
   }
 }

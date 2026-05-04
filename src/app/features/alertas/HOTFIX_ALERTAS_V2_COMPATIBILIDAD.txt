@@ -1,0 +1,23 @@
+﻿HOTFIX ALERTAS V2 APLICADO
+
+Qué corrige:
+- Reagrega el estado de alertas descartadas como signal: descartadas
+- Reagrega métodos esperados por la UI:
+  - estaDescartada(id)
+  - descartarAlerta(id)
+  - restaurarAlerta(id)
+  - limpiarDescartes()
+  - reemplazarDescartadas(lista)
+- Mantiene Firestore + fallback localStorage
+- Mantiene métodos CRUD creados en la FASE 2
+
+Relación con tu proyecto:
+- alertas-page usa estaDescartada(), descartarAlerta() y restaurarAlerta()
+- checklist-page y respaldo.service usan descartadas() y reemplazarDescartadas()
+
+Ahora ejecuta:
+1) ng build
+2) si compila, ng serve
+3) prueba Alertas, Checklist y Respaldo
+
+Si sale otro error por nombres específicos, pégalo y se prepara HOTFIX V3.

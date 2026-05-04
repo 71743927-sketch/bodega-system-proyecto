@@ -1,4 +1,6 @@
-﻿html, body {
+﻿@import 'sweetalert2/themes/bootstrap-5.css';
+@import 'bootstrap/dist/css/bootstrap.min.css';
+html, body {
   margin: 0;
   padding: 0;
   min-height: 100%;
@@ -9,3 +11,350 @@
 * {
   box-sizing: border-box;
 }
+
+/* ==== FIX BASE VIEWPORT / ESCALA ==== */
+*, *::before, *::after { box-sizing: border-box; }
+html { font-size: 16px; }
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+/* =================================== */
+
+
+/* ===== FIX SCROLL RESPONSIVE ===== */
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Evita que layouts rompan el scroll */
+app-root {
+  display: block;
+  min-height: 100vh;
+}
+
+/* Contenedores comunes */
+.page, .container, .content {
+  min-height: 100%;
+  overflow-y: auto;
+}
+/* ================================= */
+
+
+/* ====================================================
+   RESPONSIVE GLOBAL - TODOS LOS MÓDULOS
+   ==================================================== */
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  font-size: 16px;
+}
+
+body {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Root Angular */
+app-root {
+  display: block;
+  min-height: 100vh;
+}
+
+/* Contenedores base de módulos */
+.page, .container, .content, .module {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100%;
+  padding: 1rem;
+}
+
+/* Tablas responsive */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Imágenes y media */
+img, video, canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Formularios */
+input, select, textarea, button {
+  max-width: 100%;
+}
+
+/* Layout flexible */
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.flex-column { flex-direction: column; }
+.flex-center { align-items: center; justify-content: center; }
+
+/* ================= BREAKPOINTS ================= */
+
+@media (max-width: 1200px) {
+  .container { padding: 0.75rem; }
+}
+
+@media (max-width: 992px) {
+  .container { padding: 0.5rem; }
+}
+
+@media (max-width: 768px) {
+  html { font-size: 15px; }
+  .hide-mobile { display: none !important; }
+}
+
+@media (max-width: 480px) {
+  html { font-size: 14px; }
+  .container, .page { padding: 0.5rem; }
+}
+
+/* ====================================================
+   FIN RESPONSIVE GLOBAL
+   ==================================================== */
+
+
+
+
+
+/* =========================================================
+   SWEETALERT2 PREMIUM GLOBAL
+   Estilo elegante para notificaciones del sistema
+========================================================= */
+
+.swal2-container {
+  z-index: 99999 !important;
+}
+
+.swal2-popup.swal2-toast.swal-toast-premium {
+  border-radius: 18px !important;
+  padding: 0.85rem 1rem !important;
+  min-width: 320px !important;
+  max-width: 420px !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  backdrop-filter: blur(12px) !important;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.22) !important;
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif !important;
+}
+
+.swal-toast-premium .swal2-title {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  color: #1f2937 !important;
+  letter-spacing: 0.1px !important;
+  line-height: 1.35 !important;
+}
+
+.swal-toast-premium .swal2-html-container {
+  font-size: 0.85rem !important;
+  color: #6b7280 !important;
+}
+
+.swal-toast-premium .swal2-icon {
+  width: 2.1em !important;
+  height: 2.1em !important;
+  margin: 0 0.65rem 0 0 !important;
+  border-width: 0.16em !important;
+}
+
+.swal-toast-premium .swal2-icon .swal2-icon-content {
+  font-size: 1.25em !important;
+}
+
+.swal-toast-premium.swal2-show {
+  animation: swal-premium-slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.swal-toast-premium.swal2-hide {
+  animation: swal-premium-slide-out 0.25s ease-in forwards !important;
+}
+
+@keyframes swal-premium-slide-in {
+  from {
+    transform: translateX(18px) translateY(-10px) scale(0.96);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0) translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes swal-premium-slide-out {
+  from {
+    transform: translateX(0) translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(18px) translateY(-8px) scale(0.97);
+    opacity: 0;
+  }
+}
+
+.swal-toast-premium .swal2-timer-progress-bar {
+  height: 4px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #0d6efd, #20c997, #6f42c1) !important;
+}
+
+.swal-toast-premium .swal2-success {
+  border-color: #198754 !important;
+  color: #198754 !important;
+}
+
+.swal-toast-premium .swal2-error {
+  border-color: #dc3545 !important;
+  color: #dc3545 !important;
+}
+
+.swal-toast-premium .swal2-warning {
+  border-color: #ffc107 !important;
+  color: #f59f00 !important;
+}
+
+.swal-toast-premium .swal2-info {
+  border-color: #0dcaf0 !important;
+  color: #0d6efd !important;
+}
+
+.swal-toast-premium .swal2-question {
+  border-color: #6f42c1 !important;
+  color: #6f42c1 !important;
+}
+
+.swal2-popup.swal-modal-premium {
+  border-radius: 22px !important;
+  padding: 1.4rem !important;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28) !important;
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif !important;
+}
+
+.swal-modal-premium .swal2-title {
+  font-size: 1.35rem !important;
+  font-weight: 800 !important;
+  color: #111827 !important;
+}
+
+.swal-modal-premium .swal2-html-container {
+  color: #4b5563 !important;
+  font-size: 0.96rem !important;
+}
+
+.swal-modal-premium .swal2-confirm {
+  border-radius: 12px !important;
+  padding: 0.65rem 1.15rem !important;
+  font-weight: 700 !important;
+}
+
+.swal-modal-premium .swal2-cancel {
+  border-radius: 12px !important;
+  padding: 0.65rem 1.15rem !important;
+  font-weight: 700 !important;
+}
+
+@media (max-width: 576px) {
+  .swal2-popup.swal2-toast.swal-toast-premium {
+    min-width: 92vw !important;
+    max-width: 92vw !important;
+    margin: 0 auto !important;
+  }
+}
+
+
+/* =========================================================
+   SWEETALERT2 VALIDATION COLORS
+   Estados visuales segun validaciones del sistema
+========================================================= */
+
+.swal-toast-premium.swal-toast-error {
+  border-left: 6px solid #dc3545 !important;
+}
+
+.swal-toast-premium.swal-toast-success {
+  border-left: 6px solid #198754 !important;
+}
+
+.swal-toast-premium.swal-toast-warning {
+  border-left: 6px solid #ffc107 !important;
+}
+
+.swal-toast-premium.swal-toast-info {
+  border-left: 6px solid #0d6efd !important;
+}
+
+.swal-toast-premium.swal-toast-question {
+  border-left: 6px solid #6f42c1 !important;
+}
+
+.swal-toast-error .swal2-title {
+  color: #991b1b !important;
+}
+
+.swal-toast-warning .swal2-title {
+  color: #92400e !important;
+}
+
+.swal-toast-success .swal2-title {
+  color: #14532d !important;
+}
+
+.swal-toast-info .swal2-title {
+  color: #1e3a8a !important;
+}
+
+.swal-toast-question .swal2-title {
+  color: #4c1d95 !important;
+}
+
+.swal-toast-error .swal2-timer-progress-bar {
+  background: linear-gradient(90deg, #dc3545, #fb7185) !important;
+}
+
+.swal-toast-warning .swal2-timer-progress-bar {
+  background: linear-gradient(90deg, #f59e0b, #facc15) !important;
+}
+
+.swal-toast-success .swal2-timer-progress-bar {
+  background: linear-gradient(90deg, #198754, #20c997) !important;
+}
+
+.swal-toast-info .swal2-timer-progress-bar {
+  background: linear-gradient(90deg, #0d6efd, #0dcaf0) !important;
+}
+
+.swal-toast-question .swal2-timer-progress-bar {
+  background: linear-gradient(90deg, #6f42c1, #a855f7) !important;
+}
+

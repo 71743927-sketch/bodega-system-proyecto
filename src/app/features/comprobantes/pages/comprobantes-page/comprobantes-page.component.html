@@ -2,184 +2,125 @@
   <div class="page-header">
     <div>
       <h1>Comprobantes</h1>
-      <p>Consulta, exporta y comparte tickets de ventas registradas en el sistema.</p>
-    </div>
-
-    <div class="stats-grid">
-      <div class="stat-card success">
-        <span>Ventas filtradas</span>
-        <strong>{{ cantidadVentas() }}</strong>
-        <small>Registros disponibles</small>
-      </div>
-      <div class="stat-card info">
-        <span>Total emitido</span>
-        <strong>{{ totalVentas() | currency:'PEN':'symbol':'1.2-2' }}</strong>
-        <small>Suma de ventas visibles</small>
-      </div>
-      <div class="stat-card accent">
-        <span>Ticket promedio</span>
-        <strong>{{ ticketPromedio() | currency:'PEN':'symbol':'1.2-2' }}</strong>
-        <small>Promedio por venta</small>
-      </div>
+      <p>Visualiza ventas emitidas y genera ticket / comprobante en texto plano y PDF.</p>
     </div>
   </div>
 
   <div class="layout-grid">
-    <div class="card list-card">
+    <div class="card left-card">
       <div class="card-title">
         <h2>Ventas emitidas</h2>
-        <p>Busca una venta y selecciónala para generar su comprobante.</p>
+        <p>Busca una venta y selecciona el comprobante a visualizar.</p>
       </div>
 
       <div class="filters-grid">
-        <div class="campo full-width">
-          <label for="busquedaComprobantes">Buscar</label>
-          <input
-            id="busquedaComprobantes"
-            type="text"
-            [value]="busqueda()"
-            (input)="actualizarBusqueda($any($event.target).value)"
-            placeholder="ID, cliente, vendedor, producto o método de pago"
-          />
+        <div class="campo">
+          <label for="busquedaComprobante">Buscar</label>
+          <input id="busquedaComprobante" type="text" [value]="busqueda()" (input)="actualizarBusqueda($any($event.target).value)" placeholder="ID, cliente, producto o vendedor" />
         </div>
-
-        <div class="campo compact-field">
-          <label for="soloHoyFiltro">Fecha</label>
-          <select
-            id="soloHoyFiltro"
-            [value]="soloHoy() ? 'true' : 'false'"
-            (change)="actualizarSoloHoy($any($event.target).value === 'true')"
-          >
+        <div class="campo inline-field">
+          <label>Fecha</label>
+          <select [value]="soloHoy() ? 'true' : 'false'" (change)="actualizarSoloHoy($any($event.target).value === 'true')">
             <option value="false">Todas</option>
             <option value="true">Solo hoy</option>
           </select>
         </div>
       </div>
 
-      <div *ngIf="ventasFiltradas().length === 0" class="empty-state">
-        <p>No hay ventas que coincidan con el filtro actual.</p>
-      </div>
-
-      <div *ngIf="ventasFiltradas().length > 0" class="list-stack">
-        <button
-          type="button"
-          class="venta-item"
-          *ngFor="let item of ventasFiltradas(); trackBy: trackVenta"
-          [class.active]="ventaSeleccionada()?.id === item.id"
-          (click)="seleccionarVenta(item.id)"
-        >
-          <div class="venta-main">
-            <strong>Venta #{{ item.id }}</strong>
-            <span>{{ item.fecha | date:'medium' }}</span>
-            <small>
-              {{ item.clienteNombre !== '' ? item.clienteNombre : 'Público general' }} · {{ item.vendedor }} · {{ item.metodoPago }}
-            </small>
-          </div>
-          <div class="venta-side">
-            <strong>{{ item.total | currency:'PEN':'symbol':'1.2-2' }}</strong>
-          </div>
-        </button>
-      </div>
+      @if (ventasFiltradas().length === 0) {
+        <div class="empty-state"><p>No hay ventas para los filtros actuales.</p></div>
+      } @else {
+        <div class="sales-list">
+          @for (item of ventasFiltradas(); track item.id) {
+            <button type="button" class="sale-item" [class.sale-item-active]="ventaSeleccionada()?.id === item.id" (click)="seleccionarVenta(item.id)">
+              <div>
+                <strong>Venta #{{ item.id }}</strong>
+                <span>{{ item.fecha | date:'medium' }}</span>
+                <small>{{ item.clienteNombre !== '' ? item.clienteNombre : 'Público general' }} · {{ item.metodoPago }}</small>
+              </div>
+              <strong>{{ item.total | currency:'PEN':'symbol':'1.2-2' }}</strong>
+            </button>
+          }
+        </div>
+      }
     </div>
 
-    <div class="card preview-card">
-      <div *ngIf="comprobanteActual() as comp; else previewEmpty">
-        <div id="ticket-captura" class="ticket-preview">
+    <div class="card right-card">
+      <div class="card-title">
+        <h2>Vista previa del comprobante</h2>
+        <p>Ticket listo para exportarse en TXT o PDF.</p>
+      </div>
+
+      @if (comprobanteActual() === null) {
+        <div class="empty-state"><p>No hay comprobante seleccionado.</p></div>
+      } @else {
+        <div class="ticket-box">
           <div class="ticket-header">
-            <div>
-              <span class="brand">BodegaSys</span>
-              <h2>{{ comp.tipo }} {{ comp.serie }}-{{ comp.correlativo }}</h2>
-              <p>{{ comp.emitidoEn | date:'full' }}</p>
-            </div>
-            <span class="badge success">VENTA</span>
+            <h3>BODEGA APP</h3>
+            <span>{{ comprobanteActual()!.tipo }} {{ comprobanteActual()!.serie }}-{{ comprobanteActual()!.correlativo }}</span>
+            <small>{{ comprobanteActual()!.emitidoEn | date:'medium' }}</small>
           </div>
 
           <div class="ticket-meta">
-            <div>
-              <span>Cliente</span>
-              <strong>{{ comp.clienteNombre }}</strong>
-            </div>
-            <div>
-              <span>Vendedor</span>
-              <strong>{{ comp.vendedor }}</strong>
-            </div>
-            <div>
-              <span>Método</span>
-              <strong>{{ comp.metodoPago }}</strong>
-            </div>
+            <div><span>Cliente</span><strong>{{ comprobanteActual()!.clienteNombre }}</strong></div>
+            <div><span>Vendedor</span><strong>{{ comprobanteActual()!.vendedor }}</strong></div>
+            <div><span>Método</span><strong>{{ comprobanteActual()!.metodoPago }}</strong></div>
           </div>
 
-          <div class="table-wrapper">
+          <div class="table-wrapper compact">
             <table>
               <thead>
                 <tr>
                   <th>Producto</th>
                   <th>Cant.</th>
                   <th>P. Unit.</th>
-                  <th>Subtotal</th>
+                  <th>Subt.</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let detalle of comp.lineas">
-                  <td>
-                    <strong>{{ detalle.nombre }}</strong>
-                    <small>{{ detalle.codigo }} · {{ detalle.categoria }}</small>
-                  </td>
-                  <td>{{ detalle.cantidad }}</td>
-                  <td>{{ detalle.precioUnitario | currency:'PEN':'symbol':'1.2-2' }}</td>
-                  <td>{{ detalle.subtotal | currency:'PEN':'symbol':'1.2-2' }}</td>
-                </tr>
+                @for (item of comprobanteActual()!.lineas; track item.productoId) {
+                  <tr>
+                    <td>
+                      <strong>{{ item.nombre }}</strong>
+                      <small>{{ item.codigo }} · {{ item.categoria }}</small>
+                    </td>
+                    <td>{{ item.cantidad }}</td>
+                    <td>{{ item.precioUnitario | currency:'PEN':'symbol':'1.2-2' }}</td>
+                    <td>{{ item.subtotal | currency:'PEN':'symbol':'1.2-2' }}</td>
+                  </tr>
+                }
               </tbody>
             </table>
           </div>
 
           <div class="totals-box">
-            <div><span>Subtotal</span><strong>{{ comp.subtotal | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
-            <div><span>Descuento</span><strong>{{ comp.descuento | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
-            <div class="total-line"><span>Total</span><strong>{{ comp.total | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+            <div><span>Subtotal</span><strong>{{ comprobanteActual()!.subtotal | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+            <div><span>Descuento</span><strong>{{ comprobanteActual()!.descuento | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+            <div class="total-line"><span>Total</span><strong>{{ comprobanteActual()!.total | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
           </div>
 
-          <div *ngIf="comp.observacion !== ''" class="note-box">
-            <span>Observación</span>
-            <p>{{ comp.observacion }}</p>
-          </div>
+          @if (comprobanteActual()!.observacion !== '') {
+            <div class="note-box">
+              <span>Observación</span>
+              <p>{{ comprobanteActual()!.observacion }}</p>
+            </div>
+          }
 
           <div class="note-box qr-box">
             <span>QR Payload</span>
-            <p>{{ comp.qrPayload }}</p>
-          </div>
-        </div>
-
-        <div class="actions-panel">
-          <div class="campo full-width whatsapp-field">
-            <label for="numeroWhatsappCliente">WhatsApp del cliente</label>
-            <input
-              id="numeroWhatsappCliente"
-              type="text"
-              [value]="numeroWhatsapp()"
-              (input)="actualizarNumeroWhatsapp($any($event.target).value)"
-              placeholder="Ej. 51987654321"
-            />
-            <small>Con texto va directo al número. Para imagen se abrirá el panel de compartir del dispositivo.</small>
+            <p>{{ comprobanteActual()!.qrPayload }}</p>
           </div>
 
-          <div class="actions-row">
-            <button type="button" class="btn-primary" (click)="exportarTxt()">Exportar TXT</button>
-            <button type="button" class="btn-secondary" (click)="exportarPdf()">Exportar PDF</button>
-            <button type="button" class="btn-whatsapp" (click)="enviarTextoPorWhatsapp()">WhatsApp texto</button>
-            <button type="button" class="btn-image" (click)="enviarImagenPorWhatsapp()">WhatsApp imagen</button>
-            <button type="button" class="btn-light" (click)="limpiarSeleccion()">Cerrar</button>
+          <div class="actions">
+            <button type="button" class="btn-primary" (click)="exportarTxt()">Exportar ticket .txt</button>
+            <button type="button" class="btn-secondary" (click)="exportarPdf()">Exportar ticket .pdf</button>
           </div>
         </div>
+      }
 
-        <div *ngIf="mensaje() !== ''" class="message-box">{{ mensaje() }}</div>
-      </div>
-
-      <ng-template #previewEmpty>
-        <div class="empty-state preview-empty">
-          <p>Selecciona una venta para visualizar su comprobante, exportarlo o compartirlo.</p>
-        </div>
-      </ng-template>
+      @if (mensaje() !== '') {
+        <div class="message-box">{{ mensaje() }}</div>
+      }
     </div>
   </div>
 </section>

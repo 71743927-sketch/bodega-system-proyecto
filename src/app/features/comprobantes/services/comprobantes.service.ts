@@ -102,62 +102,6 @@ export class ComprobantesService {
     return lineas.join('\n');
   }
 
-  construirMensajeWhatsApp(comprobante: ComprobanteVenta): string {
-    const encabezado = [
-      '*BODEGA APP*',
-      '*Comprobante de venta*',
-      `${comprobante.tipo} ${comprobante.serie}-${comprobante.correlativo}`,
-      `Cliente: ${comprobante.clienteNombre}`,
-      `Fecha: ${comprobante.emitidoEn}`,
-      `Pago: ${comprobante.metodoPago}`,
-      ''
-    ];
-
-    const detalle = comprobante.lineas.flatMap(item => ([
-      `${item.nombre}`,
-      `  ${item.cantidad} x ${comprobante.simboloMoneda} ${item.precioUnitario.toFixed(2)} = ${comprobante.simboloMoneda} ${item.subtotal.toFixed(2)}`
-    ]));
-
-    const resumen = [
-      '',
-      `Subtotal: ${comprobante.simboloMoneda} ${comprobante.subtotal.toFixed(2)}`,
-      `Descuento: ${comprobante.simboloMoneda} ${comprobante.descuento.toFixed(2)}`,
-      `*TOTAL: ${comprobante.simboloMoneda} ${comprobante.total.toFixed(2)}*`
-    ];
-
-    const observacion = comprobante.observacion !== ''
-      ? ['', `Observación: ${comprobante.observacion}`]
-      : [];
-
-    const cierre = ['', 'Gracias por su compra.'];
-    return [...encabezado, ...detalle, ...resumen, ...observacion, ...cierre].join('\n');
-  }
-
-  normalizarNumeroWhatsApp(numero: string): string {
-    return (numero || '').replace(/\D+/g, '');
-  }
-
-  construirLinkWhatsApp(numero: string, mensaje: string): string {
-    const telefono = this.normalizarNumeroWhatsApp(numero);
-    const texto = encodeURIComponent(mensaje);
-    return `https://wa.me/${telefono}?text=${texto}`;
-  }
-
-  abrirWhatsApp(numero: string, mensaje: string): boolean {
-    if (typeof window === 'undefined') {
-      return false;
-    }
-
-    const telefono = this.normalizarNumeroWhatsApp(numero);
-    if (telefono.length < 8) {
-      return false;
-    }
-
-    const url = this.construirLinkWhatsApp(telefono, mensaje);
-    window.open(url, '_blank', 'noopener,noreferrer');
-    return true;
-  }
-
   exportarTxt(fileName: string, content: string) {
     if (typeof document === 'undefined' || typeof URL === 'undefined' || typeof Blob === 'undefined') {
       return;
@@ -205,8 +149,14 @@ export class ComprobantesService {
         `${comprobante.simboloMoneda} ${item.precioUnitario.toFixed(2)}`,
         `${comprobante.simboloMoneda} ${item.subtotal.toFixed(2)}`
       ]),
-      styles: { fontSize: 9, cellPadding: 6, valign: 'middle' },
-      headStyles: { fillColor: [37, 99, 235] },
+      styles: {
+        fontSize: 9,
+        cellPadding: 6,
+        valign: 'middle'
+      },
+      headStyles: {
+        fillColor: [37, 99, 235]
+      },
       margin: { left: marginX, right: marginX }
     });
 

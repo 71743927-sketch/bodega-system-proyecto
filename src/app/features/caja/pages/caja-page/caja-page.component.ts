@@ -62,8 +62,8 @@ export class CajaPageComponent {
     }
 
     return caja.movimientos
-      .filter(m => m.tipo === 'INGRESO')
-      .reduce((sum, m) => sum + m.monto, 0);
+      .filter((m: any) => m.tipo === 'INGRESO')
+      .reduce((sum: number, m: any) => sum + m.monto, 0);
   });
 
   egresosManual = computed(() => {
@@ -73,8 +73,8 @@ export class CajaPageComponent {
     }
 
     return caja.movimientos
-      .filter(m => m.tipo === 'EGRESO')
-      .reduce((sum, m) => sum + m.monto, 0);
+      .filter((m: any) => m.tipo === 'EGRESO')
+      .reduce((sum: number, m: any) => sum + m.monto, 0);
   });
 
   saldoEsperado = computed(() => {
@@ -210,3 +210,4 @@ export class CajaPageComponent {
     });
   }
 }
+

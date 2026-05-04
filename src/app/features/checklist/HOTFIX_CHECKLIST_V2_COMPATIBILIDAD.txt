@@ -1,0 +1,23 @@
+﻿HOTFIX CHECKLIST V2 APLICADO
+
+Qué corrige:
+- obtenerChecklistDelDia(usuario?) ahora devuelve ChecklistDiario (no Observable)
+- Se reagregan métodos esperados por tu UI:
+  - alternarItem(checklist, itemId)
+  - actualizarObservacion(checklist, itemId, observacion)
+  - completarBloque(checklist, bloqueId)
+  - reiniciarChecklist(usuario?)
+  - exportarChecklist(fileName, content)
+- Se mantiene Firestore + fallback localStorage
+- cierre-diario.service ya podrá usar checklist.items sin error de tipo
+
+Compatibilidad importante:
+- checklist-page.component.ts esperaba API síncrona, no reactiva
+- cierre-diario.service.ts esperaba un objeto ChecklistDiario, no Observable
+
+Ahora ejecuta:
+1) ng build
+2) si compila, ng serve
+3) prueba Checklist y Cierre diario
+
+Si aparece otro error de métodos específicos, pégalo y preparo HOTFIX V3.

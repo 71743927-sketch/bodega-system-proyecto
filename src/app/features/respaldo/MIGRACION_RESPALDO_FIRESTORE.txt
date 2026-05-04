@@ -1,0 +1,47 @@
+﻿FASE 5 COMPLETADA: RESPALDO CON FIRESTORE + FALLBACK LOCAL
+
+Qué quedó listo:
+- respaldo.service.ts ahora usa el SDK 'firebase' oficial
+- No depende de @angular/fire
+- Si Firestore está disponible en runtime, sincroniza con la colección: respaldos
+- Si Firestore no está disponible o falla, usa localStorage sin romper la UI
+- Se creó el modelo: src/app/features/respaldo/models/respaldo.model.ts
+
+Métodos principales disponibles:
+- listarRespaldos()
+- obtenerRespaldos()
+- obtenerHistorial()
+- ultimoRespaldo()
+- obtenerPorId(id)
+- crearRespaldo(payload, usuario?, nombre?, descripcion?, origen?, modulo?)
+- guardarRespaldo(respaldo)
+- eliminarRespaldo(id)
+- restaurarRespaldo(id)
+- reemplazarDesdeRespaldo(items)
+- exportarRespaldo(fileName, content)
+- importarRespaldo(content, usuario?)
+- sincronizarLocalAFirestore()
+
+Sugerencia de integración:
+1) crear respaldo:
+   const respaldo = this.respaldoService.crearRespaldo({ checklist, cierreDiario }, this.authService.usernameActual() || 'Sistema');
+
+2) listar historial:
+   const historial = this.respaldoService.obtenerHistorial();
+
+3) exportar respaldo:
+   this.respaldoService.exportarRespaldo('respaldo.json', JSON.stringify(respaldo, null, 2));
+
+4) restaurar respaldo:
+   const payload = this.respaldoService.restaurarRespaldo(id);
+
+Prueba recomendada:
+1) ng build
+2) ng serve
+3) entra a la pantalla Respaldo
+4) crea un respaldo manual
+5) exporta el respaldo a archivo
+6) verifica si aparecen documentos en la colección 'respaldos' de Firestore
+
+Si el build falla por nombres específicos de métodos o campos esperados por tu componente,
+me pegas el error y te preparo un HOTFIX DE COMPATIBILIDAD para Respaldo.

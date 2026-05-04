@@ -1,9 +1,6 @@
 ﻿import { Injectable, inject, signal } from '@angular/core';
 import { AuditoriaService } from '../../auditoria/services/auditoria.service';
 import { ConfiguracionGeneral } from '../models/configuracion-general';
-import { getApp } from 'firebase/app';
-import { Firestore, doc, getDoc, setDoc, getFirestore, serverTimestamp } from 'firebase/firestore';
-import { firestoreDb } from '../../../core/firebase/firebase.config';
 
 const STORAGE_KEY = 'bodega-config-general';
 
@@ -34,20 +31,6 @@ export class ConfiguracionService {
   private readonly _configuracion = signal<ConfiguracionGeneral>(this.cargarDesdeStorage());
 
   configuracionLectura = this._configuracion.asReadonly();
-
-  private db: Firestore | null = null;
-
-  constructor() {
-    this.db = this.tryResolveFirestore();
-    if (this.db) {
-      void this.loadRemoteConfig();
-    }
-    if (typeof window !== 'undefined') {
-      (window as any).syncConfigToFirestore = async () => {
-        return await this.sincronizarLocalAFirestore();
-      };
-    }
-  }
 
   obtenerConfiguracionPorDefecto(): ConfiguracionGeneral {
     return { ...DEFAULT_CONFIG };
@@ -122,54 +105,6 @@ export class ConfiguracionService {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(configuracion));
     } catch {
       // Ignorar errores de persistencia local
-    }
-  }
-
-  private tryResolveFirestore(): Firestore | null {
-    try {
-      const app = getApp();
-      return getFirestore(app);
-    } catch {
-      return null;
-    }
-  }
-
-  private async loadRemoteConfig(): Promise<void> {
-    if (!this.db) return;
-    try {
-      const ref = doc(this.db, 'configuracion', 'general');
-      const snap = await getDoc(ref);
-      if (snap.exists()) {
-        const remote = snap.data() as Partial<ConfiguracionGeneral>;
-        const merged = { ...this.obtenerConfiguracionPorDefecto(), ...(remote as any) } as ConfiguracionGeneral;
-        this._configuracion.set(merged);
-        this.guardarEnStorage(merged);
-      }
-    } catch {
-      // mantener local
-    }
-  }
-
-  async sincronizarLocalAFirestore(): Promise<boolean> {
-    if (!this.db) {
-      this.db = this.tryResolveFirestore();
-      if (!this.db) return false;
-    }
-
-    try {
-      const payload = this._configuracion();
-      await setDoc(doc(this.db, 'configuracion', 'general'), { ...payload }, { merge: true });
-
-      const backupId = `cfg-bkp-${Date.now()}`;
-      await setDoc(doc(this.db, 'respaldos', backupId), {
-        tipo: 'configuracion-migracion',
-        createdAt: serverTimestamp(),
-        data: { ...payload }
-      }, { merge: true });
-
-      return true;
-    } catch {
-      return false;
     }
   }
 }

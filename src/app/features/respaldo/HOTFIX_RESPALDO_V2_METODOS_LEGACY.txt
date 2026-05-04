@@ -1,0 +1,22 @@
+﻿HOTFIX RESPALDO V2 APLICADO
+
+Qué corrige:
+- Se agrega alias de modelo RespaldoSistema
+- Se reagregan métodos esperados por la UI:
+  - cargarUltimoRespaldo()
+  - generarRespaldo(usuario?)
+  - serializar(respaldo)
+  - descargar(fileName, content)
+  - guardarUltimoRespaldo(respaldo)
+  - parsear(text)
+  - aplicarRespaldo(snap)
+- Se mantiene Firestore + fallback localStorage
+- generarRespaldo() ahora toma una instantánea del sistema desde localStorage app_*
+- aplicarRespaldo() restaura de forma best-effort varias claves conocidas y el mapa bruto si existe
+
+Ahora ejecuta:
+1) ng build
+2) si compila, ng serve
+3) prueba Respaldo
+
+Si sale otro error, probablemente ya será un ajuste pequeño de nombres/campos del componente.

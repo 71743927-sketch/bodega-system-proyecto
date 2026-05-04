@@ -1,0 +1,33 @@
+﻿HOTFIX AUTH V3 APLICADO
+
+Qué corrige:
+- Elimina imports de @angular/fire/auth y @angular/fire/firestore
+- Restaura una API compatible con la UI actual
+- Reagrega métodos esperados por el proyecto:
+  - login(username, password?)
+  - logout()
+  - autenticado()
+  - validarSesion()
+  - tieneRol(...)
+  - renovarActividad()
+  - renovarSesionManual()
+  - tiempoRestanteMs()
+  - usernameActual()
+- Reagrega señales esperadas por layouts/páginas:
+  - sesion
+  - nombreActual
+  - rolActual
+
+Importante:
+- Este hotfix prioriza compilar sin romper pantallas.
+- La conexión real de Auth con Firebase se debe hacer luego de forma incremental.
+- El login actual quedará local (compatibilidad) hasta la siguiente fase.
+
+Ahora ejecuta:
+1) ng build
+2) si compila, ng serve
+3) prueba login escribiendo cualquier usuario en la pantalla actual
+
+Si luego quieres Firebase real para Auth, la siguiente fase correcta es:
+- instalar/configurar @angular/fire si no está realmente instalado
+- adaptar SOLO internamente el servicio, manteniendo la misma API pública

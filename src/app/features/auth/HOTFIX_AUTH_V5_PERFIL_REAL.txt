@@ -1,0 +1,38 @@
+﻿HOTFIX AUTH V5 APLICADO
+
+Qué corrige:
+- Ya no entra como "Invitado" por defecto si el usuario sí escribió un username
+- Guarda correctamente en sesión:
+  - username
+  - nombre
+  - rol
+  - loginAt
+  - lastActivityAt
+  - expiresAt
+- Recupera sesiones antiguas / legacy desde localStorage
+- Mantiene compatibilidad con guards, layouts y páginas actuales
+
+Perfiles automáticos de ejemplo:
+- admin -> Administrador / admin
+- clinton -> Clinton Janampa / admin
+- caja, cajero -> Cajero Principal / cajero
+- operador, almacen, bodega -> Operador / operador
+- ventas, vendedor -> Usuario Ventas / vendedor
+
+Si ingresas otro usuario cualquiera:
+- username = el texto ingresado
+- nombre = una versión bonita del username
+- rol = se infiere por nombre, y si no coincide, queda como operador
+
+Prueba recomendada:
+1) ng build
+2) ng serve
+3) inicia sesión con un username real, por ejemplo:
+   - clinton
+   - admin
+   - caja
+   - operador
+4) verifica que el sidebar ya no muestre "Invitado"
+
+Si quieres forzar manualmente un nombre y rol después:
+- this.authService.actualizarPerfil('Clinton Janampa', 'admin')

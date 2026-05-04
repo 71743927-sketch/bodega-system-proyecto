@@ -1,0 +1,41 @@
+﻿======================================================================
+ AUDITORÍA ROBUSTA DEL MÓDULO COMPROBANTES / TICKETS / FIRESTORE
+======================================================================
+Fecha: 2026-04-21 17:12:15
+
+1) ARCHIVOS DETECTADOS
+----------------------------------------------------------------------
+Service: src/app/features/comprobantes/services/comprobantes.service.ts
+Page TS: src/app/features/comprobantes/pages/comprobantes-page/comprobantes-page.component.ts
+Page HTML: src/app/features/comprobantes/pages/comprobantes-page/comprobantes-page.component.html
+VentasService: src/app/features/ventas/services/ventas.service.ts
+
+2) HALLAZGOS
+----------------------------------------------------------------------
+- [MEDIO] Se detectaron referencias donde el cliente podría serializarse como texto literal null/undefined: C:\Users\clint\Downloads\semana06-app-nuevo (2)\semana06-app-nuevo\src\app\features\comprobantes\services\comprobantes.service.ts
+- [CRITICO] ng build falló; revisar sección de errores del reporte.
+
+3) PISTAS DEL CASO ADJUNTO
+----------------------------------------------------------------------
+- Si el ticket se exporta con 'undefined' en el nombre, todavía hay una construcción insegura del fileName.
+- Si el contenido muestra 'Cliente: null', hay una conversión String(null) o fallback incompleto.
+- Si el total ya aparece bien, entonces la prioridad ahora es normalizar cliente y nombre de archivo.
+
+4) RECOMENDACIONES
+----------------------------------------------------------------------
+- Primero corregir todos los hallazgos [CRITICO] y [ALTO]. Luego recompilar con ng build y volver a emitir un comprobante de prueba.
+- Probar un caso real con cliente vacío, cliente null y cliente válido para confirmar que el ticket no vuelva a mostrar 'null' ni 'undefined'.
+- Probar exportación usando serie+numero para el nombre del archivo: por ejemplo B001-000001.txt. Evita concatenar campos opcionales sin fallback.
+
+5) RESULTADO DE ng build
+----------------------------------------------------------------------
+[1m[33m[33mΓû▓ [43;33m[[43;30mWARNING[43;33m][0m [1msrc/app/features/comprobantes/pages/comprobantes-page/comprobantes-page.component.css exceeded maximum budget. Budget 6.00 kB was not met by 484 bytes with a total of 6.48 kB.[0m
+
+6) CHECKLIST DE VALIDACIÓN MANUAL
+----------------------------------------------------------------------
+- Emitir una boleta con cliente válido.
+- Emitir una boleta con cliente vacío.
+- Emitir una boleta con cliente null/undefined desde datos de prueba.
+- Verificar que el archivo exportado use serie-numero y nunca termine en undefined.
+- Revisar Firestore colección 'comprobantes' después de guardar, editar y eliminar.
+

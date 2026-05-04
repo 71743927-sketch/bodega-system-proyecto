@@ -54,7 +54,7 @@ export class MantenimientoPageComponent {
     movimientosInventario: this.movimientosInventario().length,
     cierresCaja: this.cierresCaja().length,
     auditoria: this.eventosAuditoria().length,
-    stockCritico: this.productos().filter(item => item.stockActual <= item.stockMinimo).length,
+    stockCritico: this.productos().filter((item: any) => item.stockActual <= item.stockMinimo).length,
     utilidadEstimada:
       this.ventas().reduce((sum, item) => sum + item.total, 0) -
       this.compras().reduce((sum, item) => sum + item.total, 0)
@@ -72,7 +72,7 @@ export class MantenimientoPageComponent {
     const auditoria = this.eventosAuditoria();
     const config = this.configuracion();
 
-    const stockNegativo = productos.filter(item => item.stockActual < 0).length;
+    const stockNegativo = productos.filter((item: any) => item.stockActual < 0).length;
     if (stockNegativo > 0) {
       diagnos.push({
         id: 'stock-negativo',
@@ -83,7 +83,7 @@ export class MantenimientoPageComponent {
       });
     }
 
-    const stockCero = productos.filter(item => item.stockActual === 0).length;
+    const stockCero = productos.filter((item: any) => item.stockActual === 0).length;
     if (stockCero > 0) {
       diagnos.push({
         id: 'stock-cero',
@@ -94,7 +94,7 @@ export class MantenimientoPageComponent {
       });
     }
 
-    const codigosDuplicados = this.contarDuplicados(productos.map(item => item.codigo));
+    const codigosDuplicados = this.contarDuplicados(productos.map((item: any) => item.codigo));
     if (codigosDuplicados > 0) {
       diagnos.push({
         id: 'codigos-duplicados',
@@ -105,7 +105,7 @@ export class MantenimientoPageComponent {
       });
     }
 
-    const usernamesDuplicados = this.contarDuplicados(usuarios.map(item => item.username));
+    const usernamesDuplicados = this.contarDuplicados(usuarios.map((item: any) => item.username));
     if (usernamesDuplicados > 0) {
       diagnos.push({
         id: 'usuarios-duplicados',
@@ -116,7 +116,7 @@ export class MantenimientoPageComponent {
       });
     }
 
-    const proveedoresDuplicados = this.contarDuplicados(proveedores.map(item => item.nombre));
+    const proveedoresDuplicados = this.contarDuplicados(proveedores.map((item: any) => item.nombre));
     if (proveedoresDuplicados > 0) {
       diagnos.push({
         id: 'proveedores-duplicados',
@@ -127,7 +127,7 @@ export class MantenimientoPageComponent {
       });
     }
 
-    const ventasSinDetalle = ventas.filter(item => item.detalles.length === 0).length;
+    const ventasSinDetalle = ventas.filter((item: any) => item.detalles.length === 0).length;
     if (ventasSinDetalle > 0) {
       diagnos.push({
         id: 'ventas-sin-detalle',
@@ -138,7 +138,7 @@ export class MantenimientoPageComponent {
       });
     }
 
-    const comprasSinDetalle = compras.filter(item => item.detalles.length === 0).length;
+    const comprasSinDetalle = compras.filter((item: any) => item.detalles.length === 0).length;
     if (comprasSinDetalle > 0) {
       diagnos.push({
         id: 'compras-sin-detalle',
@@ -149,7 +149,7 @@ export class MantenimientoPageComponent {
       });
     }
 
-    const cierresConDiferencia = cierres.filter(item => item.diferencia !== 0).length;
+    const cierresConDiferencia = cierres.filter((item: any) => item.diferencia !== 0).length;
     if (cierresConDiferencia > 0) {
       diagnos.push({
         id: 'cierres-diferencia',
@@ -160,7 +160,7 @@ export class MantenimientoPageComponent {
       });
     }
 
-    const eventosCriticos = auditoria.filter(item => item.nivel === 'DANGER').length;
+    const eventosCriticos = auditoria.filter((item: any) => item.nivel === 'DANGER').length;
     if (eventosCriticos > 0) {
       diagnos.push({
         id: 'auditoria-critica',
@@ -171,7 +171,7 @@ export class MantenimientoPageComponent {
       });
     }
 
-    const usuariosInactivos = usuarios.filter(item => !item.activo).length;
+    const usuariosInactivos = usuarios.filter((item: any) => !item.activo).length;
     if (usuariosInactivos > 0) {
       diagnos.push({
         id: 'usuarios-inactivos',
@@ -182,7 +182,7 @@ export class MantenimientoPageComponent {
       });
     }
 
-    const proveedoresInactivos = proveedores.filter(item => !item.activo).length;
+    const proveedoresInactivos = proveedores.filter((item: any) => !item.activo).length;
     if (proveedoresInactivos > 0) {
       diagnos.push({
         id: 'proveedores-inactivos',
@@ -283,8 +283,8 @@ export class MantenimientoPageComponent {
     const mapa = new Map<string, number>();
 
     values
-      .map(item => item.trim().toLowerCase())
-      .filter(item => item !== '')
+      .map((item: any) => item.trim().toLowerCase())
+      .filter((item: any) => item !== '')
       .forEach(item => {
         mapa.set(item, (mapa.get(item) ?? 0) + 1);
       });
@@ -306,3 +306,4 @@ export class MantenimientoPageComponent {
     }
   }
 }
+

@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "bodega-system"
+  },
+  "targets": {
+    "bodega-system": {
+      "hosting": {
+        "bodega": [
+          "bodega-system"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

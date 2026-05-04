@@ -1,0 +1,44 @@
+﻿FASE 4 COMPLETADA: CIERRE DIARIO CON FIRESTORE + FALLBACK LOCAL
+
+Qué quedó listo:
+- cierre-diario.service.ts ahora usa el SDK 'firebase' oficial
+- No depende de @angular/fire
+- Si Firestore está disponible en runtime, sincroniza con la colección: cierresDiarios
+- Si Firestore no está disponible o falla, usa localStorage sin romper la UI
+- Se creó el modelo: src/app/features/cierre-diario/models/cierre-diario.model.ts
+- Se integra con ChecklistService para calcular automáticamente métricas del checklist del día
+
+Métodos principales disponibles:
+- listarReportes()
+- obtenerReportes()
+- listarCierres()
+- obtenerReportePorFecha(fecha)
+- ultimoReporte()
+- generarReporte(usuario?)
+- generarCierre(usuario?)
+- cerrarDia(usuario?)
+- actualizarReporte(id, changes)
+- eliminarReporte(id)
+- reemplazarDesdeRespaldo(items)
+- exportarReporte(fileName, content)
+- sincronizarLocalAFirestore()
+
+Sugerencia de integración:
+1) generar reporte del día:
+   const reporte = this.cierreDiarioService.generarReporte(this.authService.usernameActual() || 'Sistema');
+
+2) exportar reporte:
+   this.cierreDiarioService.exportarReporte('cierre-dia.json', JSON.stringify(reporte, null, 2));
+
+3) listar historial:
+   const reportes = this.cierreDiarioService.listarReportes();
+
+Prueba recomendada:
+1) ng build
+2) ng serve
+3) entra a la pantalla Cierre diario
+4) genera el reporte del día
+5) revisa si aparecen documentos en la colección 'cierresDiarios' de Firestore
+
+Si el build falla por nombres específicos de métodos esperados por tu componente,
+me pegas el error y te preparo un HOTFIX DE COMPATIBILIDAD para cierre diario.

@@ -1,0 +1,21 @@
+﻿HOTFIX AUTH V4 APLICADO
+
+Qué corrige respecto al V3:
+- sesion() ahora devuelve un objeto compatible con Seguridad:
+  - username
+  - nombre
+  - rol
+  - loginAt
+  - lastActivityAt
+  - expiresAt
+- rolActual ya no está tipado como string estricto; ahora se deja compatible para no chocar con RolUsuario.
+
+Importante:
+- Este hotfix sigue siendo de compatibilidad local.
+- No usa @angular/fire.
+- Su objetivo inmediato es que tu proyecto vuelva a compilar.
+
+Ahora ejecuta:
+1) ng build
+2) si compila, ng serve
+3) prueba login con la pantalla actual

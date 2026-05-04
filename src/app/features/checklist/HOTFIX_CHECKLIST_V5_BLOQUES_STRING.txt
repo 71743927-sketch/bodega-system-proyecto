@@ -1,0 +1,24 @@
+﻿HOTFIX CHECKLIST V5 APLICADO
+
+Qué corrige:
+- BloqueChecklist ahora es union type de strings:
+  - APERTURA
+  - OPERACION
+  - CIERRE
+- ChecklistItem.bloque ahora usa ese tipo string literal
+- completarBloque(...) ahora acepta BloqueChecklist | string
+- defaultItems y normalización ahora usan bloques en MAYÚSCULA
+- Se mantiene Firestore + fallback localStorage
+- Se mantiene la API síncrona de tu UI
+
+Problema real que resuelve:
+- Tu HTML llama completarBloque('APERTURA')
+- Tu TS llama ordenarBloque('APERTURA')
+- El modelo anterior trataba BloqueChecklist como objeto, no como string
+
+Ahora ejecuta:
+1) ng build
+2) si compila, ng serve
+3) prueba Checklist
+
+Si aparece otro error, probablemente ya será ajuste puntual del componente (no del servicio).

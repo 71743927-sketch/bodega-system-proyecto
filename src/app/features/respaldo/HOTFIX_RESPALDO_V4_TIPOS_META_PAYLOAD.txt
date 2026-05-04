@@ -1,0 +1,26 @@
+﻿HOTFIX RESPALDO V4 APLICADO
+
+Qué corrige:
+- Se agregan tipos explícitos para meta:
+  - generadoEn
+  - generadoPor
+  - notas
+  - rawLocalStorage
+  - appKeys
+- Se agregan tipos explícitos para payload:
+  - configuracion
+  - productos
+  - proveedores
+  - usuarios
+  - movimientosInventario
+  - cierresCaja
+  - auditoria
+  - alertasDescartadas
+- Esto elimina los errores TS4111 por index signatures
+- Se mantiene Firestore + fallback localStorage
+- Se mantienen métodos legacy y la compatibilidad de la UI
+
+Ahora ejecuta:
+1) ng build
+2) si compila, ng serve
+3) prueba Respaldo

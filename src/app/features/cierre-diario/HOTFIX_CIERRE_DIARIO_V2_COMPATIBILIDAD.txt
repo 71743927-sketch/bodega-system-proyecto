@@ -1,0 +1,24 @@
+﻿HOTFIX CIERRE DIARIO V2 APLICADO
+
+Qué corrige:
+- cierre-diario-reporte.ts pasa a ser el modelo canónico usado por la UI
+- cierre-diario.model.ts ahora reexporta desde cierre-diario-reporte.ts
+- generarReporte(usuario?) ahora devuelve CierreDiarioReporte
+- Se agregan métodos esperados por la UI:
+  - obtenerHistorial()
+  - guardarReporte(reporte)
+- El modelo ahora incluye campos que esperaba tu componente:
+  - version
+  - generadoEn
+  - contexto
+  - metricas
+  - pendientes
+- Se mantiene Firestore + fallback localStorage
+- Se integra con ChecklistService para calcular pendientes y métricas
+
+Ahora ejecuta:
+1) ng build
+2) si compila, ng serve
+3) prueba Cierre diario
+
+Si sale otro error, probablemente ya será un ajuste pequeño de nombres/campos del componente.

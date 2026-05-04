@@ -110,20 +110,20 @@ export class ExportacionesPageComponent {
 
       case 'VENTAS':
         return this.ventas()
-          .filter(item => this.estaEnRango(item.fecha))
-          .map(item => ({
+          .filter((item: any) => this.estaEnRango(item.fecha))
+          .map((item: any) => ({
             id: item.id,
             fecha: item.fecha,
             metodoPago: item.metodoPago,
             total: item.total,
             cantidadItems: item.detalles.length,
-            detalleResumen: item.detalles.map(d => `${d.nombre} x${d.cantidad}`).join(' | ')
+            detalleResumen: item.detalles.map((d: any) => `${d.nombre} x${d.cantidad}`).join(' | ')
           }));
 
       case 'COMPRAS':
         return this.compras()
-          .filter(item => this.estaEnRango(item.fecha))
-          .map(item => ({
+          .filter((item: any) => this.estaEnRango(item.fecha))
+          .map((item: any) => ({
             id: item.id,
             fecha: item.fecha,
             proveedor: item.proveedorNombre,
@@ -134,7 +134,7 @@ export class ExportacionesPageComponent {
           }));
 
       case 'PRODUCTOS':
-        return this.productos().map(item => ({
+        return this.productos().map((item: any) => ({
           id: item.id,
           codigo: item.codigo,
           nombre: item.nombre,
@@ -147,7 +147,7 @@ export class ExportacionesPageComponent {
         }));
 
       case 'USUARIOS':
-        return this.usuarios().map(item => ({
+        return this.usuarios().map((item: any) => ({
           id: item.id,
           nombre: item.nombre,
           username: item.username,
@@ -159,8 +159,8 @@ export class ExportacionesPageComponent {
 
       case 'CIERRES_CAJA':
         return this.cierresCaja()
-          .filter(item => this.estaEnRango(item.fechaCierre))
-          .map(item => ({
+          .filter((item: any) => this.estaEnRango(item.fechaCierre))
+          .map((item: any) => ({
             id: item.id,
             fechaApertura: item.fechaApertura,
             fechaCierre: item.fechaCierre,
@@ -178,8 +178,8 @@ export class ExportacionesPageComponent {
 
       case 'AUDITORIA':
         return this.eventosAuditoria()
-          .filter(item => this.estaEnRango(item.fecha))
-          .map(item => ({
+          .filter((item: any) => this.estaEnRango(item.fecha))
+          .map((item: any) => ({
             id: item.id,
             fecha: item.fecha,
             modulo: item.modulo,
@@ -259,5 +259,7 @@ export class ExportacionesPageComponent {
     );
   }
 }
+
+
 
 

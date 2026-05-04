@@ -1,0 +1,27 @@
+﻿HOTFIX CHECKLIST V3 APLICADO
+
+Qué corrige:
+- checklist-diario.ts pasa a ser el modelo canónico usado por la UI
+- checklist.model.ts ahora reexporta desde checklist-diario.ts
+- responsable ya no es opcional; ahora siempre es string
+- checklist.service.ts ahora importa y devuelve el tipo de checklist-diario.ts
+- Se mantiene la API síncrona que tu UI espera:
+  - obtenerChecklistDelDia(usuario?)
+  - alternarItem(checklist, itemId)
+  - actualizarObservacion(checklist, itemId, observacion)
+  - completarBloque(checklist, bloqueId)
+  - reiniciarChecklist(usuario?)
+  - exportarChecklist(fileName, content)
+- Se mantiene Firestore + fallback localStorage
+
+Problema real que resuelve:
+- Tu componente usa el tipo de checklist-diario.ts
+- El servicio estaba devolviendo el tipo de checklist.model.ts
+- Ahora ambos apuntan al mismo modelo
+
+Ahora ejecuta:
+1) ng build
+2) si compila, ng serve
+3) prueba Checklist y Cierre diario
+
+Si sale otro error, probablemente ya será un ajuste pequeño de nombres/campos.

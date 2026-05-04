@@ -38,17 +38,17 @@ export class CalidadService {
 
     const hallazgos: HallazgoCalidad[] = [];
 
-    const productoIds = new Set(productos.map(item => item.id));
-    const productoNombres = new Set(productos.map(item => item.nombre.trim().toLowerCase()));
-    const proveedorNombres = new Set(proveedores.map(item => item.nombre.trim().toLowerCase()));
+    const productoIds = new Set(productos.map((item: any) => item.id));
+    const productoNombres = new Set(productos.map((item: any) => item.nombre.trim().toLowerCase()));
+    const proveedorNombres = new Set(proveedores.map((item: any) => item.nombre.trim().toLowerCase()));
 
     const ahora = Date.now();
 
     const futuros = [
-      ...ventas.filter(item => new Date(item.fecha).getTime() > ahora).map(item => `Venta #${item.id}`),
-      ...compras.filter(item => new Date(item.fecha).getTime() > ahora).map(item => `Compra #${item.id}`),
-      ...cierres.filter(item => new Date(item.fechaCierre).getTime() > ahora).map(item => `Cierre #${item.id}`),
-      ...auditoria.filter(item => new Date(item.fecha).getTime() > ahora).map(item => `Evento #${item.id}`)
+      ...ventas.filter((item: any) => new Date(item.fecha).getTime() > ahora).map((item: any) => `Venta #${item.id}`),
+      ...compras.filter((item: any) => new Date(item.fecha).getTime() > ahora).map((item: any) => `Compra #${item.id}`),
+      ...cierres.filter((item: any) => new Date(item.fechaCierre).getTime() > ahora).map((item: any) => `Cierre #${item.id}`),
+      ...auditoria.filter((item: any) => new Date(item.fecha).getTime() > ahora).map((item: any) => `Evento #${item.id}`)
     ];
 
     if (futuros.length > 0) {
@@ -63,7 +63,7 @@ export class CalidadService {
       });
     }
 
-    const ventasSinDetalle = ventas.filter(item => item.detalles.length === 0);
+    const ventasSinDetalle = ventas.filter((item: any) => item.detalles.length === 0);
     if (ventasSinDetalle.length > 0) {
       hallazgos.push({
         id: 'ventas-sin-detalle',
@@ -71,12 +71,12 @@ export class CalidadService {
         categoria: 'Ventas',
         titulo: 'Existen ventas sin detalle',
         detalle: `Se detectaron ${ventasSinDetalle.length} ventas sin líneas de ítems.`,
-        referencia: ventasSinDetalle.map(item => `#${item.id}`).slice(0, 8).join(', '),
+        referencia: ventasSinDetalle.map((item: any) => `#${item.id}`).slice(0, 8).join(', '),
         sugerencia: 'Corregir registros incompletos o excluirlos de analítica y comprobantes.'
       });
     }
 
-    const comprasSinDetalle = compras.filter(item => item.detalles.length === 0);
+    const comprasSinDetalle = compras.filter((item: any) => item.detalles.length === 0);
     if (comprasSinDetalle.length > 0) {
       hallazgos.push({
         id: 'compras-sin-detalle',
@@ -84,7 +84,7 @@ export class CalidadService {
         categoria: 'Compras',
         titulo: 'Existen compras sin detalle',
         detalle: `Se detectaron ${comprasSinDetalle.length} compras sin líneas de productos.`,
-        referencia: comprasSinDetalle.map(item => `#${item.id}`).slice(0, 8).join(', '),
+        referencia: comprasSinDetalle.map((item: any) => `#${item.id}`).slice(0, 8).join(', '),
         sugerencia: 'Revisar la captura de compras y normalizar los registros incompletos.'
       });
     }
@@ -125,7 +125,7 @@ export class CalidadService {
       });
     }
 
-    const comprasProveedorHuerfano = compras.filter(item => !proveedorNombres.has(item.proveedorNombre.trim().toLowerCase()));
+    const comprasProveedorHuerfano = compras.filter((item: any) => !proveedorNombres.has(item.proveedorNombre.trim().toLowerCase()));
     if (comprasProveedorHuerfano.length > 0) {
       hallazgos.push({
         id: 'compras-proveedor-huerfano',
@@ -133,12 +133,12 @@ export class CalidadService {
         categoria: 'Integridad referencial',
         titulo: 'Compras con proveedor no encontrado',
         detalle: `Hay ${comprasProveedorHuerfano.length} compras cuyo proveedor ya no existe en el catálogo actual.`,
-        referencia: comprasProveedorHuerfano.map(item => `${item.id}:${item.proveedorNombre}`).slice(0, 6).join(', '),
+        referencia: comprasProveedorHuerfano.map((item: any) => `${item.id}:${item.proveedorNombre}`).slice(0, 6).join(', '),
         sugerencia: 'Mantener proveedores inactivos en lugar de borrarlos para preservar historial.'
       });
     }
 
-    const movimientosHuerfanos = movimientos.filter(item => !productoIds.has(item.productoId));
+    const movimientosHuerfanos = movimientos.filter((item: any) => !productoIds.has(item.productoId));
     if (movimientosHuerfanos.length > 0) {
       hallazgos.push({
         id: 'movimientos-huerfanos',
@@ -146,12 +146,12 @@ export class CalidadService {
         categoria: 'Inventario',
         titulo: 'Movimientos de inventario con producto inválido',
         detalle: `Se detectaron ${movimientosHuerfanos.length} movimientos apuntando a productos inexistentes.`,
-        referencia: movimientosHuerfanos.map(item => `#${item.id}/P${item.productoId}`).slice(0, 6).join(', '),
+        referencia: movimientosHuerfanos.map((item: any) => `#${item.id}/P${item.productoId}`).slice(0, 6).join(', '),
         sugerencia: 'Corregir productoId inválidos o regenerar la bitácora de inventario.'
       });
     }
 
-    const stockNegativo = productos.filter(item => item.stockActual < 0);
+    const stockNegativo = productos.filter((item: any) => item.stockActual < 0);
     if (stockNegativo.length > 0) {
       hallazgos.push({
         id: 'stock-negativo',
@@ -159,12 +159,12 @@ export class CalidadService {
         categoria: 'Inventario',
         titulo: 'Existen productos con stock negativo',
         detalle: `Se detectaron ${stockNegativo.length} productos con stock por debajo de cero.`,
-        referencia: stockNegativo.map(item => `${item.codigo}:${item.stockActual}`).slice(0, 8).join(', '),
+        referencia: stockNegativo.map((item: any) => `${item.codigo}:${item.stockActual}`).slice(0, 8).join(', '),
         sugerencia: 'Revisar ventas, ajustes y configuración de stock negativo.'
       });
     }
 
-    const precioInvalido = productos.filter(item => item.precioVenta < item.precioCompra || item.precioVenta <= 0 || item.precioCompra < 0);
+    const precioInvalido = productos.filter((item: any) => item.precioVenta < item.precioCompra || item.precioVenta <= 0 || item.precioCompra < 0);
     if (precioInvalido.length > 0) {
       hallazgos.push({
         id: 'precios-invalidos',
@@ -172,12 +172,12 @@ export class CalidadService {
         categoria: 'Productos',
         titulo: 'Productos con precios potencialmente problemáticos',
         detalle: `Se detectaron ${precioInvalido.length} productos con margen negativo o precios no válidos.`,
-        referencia: precioInvalido.map(item => `${item.codigo} C:${item.precioCompra} V:${item.precioVenta}`).slice(0, 8).join(' | '),
+        referencia: precioInvalido.map((item: any) => `${item.codigo} C:${item.precioCompra} V:${item.precioVenta}`).slice(0, 8).join(' | '),
         sugerencia: 'Revisar reglas de fijación de precios y carga inicial del catálogo.'
       });
     }
 
-    const cierresAnomalos = cierres.filter(item => Math.abs(item.diferencia) >= 20);
+    const cierresAnomalos = cierres.filter((item: any) => Math.abs(item.diferencia) >= 20);
     if (cierresAnomalos.length > 0) {
       hallazgos.push({
         id: 'cierres-anomalos',
@@ -185,12 +185,12 @@ export class CalidadService {
         categoria: 'Caja',
         titulo: 'Cierres de caja con diferencia alta',
         detalle: `Hay ${cierresAnomalos.length} cierres con diferencia absoluta mayor o igual a S/ 20.00.`,
-        referencia: cierresAnomalos.map(item => `#${item.id}: ${item.diferencia}`).slice(0, 6).join(', '),
+        referencia: cierresAnomalos.map((item: any) => `#${item.id}: ${item.diferencia}`).slice(0, 6).join(', '),
         sugerencia: 'Auditar caja, revisar ingresos/egresos manuales y efectivo contado.'
       });
     }
 
-    const usuariosDuplicados = this.contarDuplicados(usuarios.map(item => item.username));
+    const usuariosDuplicados = this.contarDuplicados(usuarios.map((item: any) => item.username));
     if (usuariosDuplicados > 0) {
       hallazgos.push({
         id: 'usuarios-duplicados',
@@ -203,7 +203,7 @@ export class CalidadService {
       });
     }
 
-    const productosDuplicados = this.contarDuplicados(productos.map(item => item.codigo));
+    const productosDuplicados = this.contarDuplicados(productos.map((item: any) => item.codigo));
     if (productosDuplicados > 0) {
       hallazgos.push({
         id: 'productos-duplicados',
@@ -216,7 +216,7 @@ export class CalidadService {
       });
     }
 
-    const warningsAuth = auditoria.filter(item => item.modulo === 'AUTH' && item.nivel === 'WARNING').length;
+    const warningsAuth = auditoria.filter((item: any) => item.modulo === 'AUTH' && item.nivel === 'WARNING').length;
     if (warningsAuth > 0) {
       hallazgos.push({
         id: 'auth-warnings',
@@ -264,8 +264,8 @@ export class CalidadService {
     const mapa = new Map<string, number>();
 
     values
-      .map(item => item.trim().toLowerCase())
-      .filter(item => item !== '')
+      .map((item: any) => item.trim().toLowerCase())
+      .filter((item: any) => item !== '')
       .forEach(item => {
         mapa.set(item, (mapa.get(item) ?? 0) + 1);
       });
@@ -273,3 +273,4 @@ export class CalidadService {
     return Array.from(mapa.values()).filter(count => count > 1).length;
   }
 }
+

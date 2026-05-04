@@ -111,9 +111,9 @@ export class AlertasPageComponent {
     }
 
     // AUDITORÍA: eventos críticos y warnings recientes
-    const eventosRecientes = this.eventosAuditoria().filter(evento => new Date(evento.fecha) >= hace7Dias);
-    const criticos = eventosRecientes.filter(evento => evento.nivel === 'DANGER').length;
-    const warnings = eventosRecientes.filter(evento => evento.nivel === 'WARNING').length;
+    const eventosRecientes = this.eventosAuditoria().filter((evento: any) => new Date(evento.fecha) >= hace7Dias);
+    const criticos = eventosRecientes.filter((evento: any) => evento.nivel === 'DANGER').length;
+    const warnings = eventosRecientes.filter((evento: any) => evento.nivel === 'WARNING').length;
 
     if (criticos > 0) {
       alertas.push({
@@ -154,13 +154,13 @@ export class AlertasPageComponent {
         titulo: 'Usuarios inactivos detectados',
         descripcion: `Hay ${inactivos.length} usuarios inactivos en el sistema.`,
         accionSugerida: 'Confirmar si deben mantenerse inactivos o reactivarse.',
-        referencia: inactivos.map(item => item.username).join(', '),
+        referencia: inactivos.map((item: any) => item.username).join(', '),
         descartada: this.alertasService.estaDescartada('usuarios-inactivos')
       });
     }
 
     // VENTAS DEL DÍA
-    const ventasHoy = this.ventas().filter(item => new Date(item.fecha) >= hoyInicio);
+    const ventasHoy = this.ventas().filter((item: any) => new Date(item.fecha) >= hoyInicio);
     if (ventasHoy.length === 0) {
       alertas.push({
         id: 'ventas-sin-registros-hoy',
@@ -275,3 +275,4 @@ export class AlertasPageComponent {
     this.auditoriaService.registrar('SISTEMA', 'ALERTAS_LIMPIAR_DESCARTES', 'Se limpiaron los descartes de alertas.', 'INFO');
   }
 }
+

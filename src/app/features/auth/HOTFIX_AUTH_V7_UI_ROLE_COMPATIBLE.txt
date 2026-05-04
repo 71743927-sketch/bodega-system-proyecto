@@ -1,0 +1,39 @@
+﻿HOTFIX AUTH V7 APLICADO
+
+Qué corrige:
+- Usa roles internos compatibles con la UI actual:
+  - admin
+  - cajero
+  - vendedor
+  - operador
+- Lee usuarios reales desde Firestore (colección: usuarios)
+- Usa claves nuevas de sesión/cache para ignorar sesiones antiguas dañadas:
+  - app_auth_session_v7
+  - app_auth_users_cache_v7
+
+Escenario esperado con tu base:
+- Si en Firestore existe:
+  username = admin
+  nombres  = Administrador
+  apellidos= General
+  rol      = ADMIN
+  activo   = true
+- Entonces, al iniciar sesión con admin debe quedar:
+  nombreActual() = "Administrador General"
+  rolActual()    = "admin"
+- Y la UI ya no debería pintar "Invitado"
+
+MUY IMPORTANTE DESPUÉS DE APLICAR:
+1) Detén ng serve si está corriendo
+2) Ejecuta ng build
+3) Ejecuta ng serve otra vez
+4) En el navegador haz Ctrl + F5
+5) Cierra sesión y vuelve a entrar con admin
+
+Si quieres limpiar manualmente sesiones viejas en consola del navegador:
+localStorage.removeItem('app_auth_session');
+localStorage.removeItem('app_auth_users_cache');
+localStorage.removeItem('app_auth_session_v7');
+localStorage.removeItem('app_auth_users_cache_v7');
+
+Si aun así sigue saliendo Invitado, entonces el siguiente punto a corregir será el método etiquetaRol(...) del layout.

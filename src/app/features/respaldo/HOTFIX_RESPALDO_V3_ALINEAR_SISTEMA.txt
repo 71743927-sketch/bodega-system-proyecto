@@ -1,0 +1,28 @@
+﻿HOTFIX RESPALDO V3 APLICADO
+
+Qué corrige:
+- respaldo-sistema.ts pasa a ser el modelo canónico usado por la UI
+- respaldo.model.ts ahora reexporta desde respaldo-sistema.ts
+- RespaldoSistema ahora tiene campos directos que usa el componente:
+  - meta
+  - configuracion
+  - productos
+  - ventas
+  - compras
+  - proveedores
+  - usuarios
+  - movimientosInventario
+  - cierresCaja
+  - auditoria
+  - alertasDescartadas
+  - checklist
+  - cierreDiario
+- generarRespaldo(usuario?, notas?) ahora acepta dos parámetros
+- Se corrige acceso a meta['rawLocalStorage']
+- Se mantienen métodos legacy
+- Se mantiene Firestore + fallback localStorage
+
+Ahora ejecuta:
+1) ng build
+2) si compila, ng serve
+3) prueba Respaldo

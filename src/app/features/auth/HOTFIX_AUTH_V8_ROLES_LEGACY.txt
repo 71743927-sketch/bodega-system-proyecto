@@ -1,0 +1,25 @@
+﻿HOTFIX AUTH V8 APLICADO
+
+CAUSA REAL DEL ERROR:
+- El layout solo reconoce: DUENO, CAJERO, ALMACENERO, SUPERVISOR
+- auth.service.ts estaba devolviendo: admin, cajero, vendedor, operador
+- por eso etiquetaRol(...) caía en default => Invitado
+
+MAPEO NUEVO:
+- ADMIN / administrador / admin -> DUENO
+- SUPERVISOR / gerente -> SUPERVISOR
+- CAJERO / ventas / vendedor -> CAJERO
+- ALMACEN / operador / bodega -> ALMACENERO
+
+PASOS:
+1) ng build
+2) ng serve
+3) en el navegador, cierra sesión
+4) vuelve a entrar con admin
+5) si quieres limpiar cache:
+   localStorage.removeItem('app_auth_session_v8');
+   localStorage.removeItem('app_auth_users_cache_v8');
+
+RESULTADO ESPERADO:
+- nombre: Administrador General
+- rol visible: Dueño

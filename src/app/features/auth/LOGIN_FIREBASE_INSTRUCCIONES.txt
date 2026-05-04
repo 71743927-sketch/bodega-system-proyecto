@@ -1,0 +1,40 @@
+﻿FASE 1 COMPLETADA: LOGIN CON FIREBASE AUTH
+
+Qué quedó listo:
+- auth.service.ts conectado a Firebase Authentication
+- auth.guard.ts creado para proteger rutas
+- Perfil de usuario en Firestore: /usuarios/{uid}
+
+Ejemplo básico en tu componente login:
+
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html'
+})
+export class LoginComponent {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
+  email = '';
+  password = '';
+  errorMsg = '';
+  loading = false;
+
+  async iniciarSesion() {
+    this.errorMsg = '';
+    this.loading = true;
+    try {
+      await this.authService.login(this.email, this.password);
+      await this.router.navigate(['/dashboard']);
+    } catch (error: any) {
+      this.errorMsg = error?.message ?? 'No se pudo iniciar sesión';
+      console.error(error);
+    } finally {
+      this.loading = false;
+    }
+  }
+}

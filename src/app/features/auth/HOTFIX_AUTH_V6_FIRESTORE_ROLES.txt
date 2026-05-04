@@ -1,0 +1,37 @@
+﻿HOTFIX AUTH V6 APLICADO
+
+Qué corrige:
+- Lee usuarios reales desde Firestore (colección: usuarios) y los guarda en cache local
+- El login sigue siendo síncrono porque usa el cache precargado
+- El rol ya no queda como Invitado si en Firestore existe un rol como ADMIN
+- Normaliza roles al formato esperado por la app:
+  - ADMIN
+  - CAJERO
+  - VENDEDOR
+  - OPERADOR
+- Mantiene compatibilidad con:
+  - sesion
+  - nombreActual
+  - rolActual
+  - validarSesion()
+  - tieneRol()
+  - renovarActividad()
+  - usernameActual()
+
+Escenario real esperado con tu base:
+- Si existe usuarios/{id} con username=admin, nombres=Administrador, apellidos=General, rol=ADMIN y activo=true,
+  entonces al iniciar sesión con admin debe quedar:
+  - nombreActual() = "Administrador General"
+  - rolActual() = "ADMIN"
+
+IMPORTANTE:
+- Si antes quedó una sesión vieja con rol incorrecto, primero haz logout y vuelve a entrar.
+- Si quieres limpiar cache manualmente en el navegador:
+  localStorage.removeItem('app_auth_session')
+  localStorage.removeItem('app_auth_users_cache')
+
+Prueba recomendada:
+1) ng build
+2) ng serve
+3) entra a login con admin
+4) verifica que el sidebar ya no muestre Invitado y tome el rol ADMIN

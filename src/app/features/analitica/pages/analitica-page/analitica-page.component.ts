@@ -98,19 +98,19 @@ export class AnaliticaPageComponent {
   }
 
   ventasFiltradas = computed(() =>
-    this.ventas().filter(item => this.estaEnRango(item.fecha))
+    this.ventas().filter((item: any) => this.estaEnRango(item.fecha))
   );
 
   comprasFiltradas = computed(() =>
-    this.compras().filter(item => this.estaEnRango(item.fecha))
+    this.compras().filter((item: any) => this.estaEnRango(item.fecha))
   );
 
   cierresFiltrados = computed(() =>
-    this.cierresCaja().filter(item => this.estaEnRango(item.fechaCierre))
+    this.cierresCaja().filter((item: any) => this.estaEnRango(item.fechaCierre))
   );
 
   eventosFiltrados = computed(() =>
-    this.eventosAuditoria().filter(item => this.estaEnRango(item.fecha))
+    this.eventosAuditoria().filter((item: any) => this.estaEnRango(item.fecha))
   );
 
   ingresosVentas = computed(() =>
@@ -136,7 +136,7 @@ export class AnaliticaPageComponent {
   );
 
   rotacionSimple = computed(() => {
-    const productosActivos = this.productos().filter(item => item.activo).length;
+    const productosActivos = this.productos().filter((item: any) => item.activo).length;
     return productosActivos === 0 ? 0 : this.unidadesVendidas() / productosActivos;
   });
 
@@ -145,15 +145,15 @@ export class AnaliticaPageComponent {
     return ventas === 0 ? 0 : (this.utilidadEstimada() / ventas) * 100;
   });
 
-  usuariosActivos = computed(() => this.usuarios().filter(item => item.activo).length);
-  usuariosInactivos = computed(() => this.usuarios().filter(item => !item.activo).length);
+  usuariosActivos = computed(() => this.usuarios().filter((item: any) => item.activo).length);
+  usuariosInactivos = computed(() => this.usuarios().filter((item: any) => !item.activo).length);
 
   eventosCriticos = computed(() =>
-    this.eventosFiltrados().filter(item => item.nivel === 'DANGER').length
+    this.eventosFiltrados().filter((item: any) => item.nivel === 'DANGER').length
   );
 
   warningsAuditoria = computed(() =>
-    this.eventosFiltrados().filter(item => item.nivel === 'WARNING').length
+    this.eventosFiltrados().filter((item: any) => item.nivel === 'WARNING').length
   );
 
   promedioDiferenciaCaja = computed(() => {
@@ -230,7 +230,7 @@ export class AnaliticaPageComponent {
   });
 
   categoriasCriticas = computed<CategoriaCritica[]>(() => {
-    const criticos = this.productos().filter(item => item.stockActual <= item.stockMinimo);
+    const criticos = this.productos().filter((item: any) => item.stockActual <= item.stockMinimo);
     const total = criticos.length;
     const mapa = new Map<string, number>();
 
@@ -260,7 +260,7 @@ export class AnaliticaPageComponent {
   saludOperacion = computed(() => {
     const criticos = this.eventosCriticos();
     const warnings = this.warningsAuditoria();
-    const stockCritico = this.productos().filter(item => item.stockActual <= item.stockMinimo).length;
+    const stockCritico = this.productos().filter((item: any) => item.stockActual <= item.stockMinimo).length;
 
     if (criticos > 0 || stockCritico >= 3) {
       return {
@@ -295,3 +295,4 @@ export class AnaliticaPageComponent {
     this.fechaFin.set('');
   }
 }
+

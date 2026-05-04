@@ -1,0 +1,63 @@
+﻿FASE 2 COMPLETADA: ALERTAS CON FIRESTORE + FALLBACK LOCAL
+
+Qué quedó listo:
+- alertas.service.ts ahora usa el SDK 'firebase' oficial
+- No depende de @angular/fire
+- Si Firestore está disponible en runtime, sincroniza en tiempo real con la colección: alertas
+- Si Firestore no está disponible o falla, usa localStorage sin romper la UI
+- Se creó el modelo: src/app/features/alertas/models/alerta.model.ts
+
+Métodos principales disponibles:
+- listarAlertas()
+- obtenerAlertas()
+- getAlertas()
+- listar()
+- obtenerTodas()
+- obtenerPendientes()
+- obtenerLeidas()
+- contarPendientes()
+- obtenerPorId(id)
+- crearAlerta(input)
+- registrarAlerta(input)
+- agregarAlerta(input)
+- agregar(input)
+- actualizarAlerta(id, changes)
+- actualizar(id, changes)
+- marcarComoLeida(id, usuario?)
+- marcarLeida(id, usuario?)
+- archivarAlerta(id)
+- eliminarAlerta(id)
+- eliminar(id)
+- borrarAlerta(id)
+- limpiarTodas()
+- sincronizarLocalAFirestore()
+
+Sugerencia de integración en página/componente:
+
+1) Listar alertas:
+   this.alertas$ = this.alertasService.listarAlertas();
+
+2) Crear alerta:
+   await this.alertasService.crearAlerta({
+     titulo: 'Stock bajo',
+     mensaje: 'El producto X está por agotarse',
+     prioridad: 'alta',
+     modulo: 'inventario',
+     usuario: 'Sistema'
+   });
+
+3) Marcar como leída:
+   await this.alertasService.marcarComoLeida(id, 'Clinton');
+
+4) Sincronizar datos antiguos de localStorage a Firestore:
+   await this.alertasService.sincronizarLocalAFirestore();
+
+Prueba recomendada:
+1) ng build
+2) ng serve
+3) entra a la pantalla Alertas
+4) crea / lista / marca como leída / elimina
+5) revisa si aparecen documentos en la colección 'alertas' de Firestore
+
+Si el build falla por nombres específicos de métodos esperados por tu componente,
+me pegas el error y te preparo un HOTFIX DE COMPATIBILIDAD para alertas.

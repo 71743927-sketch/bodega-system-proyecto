@@ -1,0 +1,34 @@
+﻿HOTFIX CIERRE DIARIO V4 APLICADO
+
+Qué corrige:
+- ContextoCierreDiario ahora incluye:
+  - cajaActiva
+  - calidadWarnings
+  - calidadErrores
+  - checklistPendientesCriticos
+  - checklistPorcentaje
+- MetricasCierreDiario ahora incluye:
+  - ventasTotal
+  - comprasTotal
+  - productosStockCritico
+  - eventosWarningHoy
+  - eventosCriticosHoy
+  - diferenciaCajaPromedioHoy
+  - utilidadEstimada
+  - ventasCantidad
+  - comprasCantidad
+- observaciones ahora es string obligatorio
+- generadoEn sigue siendo string ISO
+- Se mantiene Firestore + fallback localStorage
+- Se mantiene obtenerHistorial(), guardarReporte(...), generarReporte(...)
+
+Problema real que resuelve:
+- Tu template y TS usan más campos en contexto/metricas de los que tenía el modelo anterior
+- Tu template asume observaciones siempre definido
+
+Ahora ejecuta:
+1) ng build
+2) si compila, ng serve
+3) prueba Cierre diario
+
+Si sale otro error, ya debería ser un ajuste puntual pequeño.

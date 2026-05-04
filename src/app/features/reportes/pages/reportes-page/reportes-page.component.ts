@@ -149,7 +149,10 @@ export class ReportesPageComponent {
     };
 
     this.usuarios().forEach(usuario => {
-      conteo[usuario.rol] += 1;
+      const rol = String(usuario.rol || '').toUpperCase() as keyof typeof conteo;
+      if (rol in conteo) {
+        conteo[rol] += 1;
+      }
     });
 
     return conteo;
@@ -181,4 +184,5 @@ export class ReportesPageComponent {
     }
   }
 }
+
 

@@ -1,4 +1,17 @@
-﻿import { Injectable, inject, signal } from '@angular/core';
+﻿import { Injectable, signal } from '@angular/core';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  query,
+  setDoc,
+  updateDoc
+} from 'firebase/firestore';
+import { firestoreDb } from '../../../core/firebase/firebase.config';
 import { AuditoriaService } from '../../auditoria/services/auditoria.service';
 import { Producto } from '../models/producto';
 
@@ -59,11 +72,32 @@ const DEFAULT_PRODUCTOS: Producto[] = [
   providedIn: 'root'
 })
 export class ProductosService {
+  private readonly auditoriaService = new AuditoriaService();
+  private readonly productosRef = collection(firestoreDb, 'productos');
 
-  private readonly auditoriaService = inject(AuditoriaService);
-  private readonly _productos = signal<Producto[]>(this.cargarDesdeStorage());
-
+  private readonly _productos = signal<Producto[]>([]);
   productosLectura = this._productos.asReadonly();
+
+  private migrationTried = false;
+
+  constructor() {
+    const productosQuery = query(this.productosRef, orderBy('nombre'));
+
+    onSnapshot(productosQuery, {
+      next: snapshot => {
+        const items = snapshot.docs.map(docSnap => ({
+          ...(docSnap.data() as Producto),
+          observacion: (docSnap.data() as Producto).observacion ?? ''
+        }));
+        this._productos.set(items);
+        this.intentarMigracionInicial(items);
+      },
+      error: () => {
+        const local = this.cargarDesdeStorage();
+        this._productos.set(local);
+      }
+    });
+  }
 
   obtenerSiguienteId(): number {
     const lista = this._productos();
@@ -76,59 +110,75 @@ export class ProductosService {
   }
 
   agregarProducto(producto: Producto) {
-    this._productos.update(lista => {
-      const nueva = [...lista, { ...producto }].sort((a, b) => a.nombre.localeCompare(b.nombre));
-      this.guardarEnStorage(nueva);
-      return nueva;
-    });
+    const payload: Producto = {
+      ...producto,
+      observacion: producto.observacion ?? ''
+    };
 
-    this.auditoriaService.registrar(
-      'PRODUCTOS',
-      'CREAR',
-      `Producto creado: ${producto.nombre}`,
-      'SUCCESS',
-      `Código: ${producto.codigo}`
-    );
+    setDoc(doc(firestoreDb, 'productos', String(payload.id)), payload)
+      .then(() => {
+        this.auditoriaService.registrar(
+          'PRODUCTOS',
+          'CREAR',
+          `Producto creado: ${payload.nombre}`,
+          'SUCCESS',
+          `Código: ${payload.codigo}`
+        );
+      })
+      .catch(() => {
+        const nueva = [...this._productos(), payload].sort((a, b) => a.nombre.localeCompare(b.nombre));
+        this._productos.set(nueva);
+        this.guardarEnStorage(nueva);
+      });
   }
 
   actualizarProducto(productoActualizado: Producto) {
-    const anterior = this._productos().find(item => item.id === productoActualizado.id);
+    const payload: Producto = {
+      ...productoActualizado,
+      observacion: productoActualizado.observacion ?? ''
+    };
 
-    this._productos.update(lista => {
-      const nueva = lista
-        .map(item => item.id === productoActualizado.id ? { ...productoActualizado } : item)
-        .sort((a, b) => a.nombre.localeCompare(b.nombre));
-      this.guardarEnStorage(nueva);
-      return nueva;
-    });
+    const anterior = this._productos().find(item => item.id === payload.id);
 
-    this.auditoriaService.registrar(
-      'PRODUCTOS',
-      'ACTUALIZAR',
-      `Producto actualizado: ${productoActualizado.nombre}`,
-      'INFO',
-      anterior ? `Stock ${anterior.stockActual} → ${productoActualizado.stockActual}` : productoActualizado.codigo
-    );
+    updateDoc(doc(firestoreDb, 'productos', String(payload.id)), { ...payload } as never)
+      .then(() => {
+        this.auditoriaService.registrar(
+          'PRODUCTOS',
+          'ACTUALIZAR',
+          `Producto actualizado: ${payload.nombre}`,
+          'INFO',
+          anterior ? `Stock ${anterior.stockActual} -> ${payload.stockActual}` : payload.codigo
+        );
+      })
+      .catch(() => {
+        const nueva = this._productos()
+          .map(item => item.id === payload.id ? payload : item)
+          .sort((a, b) => a.nombre.localeCompare(b.nombre));
+        this._productos.set(nueva);
+        this.guardarEnStorage(nueva);
+      });
   }
 
   eliminarProducto(id: number) {
     const producto = this._productos().find(item => item.id === id);
 
-    this._productos.update(lista => {
-      const nueva = lista.filter(item => item.id !== id);
-      this.guardarEnStorage(nueva);
-      return nueva;
-    });
-
-    if (producto) {
-      this.auditoriaService.registrar(
-        'PRODUCTOS',
-        'ELIMINAR',
-        `Producto eliminado: ${producto.nombre}`,
-        'DANGER',
-        `Código: ${producto.codigo}`
-      );
-    }
+    deleteDoc(doc(firestoreDb, 'productos', String(id)))
+      .then(() => {
+        if (producto) {
+          this.auditoriaService.registrar(
+            'PRODUCTOS',
+            'ELIMINAR',
+            `Producto eliminado: ${producto.nombre}`,
+            'DANGER',
+            `Código: ${producto.codigo}`
+          );
+        }
+      })
+      .catch(() => {
+        const nueva = this._productos().filter(item => item.id !== id);
+        this._productos.set(nueva);
+        this.guardarEnStorage(nueva);
+      });
   }
 
   alternarEstado(id: number) {
@@ -137,54 +187,33 @@ export class ProductosService {
       return;
     }
 
-    const actualizado: Producto = {
+    this.actualizarProducto({
       ...actual,
       activo: !actual.activo
-    };
-
-    this.actualizarProducto(actualizado);
-    this.auditoriaService.registrar(
-      'PRODUCTOS',
-      'ESTADO',
-      `Estado actualizado: ${actualizado.nombre}`,
-      actualizado.activo ? 'SUCCESS' : 'WARNING',
-      actualizado.activo ? 'Activo' : 'Inactivo'
-    );
+    });
   }
 
   actualizarProductoStock(productoId: number, cantidadVendida: number) {
-    this._productos.update(lista => {
-      const nueva = lista.map(producto => {
-        if (producto.id !== productoId) {
-          return producto;
-        }
+    const actual = this._productos().find(item => item.id === productoId);
+    if (!actual) {
+      return;
+    }
 
-        return {
-          ...producto,
-          stockActual: producto.stockActual - cantidadVendida
-        };
-      });
-
-      this.guardarEnStorage(nueva);
-      return nueva;
+    this.actualizarProducto({
+      ...actual,
+      stockActual: actual.stockActual - cantidadVendida
     });
   }
 
   actualizarStockPorReposicion(productoId: number, cantidad: number) {
-    this._productos.update(lista => {
-      const nueva = lista.map(producto => {
-        if (producto.id !== productoId) {
-          return producto;
-        }
+    const actual = this._productos().find(item => item.id === productoId);
+    if (!actual) {
+      return;
+    }
 
-        return {
-          ...producto,
-          stockActual: producto.stockActual + cantidad
-        };
-      });
-
-      this.guardarEnStorage(nueva);
-      return nueva;
+    this.actualizarProducto({
+      ...actual,
+      stockActual: actual.stockActual + cantidad
     });
   }
 
@@ -194,14 +223,17 @@ export class ProductosService {
       observacion: item.observacion ?? ''
     }));
 
+    saneados.forEach(item => {
+      setDoc(doc(firestoreDb, 'productos', String(item.id)), item).catch(() => {});
+    });
+
     this._productos.set(saneados);
     this.guardarEnStorage(saneados);
   }
 
   restablecerBase() {
     const defaults = DEFAULT_PRODUCTOS.map(item => ({ ...item }));
-    this._productos.set(defaults);
-    this.guardarEnStorage(defaults);
+    this.reemplazarProductos(defaults);
 
     this.auditoriaService.registrar(
       'PRODUCTOS',
@@ -209,6 +241,25 @@ export class ProductosService {
       'Se restableció el catálogo base de productos.',
       'WARNING'
     );
+  }
+
+  private async intentarMigracionInicial(actual: Producto[]) {
+    if (this.migrationTried) {
+      return;
+    }
+    this.migrationTried = true;
+
+    if (actual.length > 0) {
+      return;
+    }
+
+    const local = this.cargarDesdeStorage();
+    if (local.length > 0) {
+      this.reemplazarProductos(local);
+      return;
+    }
+
+    this.reemplazarProductos(DEFAULT_PRODUCTOS);
   }
 
   private cargarDesdeStorage(): Producto[] {
@@ -236,10 +287,9 @@ export class ProductosService {
       if (typeof localStorage === 'undefined') {
         return;
       }
-
       localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
     } catch {
-      // Ignorar errores de persistencia local
+      // ignorar
     }
   }
 }

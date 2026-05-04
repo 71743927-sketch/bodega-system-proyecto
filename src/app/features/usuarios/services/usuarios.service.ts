@@ -4,8 +4,7 @@ import {
   deleteDoc,
   doc,
   onSnapshot,
-  setDoc,
-  serverTimestamp
+  setDoc
 } from 'firebase/firestore';
 import { firestoreDb } from '../../../core/firebase/firebase.config';
 
@@ -38,12 +37,6 @@ export class UsuariosService {
         this.usuarios.set(this.ordenarUsuarios(local));
       }
     });
-
-    if (typeof window !== 'undefined') {
-      (window as any).migrarUsuariosLocalToFirestore = async () => {
-        return await this.migrarLocalToFirestore();
-      };
-    }
   }
 
   // ==========================================================
@@ -352,32 +345,6 @@ export class UsuariosService {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
     } catch {
       // ignorar
-    }
-  }
-
-  async migrarLocalToFirestore(): Promise<number> {
-    try {
-      if (typeof localStorage === 'undefined') return 0;
-      const local = this.cargarDesdeStorage();
-      if (!Array.isArray(local) || local.length === 0) return 0;
-
-      // subir cada usuario (reemplazarUsuarios hace setDoc por cada item)
-      this.reemplazarUsuarios(local);
-
-      // crear backup en respalados
-      try {
-        const backupId = `users-mig-${Date.now()}`;
-        await setDoc(doc(firestoreDb, 'respaldos', backupId), {
-          tipo: 'usuarios-migracion',
-          createdAt: serverTimestamp(),
-          size: local.length,
-          usuarios: local
-        }, { merge: true });
-      } catch {}
-
-      return local.length;
-    } catch {
-      return 0;
     }
   }
 }
