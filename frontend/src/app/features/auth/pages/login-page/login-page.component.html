@@ -3,26 +3,44 @@
     <h1>BodegaSys</h1>
     <p class="subtitle">Inicio de sesiÃ³n con Firebase</p>
 
-    <form (submit)="login($event)">
-      <label for="email">Correo</label>
-      <input
-        id="email"
-        type="email"
-        placeholder="admin@bodega.com"
-        [value]="email()"
-        (input)="actualizarEmail($any($event.target).value)"
-        autocomplete="email"
-      />
+    <form (submit)="login(); $event.preventDefault()" novalidate>
+      <div class="field">
+        <label for="email">Correo</label>
+        <input
+          id="email"
+          type="email"
+          [formField]="loginForm.email"
+          placeholder="admin@bodega.com"
+          autocomplete="email"
+        />
 
-      <label for="password">ContraseÃ±a</label>
-      <input
-        id="password"
-        type="password"
-        placeholder="Ingrese su contraseÃ±a"
-        [value]="password()"
-        (input)="actualizarPassword($any($event.target).value)"
-        autocomplete="current-password"
-      />
+        @if (enviado() && emailRequerido()) {
+          <small class="error-text">El correo es obligatorio.</small>
+        }
+
+        @if (enviado() && emailFormatoInvalido()) {
+          <small class="error-text">Ingresa un correo valido.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="password">ContraseÃ±a</label>
+        <input
+          id="password"
+          type="password"
+          [formField]="loginForm.password"
+          placeholder="Ingrese su contraseÃ±a"
+          autocomplete="current-password"
+        />
+
+        @if (enviado() && passwordRequerido()) {
+          <small class="error-text">La contraseÃ±a es obligatoria.</small>
+        }
+
+        @if (enviado() && passwordCorto()) {
+          <small class="error-text">La contraseÃ±a debe tener minimo 6 caracteres.</small>
+        }
+      </div>
 
       @if (mensaje()) {
         <p class="message">{{ mensaje() }}</p>
@@ -31,6 +49,11 @@
       <button type="submit" [disabled]="cargando()">
         {{ cargando() ? 'Ingresando...' : 'Ingresar' }}
       </button>
+
+      <pre class="debug-form">
+{{ loginModel() | json }}
+      </pre>
     </form>
   </div>
 </section>
+

@@ -27,7 +27,12 @@ h1 {
 
 form {
   display: grid;
-  gap: 14px;
+  gap: 16px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
 }
 
 label {
@@ -61,4 +66,19 @@ button:disabled {
 .message {
   color: #dc2626;
   font-weight: 600;
+}
+
+.error-text {
+  color: #dc2626;
+  font-size: 13px;
+}
+
+.debug-form {
+  margin-top: 12px;
+  padding: 12px;
+  background: #f1f5f9;
+  color: #334155;
+  border-radius: 10px;
+  font-size: 12px;
+  white-space: pre-wrap;
 }
