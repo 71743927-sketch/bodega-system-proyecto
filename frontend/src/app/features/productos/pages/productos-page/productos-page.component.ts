@@ -1,10 +1,10 @@
-﻿import { CurrencyPipe, DecimalPipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+﻿import { Component, computed, inject, signal } from '@angular/core';
+import { form, FormField } from '@angular/forms/signals';
+
 import { Producto } from '../../models/producto';
 import { ProductosService } from '../../services/productos.service';
 
-type ProductoForm = {
-  id: number | null;
+interface ProductoSignalFormModel {
   codigo: string;
   nombre: string;
   categoria: string;
@@ -14,12 +14,19 @@ type ProductoForm = {
   stockMinimo: number;
   activo: boolean;
   observacion: string;
-};
+}
+
+interface ProductosFiltroSignalModel {
+  busqueda: string;
+  categoria: string;
+  soloActivos: boolean;
+  soloCriticos: boolean;
+}
 
 @Component({
   selector: 'app-productos-page',
   standalone: true,
-  imports: [CurrencyPipe, DecimalPipe],
+  imports: [FormField],
   templateUrl: './productos-page.component.html',
   styleUrl: './productos-page.component.css'
 })
@@ -27,51 +34,64 @@ export class ProductosPageComponent {
 
   private readonly productosService = inject(ProductosService);
 
-  productos = this.productosService.productosLectura;
-  categorias = computed(() => this.productosService.obtenerCategorias());
+  readonly productos = this.productosService.productosLectura;
 
-  busqueda = signal('');
-  categoriaFiltro = signal('TODOS');
-  soloActivos = signal(true);
-  soloCriticos = signal(false);
-  enviado = signal(false);
-  mensaje = signal('');
-  modoEdicion = signal(false);
+  readonly editandoId = signal<number | null>(null);
+  readonly enviado = signal(false);
+  readonly mensaje = signal('');
 
-  formulario = signal<ProductoForm>(this.obtenerFormularioBase());
+  readonly productoModel = signal<ProductoSignalFormModel>(this.obtenerFormularioBase());
+  readonly productoForm = form(this.productoModel);
 
-  productosFiltrados = computed(() => {
-    const q = this.busqueda().trim().toLowerCase();
-    const categoria = this.categoriaFiltro();
-    const soloActivos = this.soloActivos();
-    const soloCriticos = this.soloCriticos();
+  readonly filtrosModel = signal<ProductosFiltroSignalModel>({
+    busqueda: '',
+    categoria: '',
+    soloActivos: true,
+    soloCriticos: false
+  });
 
-    return this.productos().filter(item => {
+  readonly filtrosForm = form(this.filtrosModel);
+
+  readonly categorias = computed(() => this.productosService.obtenerCategorias());
+
+  readonly productosFiltrados = computed(() => {
+    const filtros = this.filtrosModel();
+    const texto = filtros.busqueda.trim().toLowerCase();
+
+    return this.productos().filter((producto: Producto) => {
       const coincideTexto =
-        q === '' ||
-        item.nombre.toLowerCase().includes(q) ||
-        item.codigo.toLowerCase().includes(q) ||
-        item.categoria.toLowerCase().includes(q);
+        !texto ||
+        producto.codigo.toLowerCase().includes(texto) ||
+        producto.nombre.toLowerCase().includes(texto) ||
+        producto.categoria.toLowerCase().includes(texto);
 
-      const coincideCategoria = categoria === 'TODOS' || item.categoria === categoria;
-      const coincideActivo = !soloActivos || item.activo;
-      const coincideCritico = !soloCriticos || item.stockActual <= item.stockMinimo;
+      const coincideCategoria =
+        !filtros.categoria || producto.categoria === filtros.categoria;
+
+      const coincideActivo =
+        !filtros.soloActivos || producto.activo;
+
+      const coincideCritico =
+        !filtros.soloCriticos || producto.stockActual <= producto.stockMinimo;
 
       return coincideTexto && coincideCategoria && coincideActivo && coincideCritico;
     });
   });
 
-  resumen = computed(() => {
+  readonly resumen = computed(() => {
     const lista = this.productos();
-    const activos = lista.filter(item => item.activo).length;
-    const criticos = lista.filter(item => item.stockActual <= item.stockMinimo).length;
-    const valorizado = lista.reduce((sum, item) => sum + item.stockActual * item.precioCompra, 0);
+
+    const activos = lista.filter((item: Producto) => item.activo).length;
+    const criticos = lista.filter((item: Producto) => item.stockActual <= item.stockMinimo).length;
+    const valorizado = lista.reduce(
+      (sum: number, item: Producto) => sum + item.stockActual * item.precioCompra,
+      0
+    );
+
     const margenPromedio = lista.length === 0
       ? 0
-      : lista.reduce((sum, item) => {
-          const venta = item.precioVenta;
-          const compra = item.precioCompra;
-          const margen = venta <= 0 ? 0 : ((venta - compra) / venta) * 100;
+      : lista.reduce((sum: number, item: Producto) => {
+          const margen = item.precioVenta - item.precioCompra;
           return sum + margen;
         }, 0) / lista.length;
 
@@ -84,101 +104,72 @@ export class ProductosPageComponent {
     };
   });
 
-  formularioValido = computed(() => {
-    const f = this.formulario();
+  readonly formularioValido = computed(() => {
+    const model = this.productoModel();
+
     return (
-      f.codigo.trim() !== '' &&
-      f.nombre.trim() !== '' &&
-      f.categoria.trim() !== '' &&
-      f.precioCompra >= 0 &&
-      f.precioVenta > 0 &&
-      f.stockMinimo >= 0 &&
-      f.stockActual >= 0
+      model.codigo.trim().length > 0 &&
+      model.nombre.trim().length > 0 &&
+      model.categoria.trim().length > 0 &&
+      Number(model.precioCompra) >= 0 &&
+      Number(model.precioVenta) >= 0 &&
+      Number(model.stockActual) >= 0 &&
+      Number(model.stockMinimo) >= 0 &&
+      Number(model.precioVenta) >= Number(model.precioCompra)
     );
   });
 
-  actualizarTexto(campo: 'codigo' | 'nombre' | 'categoria' | 'observacion', valor: string) {
-    this.formulario.update(actual => ({ ...actual, [campo]: valor }));
-  }
+  readonly modoEdicion = computed(() => this.editandoId() !== null);
 
-  actualizarNumero(campo: 'precioCompra' | 'precioVenta' | 'stockActual' | 'stockMinimo', valor: string) {
-    const numero = Number(valor);
-    this.formulario.update(actual => ({
-      ...actual,
-      [campo]: Number.isNaN(numero) ? 0 : numero
-    }));
-  }
-
-  actualizarBooleano(valor: boolean) {
-    this.formulario.update(actual => ({ ...actual, activo: valor }));
-  }
-
-  actualizarBusqueda(valor: string) {
-    this.busqueda.set(valor);
-  }
-
-  actualizarCategoriaFiltro(valor: string) {
-    this.categoriaFiltro.set(valor);
-  }
-
-  actualizarSoloActivos(valor: boolean) {
-    this.soloActivos.set(valor);
-  }
-
-  actualizarSoloCriticos(valor: boolean) {
-    this.soloCriticos.set(valor);
-  }
-
-  guardar(event?: Event) {
-    event?.preventDefault();
+  guardar(): void {
     this.enviado.set(true);
     this.mensaje.set('');
 
     if (!this.formularioValido()) {
-      this.mensaje.set('Revisa los campos obligatorios y los valores numéricos del producto.');
+      this.mensaje.set('Completa correctamente los datos del producto.');
       return;
     }
 
-    const f = this.formulario();
-    const codigoNormalizado = f.codigo.trim().toLowerCase();
-    const duplicado = this.productos().find(item =>
-      item.codigo.trim().toLowerCase() === codigoNormalizado && item.id !== (f.id ?? -1)
+    const model = this.productoModel();
+
+    const duplicado = this.productos().find((item: Producto) =>
+      item.codigo.trim().toLowerCase() === model.codigo.trim().toLowerCase() &&
+      item.id !== this.editandoId()
     );
 
     if (duplicado) {
-      this.mensaje.set('Ya existe un producto con ese código.');
+      this.mensaje.set('Ya existe un producto con ese codigo.');
       return;
     }
 
     const payload: Producto = {
-      id: f.id ?? this.productosService.obtenerSiguienteId(),
-      codigo: f.codigo.trim(),
-      nombre: f.nombre.trim(),
-      categoria: f.categoria.trim(),
-      precioCompra: f.precioCompra,
-      precioVenta: f.precioVenta,
-      stockActual: f.stockActual,
-      stockMinimo: f.stockMinimo,
-      activo: f.activo,
-      observacion: f.observacion.trim()
+      id: this.editandoId() ?? this.productosService.obtenerSiguienteId(),
+      codigo: model.codigo.trim(),
+      nombre: model.nombre.trim(),
+      categoria: model.categoria.trim(),
+      precioCompra: Number(model.precioCompra),
+      precioVenta: Number(model.precioVenta),
+      stockActual: Number(model.stockActual),
+      stockMinimo: Number(model.stockMinimo),
+      activo: Boolean(model.activo),
+      observacion: model.observacion.trim()
     };
 
-    if (f.id === null) {
-      this.productosService.agregarProducto(payload);
-      this.mensaje.set('Producto creado correctamente.');
-    } else {
+    if (this.modoEdicion()) {
       this.productosService.actualizarProducto(payload);
       this.mensaje.set('Producto actualizado correctamente.');
+    } else {
+      this.productosService.agregarProducto(payload);
+      this.mensaje.set('Producto agregado correctamente.');
     }
 
-    this.formulario.set(this.obtenerFormularioBase());
-    this.modoEdicion.set(false);
-    this.enviado.set(false);
+    this.cancelarEdicion();
   }
 
-  editar(producto: Producto) {
-    this.formulario.set({
-      id: producto.id,
+  editar(producto: Producto): void {
+    this.editandoId.set(producto.id);
+
+    this.productoModel.set({
       codigo: producto.codigo,
       nombre: producto.nombre,
       categoria: producto.categoria,
@@ -189,60 +180,51 @@ export class ProductosPageComponent {
       activo: producto.activo,
       observacion: producto.observacion ?? ''
     });
-    this.modoEdicion.set(true);
+
     this.enviado.set(false);
-    this.mensaje.set(`Editando producto ${producto.nombre}.`);
+    this.mensaje.set('');
   }
 
-  eliminar(id: number) {
-    if (typeof window !== 'undefined' && !window.confirm('Se eliminará el producto seleccionado. ¿Deseas continuar?')) {
+  eliminar(producto: Producto): void {
+    const confirmar = confirm(`Â¿Eliminar producto ${producto.nombre}?`);
+
+    if (!confirmar) {
       return;
     }
 
-    this.productosService.eliminarProducto(id);
+    this.productosService.eliminarProducto(producto.id);
     this.mensaje.set('Producto eliminado correctamente.');
-    if (this.formulario().id === id) {
-      this.formulario.set(this.obtenerFormularioBase());
-      this.modoEdicion.set(false);
-    }
   }
 
-  alternarEstado(id: number) {
-    this.productosService.alternarEstado(id);
-    this.mensaje.set('Estado del producto actualizado.');
+  alternarEstado(producto: Producto): void {
+    this.productosService.alternarEstado(producto.id);
   }
 
-  cancelarEdicion() {
-    this.formulario.set(this.obtenerFormularioBase());
-    this.modoEdicion.set(false);
+  cancelarEdicion(): void {
+    this.editandoId.set(null);
+    this.productoModel.set(this.obtenerFormularioBase());
     this.enviado.set(false);
-    this.mensaje.set('Edición cancelada.');
   }
 
-  restablecerBase() {
-    if (typeof window !== 'undefined' && !window.confirm('Se restablecerá el catálogo base de productos. ¿Deseas continuar?')) {
-      return;
-    }
-
+  restablecerBase(): void {
     this.productosService.restablecerBase();
-    this.formulario.set(this.obtenerFormularioBase());
-    this.modoEdicion.set(false);
-    this.mensaje.set('Catálogo base restablecido correctamente.');
+    this.mensaje.set('Productos recargados desde backend.');
   }
 
-  limpiarFiltros() {
-    this.busqueda.set('');
-    this.categoriaFiltro.set('TODOS');
-    this.soloActivos.set(true);
-    this.soloCriticos.set(false);
+  limpiarFiltros(): void {
+    this.filtrosModel.set({
+      busqueda: '',
+      categoria: '',
+      soloActivos: true,
+      soloCriticos: false
+    });
   }
 
-  private obtenerFormularioBase(): ProductoForm {
+  private obtenerFormularioBase(): ProductoSignalFormModel {
     return {
-      id: null,
       codigo: '',
       nombre: '',
-      categoria: '',
+      categoria: 'General',
       precioCompra: 0,
       precioVenta: 0,
       stockActual: 0,

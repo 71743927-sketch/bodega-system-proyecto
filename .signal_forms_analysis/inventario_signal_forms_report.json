@@ -1,0 +1,232 @@
+{
+  "metadata": {
+    "generated_at": "2026-05-31 20:26:56",
+    "root": "C:\\Users\\clint\\Downloads\\bodega-system-proyecto",
+    "base": "C:\\Users\\clint\\Downloads\\bodega-system-proyecto\\frontend\\src\\app\\features\\inventario"
+  },
+  "files": {
+    "component_ts": "frontend/src/app/features/inventario/pages/inventario-page/inventario-page.component.ts",
+    "component_html": "frontend/src/app/features/inventario/pages/inventario-page/inventario-page.component.html",
+    "service": "frontend/src/app/features/inventario/services/inventario.service.ts",
+    "model": "frontend/src/app/features/inventario/models/movimiento-inventario.ts"
+  },
+  "component": {
+    "imports": [
+      "import { Component, computed, inject, signal } from '@angular/core';",
+      "import { ProductosService } from '../../../productos/services/productos.service';",
+      "import { Producto } from '../../../productos/models/producto';",
+      "import { InventarioService } from '../../services/inventario.service';",
+      "import { MovimientoInventario, TipoMovimientoInventario } from '../../models/movimiento-inventario';"
+    ],
+    "methods": [
+      "actualizarBusqueda",
+      "actualizarCantidad",
+      "actualizarFiltroStock",
+      "actualizarFiltroTipo",
+      "actualizarProducto",
+      "actualizarTexto",
+      "actualizarTipo",
+      "etiquetaTipo",
+      "limpiarFormulario",
+      "registrarMovimiento"
+    ],
+    "injections": [
+      {
+        "property": "productosService",
+        "service": "ProductosService"
+      },
+      {
+        "property": "inventarioService",
+        "service": "InventarioService"
+      }
+    ],
+    "signals": [
+      {
+        "name": "enviado",
+        "initial_value_preview": "false"
+      },
+      {
+        "name": "busqueda",
+        "initial_value_preview": "''"
+      },
+      {
+        "name": "filtroTipo",
+        "initial_value_preview": "'TODOS'"
+      },
+      {
+        "name": "filtroStock",
+        "initial_value_preview": "'TODOS'"
+      },
+      {
+        "name": "formulario",
+        "initial_value_preview": "{\n    productoId: null,\n    tipo: 'ENTRADA',\n    cantidad: 0,\n    usuario: 'Administrador',\n    observacion: ''\n  }"
+      }
+    ],
+    "service_calls": [
+      "actualizarProducto",
+      "obtenerSiguienteId",
+      "registrarMovimiento"
+    ],
+    "uses_signal_forms": false,
+    "uses_manual_input": true,
+    "uses_value_binding": true,
+    "uses_ng_model": false,
+    "uses_reactive_forms_classic": false
+  },
+  "html": {
+    "has_form": true,
+    "controls": [
+      {
+        "kind": "input",
+        "type": "number",
+        "placeholder": "",
+        "value_binding": "formulario().cantidad",
+        "input_event": "actualizarCantidad($any($event.target).value)",
+        "form_field": "",
+        "tag_preview": "<input\n              id=\"cantidad\"\n              type=\"number\"\n              min=\"0\"\n              [value]=\"formulario().cantidad\"\n              (input)=\"actualizarCantidad($any($event.target).value)\" />"
+      },
+      {
+        "kind": "input",
+        "type": "text",
+        "placeholder": "Ej. Administrador",
+        "value_binding": "formulario().usuario",
+        "input_event": "actualizarTexto(",
+        "form_field": "",
+        "tag_preview": "<input\n              id=\"usuario\"\n              type=\"text\"\n              [value]=\"formulario().usuario\"\n              (input)=\"actualizarTexto('usuario', $any($event.target).value)\"\n              placeholder=\"Ej. Administrador\" />"
+      },
+      {
+        "kind": "input",
+        "type": "text",
+        "placeholder": "Buscar producto por nombre, código o categoría",
+        "value_binding": "busqueda()",
+        "input_event": "actualizarBusqueda($any($event.target).value)",
+        "form_field": "",
+        "tag_preview": "<input\n          type=\"text\"\n          [value]=\"busqueda()\"\n          (input)=\"actualizarBusqueda($any($event.target).value)\"\n          placeholder=\"Buscar producto por nombre, código o categoría\" />"
+      },
+      {
+        "kind": "input",
+        "type": "text",
+        "placeholder": "Buscar por producto, usuario u observación",
+        "value_binding": "busqueda()",
+        "input_event": "actualizarBusqueda($any($event.target).value)",
+        "form_field": "",
+        "tag_preview": "<input\n        type=\"text\"\n        [value]=\"busqueda()\"\n        (input)=\"actualizarBusqueda($any($event.target).value)\"\n        placeholder=\"Buscar por producto, usuario u observación\" />"
+      },
+      {
+        "kind": "select",
+        "type": "",
+        "placeholder": "",
+        "value_binding": "formulario().productoId ?? ",
+        "input_event": "",
+        "form_field": "",
+        "tag_preview": "<select id=\"productoId\" [value]=\"formulario().productoId ?? ''\" (change)=\"actualizarProducto($any($event.target).value)\">"
+      },
+      {
+        "kind": "select",
+        "type": "",
+        "placeholder": "",
+        "value_binding": "formulario().tipo",
+        "input_event": "",
+        "form_field": "",
+        "tag_preview": "<select id=\"tipo\" [value]=\"formulario().tipo\" (change)=\"actualizarTipo($any($event.target).value)\">"
+      },
+      {
+        "kind": "select",
+        "type": "",
+        "placeholder": "",
+        "value_binding": "filtroStock()",
+        "input_event": "",
+        "form_field": "",
+        "tag_preview": "<select [value]=\"filtroStock()\" (change)=\"actualizarFiltroStock($any($event.target).value)\">"
+      },
+      {
+        "kind": "select",
+        "type": "",
+        "placeholder": "",
+        "value_binding": "filtroTipo()",
+        "input_event": "",
+        "form_field": "",
+        "tag_preview": "<select [value]=\"filtroTipo()\" (change)=\"actualizarFiltroTipo($any($event.target).value)\">"
+      },
+      {
+        "kind": "textarea",
+        "type": "",
+        "placeholder": "Ej. Reposición de mercadería, merma, corrección de inventario, etc.",
+        "value_binding": "formulario().observacion",
+        "input_event": "actualizarTexto(",
+        "form_field": "",
+        "tag_preview": "<textarea\n              id=\"observacion\"\n              rows=\"4\"\n              [value]=\"formulario().observacion\"\n              (input)=\"actualizarTexto('observacion', $any($event.target).value)\"\n              placeholder=\"Ej. Reposición de mercadería"
+      }
+    ],
+    "input_count": 4,
+    "select_count": 4,
+    "textarea_count": 1
+  },
+  "service": {
+    "imports": [
+      "import { firestoreDb } from '../../../core/firebase/firebase.config';"
+    ],
+    "methods": [
+      "actualizarItem",
+      "actualizarMovimiento",
+      "actualizarStock",
+      "agregarItem",
+      "agregarMovimiento",
+      "asRecord",
+      "borrarItem",
+      "borrarMovimiento",
+      "buscarInterno",
+      "buscarPorCodigo",
+      "buscarPorNombre",
+      "cargarDesdeStorage",
+      "constructor",
+      "crearItem",
+      "crearMovimiento",
+      "deleteDoc",
+      "descontarStock",
+      "editarItem",
+      "editarMovimiento",
+      "eliminarItem",
+      "eliminarMovimiento",
+      "extraerActivo",
+      "extraerCantidad",
+      "extraerCategoria",
+      "extraerCodigo",
+      "extraerId",
+      "extraerNombre",
+      "extraerProductoId",
+      "extraerStockActual",
+      "extraerStockMinimo",
+      "extraerTipoMovimiento",
+      "guardarEnStorage",
+      "incrementarStock",
+      "intentarMigracionInicial",
+      "normalizarMovimiento",
+      "obtenerActivos",
+      "obtenerBajoStock",
+      "obtenerInactivos",
+      "obtenerPorId",
+      "obtenerPorProductoId",
+      "obtenerSiguienteId",
+      "onSnapshot",
+      "ordenarMovimientos",
+      "reemplazarInventario",
+      "reemplazarMovimientos",
+      "registrarEntrada",
+      "registrarItem",
+      "registrarMovimiento",
+      "registrarSalida",
+      "resumenInventario",
+      "sanearMovimiento",
+      "setDoc"
+    ],
+    "uses_firestore": true,
+    "uses_productos_service": false
+  },
+  "model_preview": "﻿export type TipoMovimientoInventario = 'ENTRADA' | 'SALIDA' | 'AJUSTE';\n\nexport interface MovimientoInventario {\n  id: number;\n  fecha: string;\n  productoId: number;\n  productoNombre: string;\n  tipo: TipoMovimientoInventario;\n  cantidad: number;\n  stockAnterior: number;\n  stockNuevo: number;\n  usuario: string;\n  observacion: string;\n}\n",
+  "recommendation": {
+    "next_step": "Migrar inventario a Signal Forms reales solo después de identificar campos exactos y métodos críticos.",
+    "risk": "Inventario afecta stock. No reemplazar a ciegas.",
+    "target_pattern": "signal(model) + form(model) + FormField + [formField]"
+  }
+}

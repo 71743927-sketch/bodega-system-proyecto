@@ -1,5 +1,6 @@
 ﻿import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
+import { form, FormField } from '@angular/forms/signals';
 import { ProductosService } from '../../../productos/services/productos.service';
 import { Producto } from '../../../productos/models/producto';
 import { InventarioService } from '../../services/inventario.service';
@@ -16,7 +17,7 @@ type InventarioForm = {
 @Component({
   selector: 'app-inventario-page',
   standalone: true,
-  imports: [DatePipe],
+  imports: [FormField, DatePipe],
   templateUrl: './inventario-page.component.html',
   styleUrl: './inventario-page.component.css'
 })
@@ -40,6 +41,8 @@ export class InventarioPageComponent {
     usuario: 'Administrador',
     observacion: ''
   });
+
+  readonly inventarioForm = form(this.formulario);
 
   totalProductos = computed(() => this.productos().length);
   totalMovimientos = computed(() => this.movimientos().length);
