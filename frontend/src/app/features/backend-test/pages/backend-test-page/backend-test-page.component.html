@@ -1,0 +1,48 @@
+﻿<section class="backend-test-page">
+  <div class="card">
+    <h1>Pruebas Frontend â†’ Backend</h1>
+    <p>
+      Esta pantalla permite validar la comunicaciÃ³n entre Angular, FastAPI y Firebase.
+    </p>
+
+    <div class="actions">
+      <button type="button" (click)="probarHealth()" [disabled]="cargando()">
+        Probar /api/health
+      </button>
+
+      <button type="button" (click)="probarUsuarioActual()" [disabled]="cargando()">
+        Probar /api/auth/me
+      </button>
+      <button type="button" (click)="copiarTokenFirebase()" [disabled]="cargando()">
+        Copiar token Firebase
+      </button>
+
+      <button type="button" (click)="listarProductos()" [disabled]="cargando()">
+        Listar productos
+      </button>
+
+      <button type="button" (click)="crearProductoDemo()" [disabled]="cargando()">
+        Crear producto demo
+      </button>
+    </div>
+
+    @if (cargando()) {
+      <p class="loading">Ejecutando prueba...</p>
+    }
+
+    @if (resultado()) {
+      <div class="result success">
+        <h2>Resultado OK</h2>
+        <pre>{{ resultado() | json }}</pre>
+      </div>
+    }
+
+    @if (error()) {
+      <div class="result error">
+        <h2>Error detallado</h2>
+        <pre>{{ error() | json }}</pre>
+      </div>
+    }
+  </div>
+</section>
+

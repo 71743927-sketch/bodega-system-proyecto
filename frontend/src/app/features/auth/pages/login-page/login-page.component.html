@@ -1,0 +1,36 @@
+﻿<section class="login-page">
+  <div class="login-card">
+    <h1>BodegaSys</h1>
+    <p class="subtitle">Inicio de sesiÃ³n con Firebase</p>
+
+    <form (submit)="login($event)">
+      <label for="email">Correo</label>
+      <input
+        id="email"
+        type="email"
+        placeholder="admin@bodega.com"
+        [value]="email()"
+        (input)="actualizarEmail($any($event.target).value)"
+        autocomplete="email"
+      />
+
+      <label for="password">ContraseÃ±a</label>
+      <input
+        id="password"
+        type="password"
+        placeholder="Ingrese su contraseÃ±a"
+        [value]="password()"
+        (input)="actualizarPassword($any($event.target).value)"
+        autocomplete="current-password"
+      />
+
+      @if (mensaje()) {
+        <p class="message">{{ mensaje() }}</p>
+      }
+
+      <button type="submit" [disabled]="cargando()">
+        {{ cargando() ? 'Ingresando...' : 'Ingresar' }}
+      </button>
+    </form>
+  </div>
+</section>

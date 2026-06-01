@@ -1,10 +1,43 @@
-﻿node_modules/
-dist/
-.angular/
+﻿# ============================================================
+# FRONTEND - Angular
+# ============================================================
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.firebase/
+frontend/.venv/
+
+# ============================================================
+# BACKEND - Python / FastAPI
+# ============================================================
+backend/.venv/
+backend/venv/
+backend/env/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/**/*.pyc
+backend/.pytest_cache/
+backend/.mypy_cache/
+
+# ============================================================
+# VARIABLES DE ENTORNO Y CREDENCIALES PRIVADAS
+# NO SUBIR A GITHUB
+# ============================================================
+backend/.env
+backend/.env.*
+backend/firebase-service-account.json
+backend/serviceAccountKey.json
+backend/*.service-account.json
+backend/*.firebase-admin.json
+
+# ============================================================
+# GENERAL
+# ============================================================
+.analysis/
+.backup/
+.script-logs/
 .sonar-local/
-.vscode/
-*.bak
-*.bak_*
 *.log
-SONARQUBE_UBICACIONES*.txt
-REPORTE_PROYECTO_BODEGASYS*.txt
+.DS_Store
+Thumbs.db
+*.bak
