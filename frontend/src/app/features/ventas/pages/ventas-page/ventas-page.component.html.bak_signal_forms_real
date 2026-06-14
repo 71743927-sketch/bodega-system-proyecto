@@ -1,0 +1,212 @@
+﻿<section class="ventas-page">
+  <div class="page-header">
+    <div>
+      <h1>Ventas</h1>
+      <p>Gestiona ventas rápidas con carrito, medios de pago, historial y control básico de stock.</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><span>Ventas hoy</span><strong>{{ resumenHoy().cantidad }}</strong></div>
+    <div class="stat-card success"><span>Total hoy</span><strong>{{ resumenHoy().total | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+    <div class="stat-card info"><span>Ticket promedio</span><strong>{{ resumenHoy().ticketPromedio | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+    <div class="stat-card accent"><span>Efectivo hoy</span><strong>{{ resumenHoy().efectivoHoy | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+    <div class="stat-card warning"><span>Ítems en carrito</span><strong>{{ totalItems() }}</strong></div>
+    <div class="stat-card"><span>Total carrito</span><strong>{{ total() | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+  </div>
+
+  <div class="layout-grid">
+    <div class="card products-card">
+      <div class="card-title">
+        <h2>Productos disponibles</h2>
+        <p>Busca, filtra y agrega productos al carrito de venta.</p>
+      </div>
+
+      <div class="filters-grid">
+        <div class="campo">
+          <label for="busquedaVenta">Buscar</label>
+          <input id="busquedaVenta" type="text" [value]="busqueda()" (input)="actualizarBusqueda($any($event.target).value)" placeholder="Nombre, código o categoría" />
+        </div>
+        <div class="campo">
+          <label for="categoriaVenta">Categoría</label>
+          <select id="categoriaVenta" [value]="categoriaFiltro()" (change)="actualizarCategoriaFiltro($any($event.target).value)">
+            <option value="TODOS">Todas</option>
+            @for (item of categorias(); track item) {
+              <option [value]="item">{{ item }}</option>
+            }
+          </select>
+        </div>
+        <div class="campo inline-field">
+          <label>Stock</label>
+          <select [value]="soloConStock() ? 'true' : 'false'" (change)="actualizarSoloConStock($any($event.target).value === 'true')">
+            <option value="true">Solo con stock</option>
+            <option value="false">Todos</option>
+          </select>
+        </div>
+      </div>
+
+      @if (productosDisponibles().length === 0) {
+        <div class="empty-state"><p>No hay productos disponibles con los filtros actuales.</p></div>
+      } @else {
+        <div class="products-grid">
+          @for (item of productosDisponibles(); track item.id) {
+            <div class="product-card" [class.product-critical]="item.stockActual <= item.stockMinimo">
+              <div class="product-top">
+                <div>
+                  <h3>{{ item.nombre }}</h3>
+                  <span>{{ item.codigo }} · {{ item.categoria }}</span>
+                </div>
+                <strong>{{ item.precioVenta | currency:'PEN':'symbol':'1.2-2' }}</strong>
+              </div>
+
+              <div class="product-meta">
+                <span [class.stock-critical]="item.stockActual <= item.stockMinimo">Stock: {{ item.stockActual }}</span>
+                <span>Mínimo: {{ item.stockMinimo }}</span>
+              </div>
+
+              @if ((item.observacion ?? '') !== '') {
+                <p class="product-note">{{ item.observacion }}</p>
+              }
+
+              <div class="product-actions">
+                <input type="number" min="1" step="1" [value]="cantidades()[item.id] ?? 1" (input)="actualizarCantidad(item.id, $any($event.target).value)" />
+                <button type="button" class="btn-primary" (click)="agregarAlCarrito(item)" [disabled]="item.stockActual <= 0">Agregar</button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="card cart-card">
+      <div class="card-title">
+        <h2>Carrito</h2>
+        <p>Confirma cantidades, medio de pago y registra la venta.</p>
+      </div>
+
+      @if (carrito().length === 0) {
+        <div class="empty-state"><p>No hay productos en el carrito.</p></div>
+      } @else {
+        <div class="cart-list">
+          @for (item of carrito(); track item.productoId) {
+            <div class="cart-item">
+              <div>
+                <strong>{{ item.nombre }}</strong>
+                <span>{{ item.codigo }} · Stock disp.: {{ item.stockDisponible }}</span>
+              </div>
+              <div class="cart-controls">
+                <input type="number" min="1" [max]="item.stockDisponible" [value]="item.cantidad" (input)="cambiarCantidadCarrito(item.productoId, $any($event.target).value)" />
+                <strong>{{ item.subtotal | currency:'PEN':'symbol':'1.2-2' }}</strong>
+                <button type="button" class="btn-link danger-link" (click)="quitarDelCarrito(item.productoId)">Quitar</button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="form-grid two-cols">
+        <div class="campo full-width">
+          <label for="clienteNombre">Cliente</label>
+          <input id="clienteNombre" type="text" [value]="clienteNombre()" (input)="actualizarCliente($any($event.target).value)" placeholder="Opcional: nombre del cliente" />
+        </div>
+
+        <div class="campo">
+          <label for="metodoPago">Método de pago</label>
+          <select id="metodoPago" [value]="metodoPago()" (change)="actualizarMetodoPago($any($event.target).value)">
+            <option value="EFECTIVO">Efectivo</option>
+            <option value="YAPE">Yape</option>
+            <option value="PLIN">Plin</option>
+            <option value="TARJETA">Tarjeta</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="descuentoVenta">Descuento</label>
+          <input id="descuentoVenta" type="number" min="0" step="0.01" [value]="descuento()" (input)="actualizarDescuento($any($event.target).value)" />
+        </div>
+
+        @if (metodoPago() === 'EFECTIVO') {
+          <div class="campo">
+            <label for="montoRecibido">Monto recibido</label>
+            <input id="montoRecibido" type="number" min="0" step="0.01" [value]="montoRecibido()" (input)="actualizarMontoRecibido($any($event.target).value)" />
+          </div>
+
+          <div class="campo">
+            <label>Vuelto</label>
+            <div class="value-box">{{ vuelto() | currency:'PEN':'symbol':'1.2-2' }}</div>
+          </div>
+        }
+
+        <div class="campo full-width">
+          <label for="observacionVenta">Observación</label>
+          <textarea id="observacionVenta" rows="3" [value]="observacion()" (input)="actualizarObservacion($any($event.target).value)" placeholder="Notas internas de la venta"></textarea>
+        </div>
+      </div>
+
+      <div class="totals-box">
+        <div><span>Subtotal</span><strong>{{ subtotal() | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+        <div><span>Descuento</span><strong>{{ descuento() | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+        <div class="total-line"><span>Total</span><strong>{{ total() | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn-primary" (click)="finalizarVenta()">Registrar venta</button>
+        <button type="button" class="btn-secondary" (click)="vaciarCarrito()">Vaciar carrito</button>
+      </div>
+
+      @if (!validarPago() && metodoPago() === 'EFECTIVO') {
+        <div class="warning-box">El monto recibido es menor al total de la venta.</div>
+      }
+
+      @if (mensaje() !== '') {
+        <div class="message-box">{{ mensaje() }}</div>
+      }
+    </div>
+  </div>
+
+  <div class="card history-card">
+    <div class="card-title">
+      <h2>Ventas recientes</h2>
+      <p>Últimos registros guardados en el sistema.</p>
+    </div>
+
+    @if (ventasRecientes().length === 0) {
+      <div class="empty-state"><p>Aún no hay ventas registradas.</p></div>
+    } @else {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Método</th>
+              <th>Vendedor</th>
+              <th>Total</th>
+              <th>Detalle</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of ventasRecientes(); track item.id) {
+              <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.fecha | date:'medium' }}</td>
+                <td>{{ item.clienteNombre !== '' ? item.clienteNombre : 'Público general' }}</td>
+                <td>{{ item.metodoPago }}</td>
+                <td>{{ item.vendedor }}</td>
+                <td>{{ item.total | currency:'PEN':'symbol':'1.2-2' }}</td>
+                <td>
+                  <small>
+                    @for (det of item.detalles; track det.productoId) {
+                      <span>{{ det.nombre }} x{{ det.cantidad }} </span>
+                    }
+                  </small>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>

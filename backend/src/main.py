@@ -23,3 +23,7 @@ app.include_router(productos_router, prefix="/api/productos", tags=["productos"]
 @app.get("/", include_in_schema=False)
 def root():
     return RedirectResponse(url="/docs")
+
+# Routers adicionales generados para alinear backend con frontend
+from src.apis.modulos_api import router as modulos_router
+app.include_router(modulos_router, prefix="/api")

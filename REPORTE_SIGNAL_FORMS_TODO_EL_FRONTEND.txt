@@ -1,0 +1,772 @@
+============================================
+REPORTE GLOBAL SIGNALS / SIGNAL FORMS
+============================================
+Proyecto: BodegaSys
+Frontend: C:\Users\clint\Downloads\bodega-system-proyecto\frontend
+Fecha: 06/14/2026 17:38:26
+
+Objetivo:
+Detectar en todo el frontend qué componentes, formularios y servicios necesitan Signals o Signal Forms para cumplir mejor la rubrica de Excelente.
+
+Criterio de rubrica:
+- Angular 21+
+- Signal forms
+- Validaciones
+- Modularizacion
+- Frontend funcional y organizado
+
+============================================
+1. VERSION ANGULAR Y DEPENDENCIAS
+============================================
+@angular/core: ^21.2.0
+@angular/forms: ^21.2.0
+bootstrap: ^5.3.8
+sweetalert2: ^11.26.24
+[OK] Angular 21+ detectado.
+
+============================================
+2. ANALISIS DE COMPONENTES
+============================================
+[MEDIA] [SIGNALS] core
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\core\layouts\main-layout\main-layout.component.ts
+Motivo: Componente con estado local/listas/filtros sin signal().
+Recomendacion: Migrar propiedades de estado a signal() y valores derivados a computed().
+
+[MEDIA] [SIGNAL_FORMS] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\alertas\pages\alertas-page\alertas-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+[MEDIA] [VALIDACIONES] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\alertas\pages\alertas-page\alertas-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+[MEDIA] [SIGNAL_FORMS] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\analitica\pages\analitica-page\analitica-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+[MEDIA] [VALIDACIONES] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\analitica\pages\analitica-page\analitica-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+[MEDIA] [SIGNAL_FORMS] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\auditoria\pages\auditoria-page\auditoria-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+[MEDIA] [VALIDACIONES] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\auditoria\pages\auditoria-page\auditoria-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+[BAJA] [COMPUTED] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\backend-test\pages\backend-test-page\backend-test-page.component.ts
+Motivo: Usa signal(), pero no computed() para valores derivados.
+Recomendacion: Crear computed() para totales, filtros, estados, resumenes o validaciones derivadas.
+
+[MEDIA] [SIGNAL_FORMS] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\checklist\pages\checklist-page\checklist-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+[MEDIA] [VALIDACIONES] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\checklist\pages\checklist-page\checklist-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+[MEDIA] [SIGNAL_FORMS] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\comprobantes\pages\comprobantes-page\comprobantes-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+[MEDIA] [VALIDACIONES] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\comprobantes\pages\comprobantes-page\comprobantes-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+[MEDIA] [SIGNAL_FORMS] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\configuracion\pages\configuracion-page\configuracion-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+[MEDIA] [SIGNALS] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\dashboard\pages\dashboard-page\dashboard-page.component.ts
+Motivo: Componente con estado local/listas/filtros sin signal().
+Recomendacion: Migrar propiedades de estado a signal() y valores derivados a computed().
+
+[MEDIA] [SIGNAL_FORMS] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\exportaciones\pages\exportaciones-page\exportaciones-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+[MEDIA] [VALIDACIONES] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\exportaciones\pages\exportaciones-page\exportaciones-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+[MEDIA] [SIGNAL_FORMS] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\proveedores\pages\proveedores-page\proveedores-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+[MEDIA] [VALIDACIONES] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\proveedores\pages\proveedores-page\proveedores-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+[MEDIA] [SIGNAL_FORMS] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\reportes\pages\reportes-page\reportes-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+[MEDIA] [VALIDACIONES] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\reportes\pages\reportes-page\reportes-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+[MEDIA] [SIGNAL_FORMS] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\reposicion\pages\reposicion-page\reposicion-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+[MEDIA] [VALIDACIONES] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\reposicion\pages\reposicion-page\reposicion-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+[MEDIA] [SIGNAL_FORMS] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\respaldo\pages\respaldo-page\respaldo-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+[MEDIA] [VALIDACIONES] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\respaldo\pages\respaldo-page\respaldo-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+[MEDIA] [SIGNAL_FORMS] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\usuarios\pages\usuarios-page\usuarios-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+[MEDIA] [VALIDACIONES] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\usuarios\pages\usuarios-page\usuarios-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+[MEDIA] [SIGNAL_FORMS] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\ventas\pages\ventas-page\ventas-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+Total componentes: 29
+Componentes con signal(): 25
+Componentes con computed(): 26
+Componentes con posible Signal Forms: 7
+Componentes con Reactive Forms tradicional: 1
+Componentes con estado sin signal(): 2
+
+============================================
+3. ANALISIS DE SERVICIOS
+============================================
+[MEDIA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\alertas\services\alertas.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+[BAJA] [MIGRAR_BEHAVIORSUBJECT] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\alertas\services\alertas.service.ts
+Motivo: Usa Subject/BehaviorSubject; no es malo, pero Signals seria mas alineado con Angular 21.
+Recomendacion: Evaluar signal() en servicios nuevos o estado UI.
+
+[MEDIA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\auditoria\services\auditoria.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+[MEDIA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\auth\services\auth.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+[MEDIA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\caja\services\caja.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+[MEDIA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\calidad\services\calidad.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+[MEDIA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\checklist\services\checklist.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+[BAJA] [MIGRAR_BEHAVIORSUBJECT] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\checklist\services\checklist.service.ts
+Motivo: Usa Subject/BehaviorSubject; no es malo, pero Signals seria mas alineado con Angular 21.
+Recomendacion: Evaluar signal() en servicios nuevos o estado UI.
+
+[MEDIA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\cierre-diario\services\cierre-diario.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+[BAJA] [MIGRAR_BEHAVIORSUBJECT] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\cierre-diario\services\cierre-diario.service.ts
+Motivo: Usa Subject/BehaviorSubject; no es malo, pero Signals seria mas alineado con Angular 21.
+Recomendacion: Evaluar signal() en servicios nuevos o estado UI.
+
+[MEDIA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\compras\services\compras.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+[MEDIA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\comprobantes\services\comprobantes.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+[MEDIA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\inventario\services\inventario.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+[MEDIA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\mantenimiento\services\mantenimiento.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+[MEDIA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\productos\services\productos-backend.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+[ALTA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\productos\services\productos-backend.service.ts
+Motivo: Servicio consume API y parece almacenar datos locales sin signal().
+Recomendacion: Crear signals para data/loading/error y exponer readonly signals al componente.
+
+[MEDIA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\proveedores\services\proveedores.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+[MEDIA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\reposicion\services\reposicion.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+[MEDIA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\respaldo\services\respaldo.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+[BAJA] [MIGRAR_BEHAVIORSUBJECT] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\respaldo\services\respaldo.service.ts
+Motivo: Usa Subject/BehaviorSubject; no es malo, pero Signals seria mas alineado con Angular 21.
+Recomendacion: Evaluar signal() en servicios nuevos o estado UI.
+
+[MEDIA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\usuarios\services\usuarios.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+[MEDIA] [SIGNALS_SERVICE] U
+Archivo: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\ventas\services\ventas.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+Total servicios analizados: 26
+Servicios con signal(): 2
+Servicios stateful sin signal(): 17
+
+============================================
+4. RESUMEN POR MODULO
+============================================
+Modulo: alertas
+  signal: True
+  computed: True
+  signalForms: False
+  formularios: True
+  validaciones: False
+  HTTP: False
+  estado: REQUIERE SIGNAL FORMS
+  recomendacion: Migrar formulario principal del modulo a Signal Forms.
+
+Modulo: analitica
+  signal: True
+  computed: True
+  signalForms: False
+  formularios: True
+  validaciones: False
+  HTTP: False
+  estado: REQUIERE SIGNAL FORMS
+  recomendacion: Migrar formulario principal del modulo a Signal Forms.
+
+Modulo: auditoria
+  signal: True
+  computed: True
+  signalForms: False
+  formularios: True
+  validaciones: False
+  HTTP: False
+  estado: REQUIERE SIGNAL FORMS
+  recomendacion: Migrar formulario principal del modulo a Signal Forms.
+
+Modulo: auth
+  signal: True
+  computed: True
+  signalForms: True
+  formularios: True
+  validaciones: True
+  HTTP: False
+  estado: OK
+  recomendacion: Mantener.
+
+Modulo: backend-test
+  signal: True
+  computed: False
+  signalForms: False
+  formularios: False
+  validaciones: False
+  HTTP: False
+  estado: MEJORAR COMPUTED
+  recomendacion: Agregar computed() para valores derivados.
+
+Modulo: caja
+  signal: True
+  computed: True
+  signalForms: True
+  formularios: True
+  validaciones: False
+  HTTP: False
+  estado: OK
+  recomendacion: Mantener.
+
+Modulo: calidad
+  signal: True
+  computed: True
+  signalForms: False
+  formularios: False
+  validaciones: True
+  HTTP: False
+  estado: OK
+  recomendacion: Mantener.
+
+Modulo: checklist
+  signal: True
+  computed: True
+  signalForms: False
+  formularios: True
+  validaciones: False
+  HTTP: False
+  estado: REQUIERE SIGNAL FORMS
+  recomendacion: Migrar formulario principal del modulo a Signal Forms.
+
+Modulo: cierre-diario
+  signal: True
+  computed: True
+  signalForms: False
+  formularios: False
+  validaciones: False
+  HTTP: False
+  estado: OK
+  recomendacion: Mantener.
+
+Modulo: compras
+  signal: True
+  computed: True
+  signalForms: True
+  formularios: True
+  validaciones: False
+  HTTP: False
+  estado: OK
+  recomendacion: Mantener.
+
+Modulo: comprobantes
+  signal: True
+  computed: True
+  signalForms: False
+  formularios: True
+  validaciones: False
+  HTTP: False
+  estado: REQUIERE SIGNAL FORMS
+  recomendacion: Migrar formulario principal del modulo a Signal Forms.
+
+Modulo: configuracion
+  signal: True
+  computed: True
+  signalForms: False
+  formularios: True
+  validaciones: False
+  HTTP: False
+  estado: REQUIERE SIGNAL FORMS
+  recomendacion: Migrar formulario principal del modulo a Signal Forms.
+
+Modulo: dashboard
+  signal: False
+  computed: True
+  signalForms: False
+  formularios: False
+  validaciones: False
+  HTTP: False
+  estado: REQUIERE SIGNALS
+  recomendacion: Agregar signal() para estado local del modulo.
+
+Modulo: exportaciones
+  signal: True
+  computed: True
+  signalForms: False
+  formularios: True
+  validaciones: False
+  HTTP: False
+  estado: REQUIERE SIGNAL FORMS
+  recomendacion: Migrar formulario principal del modulo a Signal Forms.
+
+Modulo: inventario
+  signal: True
+  computed: True
+  signalForms: True
+  formularios: True
+  validaciones: False
+  HTTP: False
+  estado: OK
+  recomendacion: Mantener.
+
+Modulo: mantenimiento
+  signal: True
+  computed: True
+  signalForms: False
+  formularios: False
+  validaciones: False
+  HTTP: False
+  estado: OK
+  recomendacion: Mantener.
+
+Modulo: productos
+  signal: True
+  computed: True
+  signalForms: True
+  formularios: True
+  validaciones: False
+  HTTP: True
+  estado: OK
+  recomendacion: Mantener.
+
+Modulo: proveedores
+  signal: True
+  computed: True
+  signalForms: False
+  formularios: True
+  validaciones: False
+  HTTP: False
+  estado: REQUIERE SIGNAL FORMS
+  recomendacion: Migrar formulario principal del modulo a Signal Forms.
+
+Modulo: reportes
+  signal: True
+  computed: True
+  signalForms: False
+  formularios: True
+  validaciones: False
+  HTTP: False
+  estado: REQUIERE SIGNAL FORMS
+  recomendacion: Migrar formulario principal del modulo a Signal Forms.
+
+Modulo: reposicion
+  signal: True
+  computed: True
+  signalForms: False
+  formularios: True
+  validaciones: False
+  HTTP: False
+  estado: REQUIERE SIGNAL FORMS
+  recomendacion: Migrar formulario principal del modulo a Signal Forms.
+
+Modulo: respaldo
+  signal: True
+  computed: True
+  signalForms: False
+  formularios: True
+  validaciones: False
+  HTTP: False
+  estado: REQUIERE SIGNAL FORMS
+  recomendacion: Migrar formulario principal del modulo a Signal Forms.
+
+Modulo: seguridad
+  signal: True
+  computed: True
+  signalForms: False
+  formularios: False
+  validaciones: False
+  HTTP: False
+  estado: OK
+  recomendacion: Mantener.
+
+Modulo: signal-forms-evidencia
+  signal: True
+  computed: True
+  signalForms: True
+  formularios: True
+  validaciones: True
+  HTTP: False
+  estado: OK
+  recomendacion: Mantener.
+
+Modulo: usuarios
+  signal: True
+  computed: True
+  signalForms: False
+  formularios: True
+  validaciones: False
+  HTTP: False
+  estado: REQUIERE SIGNAL FORMS
+  recomendacion: Migrar formulario principal del modulo a Signal Forms.
+
+Modulo: ventas
+  signal: True
+  computed: True
+  signalForms: False
+  formularios: True
+  validaciones: False
+  HTTP: False
+  estado: REQUIERE SIGNAL FORMS
+  recomendacion: Migrar formulario principal del modulo a Signal Forms.
+
+
+============================================
+5. TOP PRIORIDAD PARA SIGNAL FORMS
+============================================
+---- PRIORIDAD MEDIA ----
+SIGNALS | core | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\core\layouts\main-layout\main-layout.component.ts
+Motivo: Componente con estado local/listas/filtros sin signal().
+Recomendacion: Migrar propiedades de estado a signal() y valores derivados a computed().
+
+SIGNAL_FORMS | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\alertas\pages\alertas-page\alertas-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+VALIDACIONES | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\alertas\pages\alertas-page\alertas-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+SIGNAL_FORMS | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\analitica\pages\analitica-page\analitica-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+VALIDACIONES | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\analitica\pages\analitica-page\analitica-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+SIGNAL_FORMS | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\auditoria\pages\auditoria-page\auditoria-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+VALIDACIONES | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\auditoria\pages\auditoria-page\auditoria-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+SIGNAL_FORMS | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\checklist\pages\checklist-page\checklist-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+VALIDACIONES | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\checklist\pages\checklist-page\checklist-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+SIGNAL_FORMS | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\comprobantes\pages\comprobantes-page\comprobantes-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+VALIDACIONES | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\comprobantes\pages\comprobantes-page\comprobantes-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+SIGNAL_FORMS | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\configuracion\pages\configuracion-page\configuracion-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+SIGNALS | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\dashboard\pages\dashboard-page\dashboard-page.component.ts
+Motivo: Componente con estado local/listas/filtros sin signal().
+Recomendacion: Migrar propiedades de estado a signal() y valores derivados a computed().
+
+SIGNAL_FORMS | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\exportaciones\pages\exportaciones-page\exportaciones-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+VALIDACIONES | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\exportaciones\pages\exportaciones-page\exportaciones-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+SIGNAL_FORMS | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\proveedores\pages\proveedores-page\proveedores-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+VALIDACIONES | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\proveedores\pages\proveedores-page\proveedores-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+SIGNAL_FORMS | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\reportes\pages\reportes-page\reportes-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+VALIDACIONES | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\reportes\pages\reportes-page\reportes-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+SIGNAL_FORMS | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\reposicion\pages\reposicion-page\reposicion-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+VALIDACIONES | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\reposicion\pages\reposicion-page\reposicion-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+SIGNAL_FORMS | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\respaldo\pages\respaldo-page\respaldo-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+VALIDACIONES | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\respaldo\pages\respaldo-page\respaldo-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+SIGNAL_FORMS | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\usuarios\pages\usuarios-page\usuarios-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+VALIDACIONES | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\usuarios\pages\usuarios-page\usuarios-page.component.ts
+Motivo: Tiene inputs/formulario, pero no se detectan validaciones visibles.
+Recomendacion: Agregar validaciones y mensajes visibles; si se migra a Signal Forms, usar schema.
+
+SIGNAL_FORMS | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\ventas\pages\ventas-page\ventas-page.component.ts
+Motivo: Tiene formulario o inputs en HTML, pero no se detecta [formField].
+Recomendacion: Evaluar migrar formulario principal del modulo a Signal Forms.
+
+SIGNALS_SERVICE | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\alertas\services\alertas.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+SIGNALS_SERVICE | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\auditoria\services\auditoria.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+SIGNALS_SERVICE | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\auth\services\auth.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+SIGNALS_SERVICE | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\caja\services\caja.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+SIGNALS_SERVICE | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\calidad\services\calidad.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+SIGNALS_SERVICE | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\checklist\services\checklist.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+SIGNALS_SERVICE | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\cierre-diario\services\cierre-diario.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+SIGNALS_SERVICE | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\compras\services\compras.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+SIGNALS_SERVICE | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\comprobantes\services\comprobantes.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+SIGNALS_SERVICE | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\inventario\services\inventario.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+SIGNALS_SERVICE | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\mantenimiento\services\mantenimiento.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+SIGNALS_SERVICE | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\productos\services\productos-backend.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+SIGNALS_SERVICE | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\proveedores\services\proveedores.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+SIGNALS_SERVICE | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\reposicion\services\reposicion.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+SIGNALS_SERVICE | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\respaldo\services\respaldo.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+SIGNALS_SERVICE | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\usuarios\services\usuarios.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+SIGNALS_SERVICE | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\ventas\services\ventas.service.ts
+Motivo: Servicio parece manejar estado/cache/listas sin signal().
+Recomendacion: Si el servicio guarda estado compartido, migrar estado a signal() y derivados a computed().
+
+---- PRIORIDAD BAJA ----
+COMPUTED | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\backend-test\pages\backend-test-page\backend-test-page.component.ts
+Motivo: Usa signal(), pero no computed() para valores derivados.
+Recomendacion: Crear computed() para totales, filtros, estados, resumenes o validaciones derivadas.
+
+MIGRAR_BEHAVIORSUBJECT | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\alertas\services\alertas.service.ts
+Motivo: Usa Subject/BehaviorSubject; no es malo, pero Signals seria mas alineado con Angular 21.
+Recomendacion: Evaluar signal() en servicios nuevos o estado UI.
+
+MIGRAR_BEHAVIORSUBJECT | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\checklist\services\checklist.service.ts
+Motivo: Usa Subject/BehaviorSubject; no es malo, pero Signals seria mas alineado con Angular 21.
+Recomendacion: Evaluar signal() en servicios nuevos o estado UI.
+
+MIGRAR_BEHAVIORSUBJECT | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\cierre-diario\services\cierre-diario.service.ts
+Motivo: Usa Subject/BehaviorSubject; no es malo, pero Signals seria mas alineado con Angular 21.
+Recomendacion: Evaluar signal() en servicios nuevos o estado UI.
+
+MIGRAR_BEHAVIORSUBJECT | U | C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\respaldo\services\respaldo.service.ts
+Motivo: Usa Subject/BehaviorSubject; no es malo, pero Signals seria mas alineado con Angular 21.
+Recomendacion: Evaluar signal() en servicios nuevos o estado UI.
+
+
+============================================
+6. BUILD
+============================================
+[OK] Frontend compila correctamente con npm run build
+
+============================================
+7. CONCLUSION
+============================================
+Resumen general:
+- Componentes totales: 29
+- Componentes con signal(): 25
+- Componentes con computed(): 26
+- Componentes con Signal Forms o evidencia similar: 7
+- Candidatos totales detectados: 49
+
+Candidatos prioridad ALTA: 
+Candidatos prioridad MEDIA: 43
+Candidatos prioridad BAJA: 5
+
+[ACCION] El proyecto esta fuerte, pero conviene reforzar candidatos MEDIA.
+
+Criterio para sustentar:
+No todos los archivos necesitan Signal Forms. Signal Forms debe aplicarse en formularios relevantes.
+Los componentes con estado visual deben usar signal().
+Los valores derivados deben usar computed().
+Los servicios con estado compartido pueden exponer signals para data/loading/error.
+
+Recomendacion practica:
+1. Migrar formularios reales: login, productos, inventario, compras, ventas o caja.
+2. No migrar archivos que solo muestran contenido estatico.
+3. Mantener la pantalla /signal-forms-evidencia como respaldo visual.
+4. En sustentacion mostrar un formulario real y la evidencia tecnica.

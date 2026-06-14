@@ -1,0 +1,314 @@
+REPORTE DE ANALISIS PARA NOTA EXCELENTE
+Proyecto: BodegaSys
+Ruta: C:\Users\clint\Downloads\bodega-system-proyecto
+Fecha: 06/09/2026 13:07:15
+
+CRITERIOS SEGUN RUBRICA:
+1. Frontend
+2. Backend
+3. Base de datos
+4. Integracion y funcionamiento
+5. Sustentacion
+
+[OK] Existe carpeta frontend
+[OK] Existe carpeta backend
+
+============================================
+ANALISIS FRONTEND
+============================================
+[OK] frontend\angular.json
+[OK] frontend\package.json
+[OK] frontend\src\main.ts
+[OK] frontend\src\app\app.config.ts
+[OK] frontend\src\app\app.routes.ts
+[OK] frontend\src\app\components
+[OK] frontend\src\app\models
+[OK] frontend\src\app\services
+[OK] frontend\src\app\features
+[OK] frontend\src\app\shared
+[OK] frontend\src\app\core
+
+Buscando uso de Angular signals, computed, forms y validaciones...
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\components\producto-formulario\producto-formulario.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\components\producto-formulario\producto-formulario.component.ts
+[OK] Validaciones Angular encontradas en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\components\producto-formulario\producto-formulario.component.ts
+[OK] Formularios reactivos encontrados en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\components\producto-formulario\producto-formulario.component.ts
+[OK] SweetAlert2 encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\components\producto-formulario\producto-formulario.component.ts
+[OK] SweetAlert2 encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\components\sweetalert-demo\sweetalert-demo.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\core\layouts\main-layout\main-layout.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\alertas\pages\alertas-page\alertas-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\alertas\pages\alertas-page\alertas-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\analitica\pages\analitica-page\analitica-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\analitica\pages\analitica-page\analitica-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\auditoria\pages\auditoria-page\auditoria-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\auditoria\pages\auditoria-page\auditoria-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\auth\pages\login-page\login-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\auth\pages\login-page\login-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\backend-test\pages\backend-test-page\backend-test-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\caja\pages\caja-page\caja-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\caja\pages\caja-page\caja-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\calidad\pages\calidad-page\calidad-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\calidad\pages\calidad-page\calidad-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\checklist\pages\checklist-page\checklist-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\checklist\pages\checklist-page\checklist-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\cierre-diario\pages\cierre-diario-page\cierre-diario-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\cierre-diario\pages\cierre-diario-page\cierre-diario-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\compras\pages\compras-page\compras-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\compras\pages\compras-page\compras-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\comprobantes\pages\comprobantes-page\comprobantes-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\comprobantes\pages\comprobantes-page\comprobantes-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\configuracion\pages\configuracion-page\configuracion-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\configuracion\pages\configuracion-page\configuracion-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\dashboard\pages\dashboard-page\dashboard-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\exportaciones\pages\exportaciones-page\exportaciones-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\exportaciones\pages\exportaciones-page\exportaciones-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\inventario\pages\inventario-page\inventario-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\inventario\pages\inventario-page\inventario-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\mantenimiento\pages\mantenimiento-page\mantenimiento-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\mantenimiento\pages\mantenimiento-page\mantenimiento-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\productos\pages\productos-page\productos-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\productos\pages\productos-page\productos-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\productos\services\productos.service.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\proveedores\pages\proveedores-page\proveedores-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\proveedores\pages\proveedores-page\proveedores-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\reportes\pages\reportes-page\reportes-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\reportes\pages\reportes-page\reportes-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\reposicion\pages\reposicion-page\reposicion-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\reposicion\pages\reposicion-page\reposicion-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\respaldo\pages\respaldo-page\respaldo-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\respaldo\pages\respaldo-page\respaldo-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\seguridad\pages\seguridad-page\seguridad-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\seguridad\pages\seguridad-page\seguridad-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\usuarios\pages\usuarios-page\usuarios-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\usuarios\pages\usuarios-page\usuarios-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\ventas\pages\ventas-page\ventas-page.component.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\ventas\pages\ventas-page\ventas-page.component.ts
+[OK] Uso de signal encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\services\producto.service.ts
+[OK] Uso de computed encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\services\producto.service.ts
+[OK] SweetAlert2 encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\services\sweet-alert-global-button.service.ts
+[OK] SweetAlert2 encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\services\sweet-alert.service.ts
+[OK] SweetAlert2 encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\app.config.ts
+[OK] SweetAlert2 encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\app.ts
+
+============================================
+ANALISIS BACKEND
+============================================
+[OK] backend\requirements.txt
+[OK] backend\src\main.py
+[OK] backend\src\apis
+[OK] backend\src\services
+[OK] backend\src\repository
+[REVISION] No encontrado: backend\src\schemas
+[OK] backend\src\firebase
+[OK] backend\.env.example
+
+Buscando FastAPI, APIRouter, Firebase, Firestore y validaciones...
+[OK] FastAPI encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\apis\auth_api.py
+[OK] APIRouter encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\apis\auth_api.py
+[OK] Firebase/Firestore encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\apis\auth_api.py
+[OK] FastAPI encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\apis\health_api.py
+[OK] APIRouter encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\apis\health_api.py
+[OK] FastAPI encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\apis\productos_api.py
+[OK] APIRouter encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\apis\productos_api.py
+[OK] Firebase/Firestore encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\apis\productos_api.py
+[OK] Validaciones Pydantic encontradas en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\core\config.py
+[OK] Firebase/Firestore encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\core\config.py
+[OK] FastAPI encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\core\cors.py
+[OK] FastAPI encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\firebase\auth_client.py
+[OK] Firebase/Firestore encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\firebase\auth_client.py
+[OK] Manejo de errores HTTP encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\firebase\auth_client.py
+[OK] Firebase/Firestore encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\firebase\firebase_client.py
+[OK] Firebase/Firestore encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\repository\productos_repository.py
+[OK] Validaciones Pydantic encontradas en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\schema\producto_schema.py
+[OK] FastAPI encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\services\productos_service.py
+[OK] Manejo de errores HTTP encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\services\productos_service.py
+[OK] FastAPI encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\main.py
+[OK] Firebase/Firestore encontrado en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\main.py
+
+============================================
+ANALISIS BASE DE DATOS
+============================================
+[OK] Colecciones/modulos relacionados con BodegaSys en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.analysis\backend_analysis_20260530_144228.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\firebase_admin\firestore.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\firebase_admin\firestore_async.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore\__init__.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin\__init__.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\services\firestore_admin\transports\base.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\services\firestore_admin\transports\grpc.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\services\firestore_admin\transports\grpc_asyncio.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\services\firestore_admin\transports\rest.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\services\firestore_admin\transports\rest_base.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\services\firestore_admin\transports\__init__.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\services\firestore_admin\async_client.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\services\firestore_admin\client.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\services\firestore_admin\pagers.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\services\firestore_admin\__init__.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\types\backup.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\types\database.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\types\field.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\types\firestore_admin.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\types\index.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\types\location.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\types\operation.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\types\realtime_updates.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\types\schedule.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\types\snapshot.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\types\user_creds.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\types\__init__.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\gapic_metadata.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_admin_v1\__init__.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_bundle\types\bundle.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_bundle\bundle.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_bundle\gapic_metadata.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_bundle\_helpers.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_bundle\__init__.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\services\firestore\transports\base.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\services\firestore\transports\grpc.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\services\firestore\transports\grpc_asyncio.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\services\firestore\transports\rest.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\services\firestore\transports\rest_base.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\services\firestore\transports\__init__.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\services\firestore\async_client.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\services\firestore\client.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\services\firestore\pagers.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\services\firestore\__init__.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\types\aggregation_result.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\types\bloom_filter.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\types\common.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\types\document.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\types\explain_stats.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\types\firestore.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\types\pipeline.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\types\query.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\types\query_profile.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\types\write.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\types\__init__.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\aggregation.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\async_aggregation.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\async_batch.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\async_client.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\async_collection.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\async_document.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\async_pipeline.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\async_query.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\async_stream_generator.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\async_transaction.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\async_vector_query.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\base_aggregation.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\base_batch.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\base_client.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\base_collection.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\base_document.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\base_pipeline.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\base_query.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\base_transaction.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\base_vector_query.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\batch.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\bulk_batch.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\bulk_writer.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\client.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\collection.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\document.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\field_path.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\gapic_metadata.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\order.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\pipeline.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\pipeline_expressions.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\pipeline_result.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\pipeline_source.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\pipeline_stages.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\pipeline_types.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\query.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\query_profile.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\query_results.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\rate_limiter.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\stream_generator.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\transaction.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\transforms.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\vector.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\vector_query.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\watch.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\_helpers.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\google\cloud\firestore_v1\__init__.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\accessapproval.v1.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\alloydb.v1.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\alloydb.v1alpha.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\alloydb.v1beta.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\appengine.v1.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\appengine.v1beta.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\datastore.v1.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\datastore.v1beta1.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\datastore.v1beta3.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\discoveryengine.v1.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\discoveryengine.v1alpha.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\discoveryengine.v1beta.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\firebase.v1beta1.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\firebaseappcheck.v1.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\firebaseappcheck.v1beta.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\firebaserules.v1.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\firestore.v1.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\firestore.v1beta1.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\firestore.v1beta2.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\index.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\integrations.v1.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\integrations.v1alpha.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\redis.v1.json
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.venv\Lib\site-packages\googleapiclient\discovery_cache\documents\redis.v1beta1.json
+[OK] Colecciones/modulos relacionados con BodegaSys en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\apis\productos_api.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\core\config.py
+[OK] Colecciones/modulos relacionados con BodegaSys en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\core\config.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\firebase\firebase_client.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\repository\productos_repository.py
+[OK] Colecciones/modulos relacionados con BodegaSys en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\repository\productos_repository.py
+[OK] Colecciones/modulos relacionados con BodegaSys en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\services\productos_service.py
+[OK] Colecciones/modulos relacionados con BodegaSys en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\main.py
+[OK] Referencia a Firestore en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.env.example
+[OK] Colecciones/modulos relacionados con BodegaSys en: C:\Users\clint\Downloads\bodega-system-proyecto\backend\.env.example
+
+============================================
+ANALISIS INTEGRACION
+============================================
+[OK] HttpClient usado en frontend: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\core\services\backend-auth.ts
+[OK] Posible uso de Bearer Token en frontend: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\core\services\backend-auth.ts
+[OK] HttpClient usado en frontend: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\core\services\backend-health.ts
+[OK] Posible uso de Bearer Token en frontend: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\backend-test\pages\backend-test-page\backend-test-page.component.ts
+[OK] HttpClient usado en frontend: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\productos\services\productos-backend.service.ts
+[OK] HttpClient usado en frontend: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\app.config.ts
+[OK] Posible validacion de token en backend: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\apis\auth_api.py
+[OK] Posible validacion de token en backend: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\apis\productos_api.py
+[OK] Posible validacion de token en backend: C:\Users\clint\Downloads\bodega-system-proyecto\backend\src\firebase\auth_client.py
+
+============================================
+RIESGOS PARA NO SACAR EXCELENTE
+============================================
+Revisar manualmente:
+- Que el frontend compile sin errores.
+- Que el backend levante sin errores.
+- Que Swagger funcione.
+- Que Firebase Authentication funcione.
+- Que Firestore tenga colecciones coherentes.
+- Que el estudiante pueda sustentar el flujo completo.
+- Que no existan archivos sensibles subidos a GitHub.
+
+============================================
+COMANDOS RECOMENDADOS PARA VALIDAR
+============================================
+Frontend:
+cd frontend
+Backend:
+cd backend
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m uvicorn src.main:app --reload
+
+Swagger:
+http://127.0.0.1:8000/docs
+
+============================================
+CONCLUSION DEL ANALISIS
+============================================
+Para lograr EXCELENTE, el proyecto debe evidenciar:
+- Frontend Angular funcional, modular y validado.
+- Backend FastAPI por capas.
+- Base de datos Firestore coherente.
+- Integracion Angular-FastAPI-Firebase funcionando.
+- Sustentacion con dominio tecnico.

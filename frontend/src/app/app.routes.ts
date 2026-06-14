@@ -1,4 +1,4 @@
-﻿import { BackendTestPageComponent } from './features/backend-test/pages/backend-test-page/backend-test-page.component';
+import { BackendTestPageComponent } from './features/backend-test/pages/backend-test-page/backend-test-page.component';
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
@@ -28,6 +28,7 @@ import { UsuariosPageComponent } from './features/usuarios/pages/usuarios-page/u
 import { VentasPageComponent } from './features/ventas/pages/ventas-page/ventas-page.component';
 
 export const routes: Routes = [
+  { path: 'signal-forms-evidencia', loadComponent: () => import('./features/signal-forms-evidencia/pages/signal-forms-evidencia-page/signal-forms-evidencia-page.component').then(m => m.SignalFormsEvidenciaPageComponent) },
   { path: 'backend-test', component: BackendTestPageComponent },
   {
     path: 'login',

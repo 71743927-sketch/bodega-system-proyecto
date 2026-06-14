@@ -1,223 +1,96 @@
-﻿import { Component, computed, inject, signal } from '@angular/core';
-import { UsuariosService } from '../../services/usuarios.service';
-import { RolUsuario, Usuario } from '../../models/usuario';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { FormField, email, form, maxLength, minLength, required } from '@angular/forms/signals';
 
-type UsuarioForm = {
+interface UsuarioFormModel {
   nombre: string;
-  username: string;
-  rol: RolUsuario;
-  telefono: string;
+  correo: string;
+  rol: string;
   activo: boolean;
-  observacion: string;
-};
+}
+
+interface UsuarioItem extends UsuarioFormModel {
+  id: number;
+}
 
 @Component({
   selector: 'app-usuarios-page',
-  standalone: true,
-  imports: [],
+  imports: [FormField],
   templateUrl: './usuarios-page.component.html',
-  styleUrl: './usuarios-page.component.css'
+  styleUrl: './usuarios-page.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UsuariosPageComponent {
-
-  private usuariosService = inject(UsuariosService);
-
-  usuarios = this.usuariosService.usuariosLectura;
-
-  editandoId = signal<number | null>(null);
-  enviado = signal(false);
-  busqueda = signal('');
-  filtroRol = signal<'TODOS' | RolUsuario>('TODOS');
-
-  roles: RolUsuario[] = ['DUENO', 'CAJERO', 'ALMACENERO', 'SUPERVISOR'];
-
-  formulario = signal<UsuarioForm>({
+  protected readonly usuarioModel = signal<UsuarioFormModel>({
     nombre: '',
-    username: '',
-    rol: 'CAJERO',
-    telefono: '',
-    activo: true,
-    observacion: ''
+    correo: '',
+    rol: 'Cajero',
+    activo: true
   });
 
-  totalUsuarios = computed(() => this.usuarios().length);
-  totalActivos = computed(() => this.usuarios().filter(usuario => usuario.activo).length);
-  totalInactivos = computed(() => this.usuarios().filter(usuario => !usuario.activo).length);
-  totalCajeros = computed(() => this.usuarios().filter(usuario => usuario.rol === 'CAJERO').length);
+  protected readonly usuarioForm = form(this.usuarioModel, (path) => {
+    required(path.nombre, { message: 'El nombre es obligatorio.' });
+    minLength(path.nombre, 3, { message: 'El nombre debe tener mínimo 3 caracteres.' });
+    maxLength(path.nombre, 80, { message: 'El nombre debe tener máximo 80 caracteres.' });
 
-  usuariosFiltrados = computed(() => {
-    const texto = this.busqueda().trim().toLowerCase();
-    const rol = this.filtroRol();
+    required(path.correo, { message: 'El correo es obligatorio.' });
+    email(path.correo, { message: 'Debe ingresar un correo válido.' });
 
-    return this.usuarios().filter(usuario => {
-      const coincideTexto =
-        texto === '' ||
-        usuario.nombre.toLowerCase().includes(texto) ||
-        usuario.username.toLowerCase().includes(texto) ||
-        usuario.telefono.toLowerCase().includes(texto);
-
-      const coincideRol = rol === 'TODOS' || usuario.rol === rol;
-
-      return coincideTexto && coincideRol;
-    });
+    required(path.rol, { message: 'El rol es obligatorio.' });
   });
 
-  usernameDuplicado = computed(() => {
-    const username = this.formulario().username.trim().toLowerCase();
-    const editandoId = this.editandoId();
+  protected readonly usuarios = signal<UsuarioItem[]>([
+    { id: 1, nombre: 'Administrador General', correo: 'admin@bodegasys.com', rol: 'Administrador', activo: true },
+    { id: 2, nombre: 'Cajero Principal', correo: 'cajero@bodegasys.com', rol: 'Cajero', activo: true }
+  ]);
 
-    if (username === '') {
-      return false;
-    }
-
-    return this.usuarios().some(usuario =>
-      usuario.username.trim().toLowerCase() === username &&
-      usuario.id !== editandoId
-    );
-  });
-
-  formularioValido = computed(() => {
-    const f = this.formulario();
+  protected readonly totalUsuarios = computed(() => this.usuarios().length);
+  protected readonly usuariosActivos = computed(() => this.usuarios().filter((usuario) => usuario.activo).length);
+  protected readonly puedeGuardar = computed(() => {
+    const usuario = this.usuarioModel();
 
     return (
-      f.nombre.trim().length > 0 &&
-      f.username.trim().length > 0 &&
-      f.telefono.trim().length > 0 &&
-      !this.usernameDuplicado()
+      usuario.nombre.trim().length >= 3 &&
+      usuario.correo.includes('@') &&
+      usuario.rol.trim().length > 0
     );
   });
 
-  actualizarTexto(campo: 'nombre' | 'username' | 'telefono' | 'observacion', valor: string) {
-    this.formulario.update(actual => ({
-      ...actual,
-      [campo]: valor
-    }));
-  }
-
-  actualizarRol(valor: RolUsuario) {
-    this.formulario.update(actual => ({
-      ...actual,
-      rol: valor
-    }));
-  }
-
-  actualizarActivo(valor: boolean) {
-    this.formulario.update(actual => ({
-      ...actual,
-      activo: valor
-    }));
-  }
-
-  actualizarBusqueda(valor: string) {
-    this.busqueda.set(valor);
-  }
-
-  actualizarFiltroRol(valor: 'TODOS' | RolUsuario) {
-    this.filtroRol.set(valor);
-  }
-
-  guardarUsuario(event?: Event) {
-    event?.preventDefault();
-    this.enviado.set(true);
-
-    if (!this.formularioValido()) {
+  protected guardar(): void {
+    if (!this.puedeGuardar()) {
       return;
     }
 
-    const data = this.formulario();
-
-    if (this.editandoId() === null) {
-      const nuevoUsuario: Usuario = {
-        id: this.usuariosService.obtenerSiguienteId(),
-        nombre: data.nombre.trim(),
-        username: data.username.trim(),
-        rol: data.rol,
-        telefono: data.telefono.trim(),
-        activo: data.activo,
-        observacion: data.observacion.trim()
-      };
-
-      this.usuariosService.agregarUsuario(nuevoUsuario);
-    } else {
-      const usuarioActualizado: Usuario = {
-        id: this.editandoId()!,
-        nombre: data.nombre.trim(),
-        username: data.username.trim(),
-        rol: data.rol,
-        telefono: data.telefono.trim(),
-        activo: data.activo,
-        observacion: data.observacion.trim()
-      };
-
-      this.usuariosService.actualizarUsuario(usuarioActualizado);
-    }
-
-    this.limpiarFormulario();
-  }
-
-  editarUsuario(usuario: Usuario) {
-    this.editandoId.set(usuario.id);
-    this.enviado.set(false);
-
-    this.formulario.set({
-      nombre: usuario.nombre,
-      username: usuario.username,
+    const usuario = this.usuarioModel();
+    const nuevoUsuario: UsuarioItem = {
+      id: Date.now(),
+      nombre: usuario.nombre.trim(),
+      correo: usuario.correo.trim(),
       rol: usuario.rol,
-      telefono: usuario.telefono,
-      activo: usuario.activo,
-      observacion: usuario.observacion
-    });
+      activo: usuario.activo
+    };
+
+    this.usuarios.update((usuarios) => [nuevoUsuario, ...usuarios]);
+    this.limpiar();
   }
 
-  eliminarUsuario(usuario: Usuario) {
-    if (usuario.rol === 'DUENO') {
-      return;
-    }
-
-    this.usuariosService.eliminarUsuario(usuario.id);
-
-    if (this.editandoId() === usuario.id) {
-      this.limpiarFormulario();
-    }
-  }
-
-  alternarEstado(usuario: Usuario) {
-    this.usuariosService.alternarEstado(usuario.id);
-
-    if (this.editandoId() === usuario.id) {
-      this.formulario.update(actual => ({
-        ...actual,
-        activo: !actual.activo
-      }));
-    }
-  }
-
-  limpiarFormulario() {
-    this.editandoId.set(null);
-    this.enviado.set(false);
-
-    this.formulario.set({
+  protected limpiar(): void {
+    this.usuarioModel.set({
       nombre: '',
-      username: '',
-      rol: 'CAJERO',
-      telefono: '',
-      activo: true,
-      observacion: ''
+      correo: '',
+      rol: 'Cajero',
+      activo: true
     });
   }
 
-  etiquetaRol(rol: RolUsuario): string {
-    switch (rol) {
-      case 'DUENO':
-        return 'Dueño';
-      case 'CAJERO':
-        return 'Cajero';
-      case 'ALMACENERO':
-        return 'Almacenero';
-      case 'SUPERVISOR':
-        return 'Supervisor';
-      default:
-        return rol;
-    }
+  protected alternarEstado(usuarioId: number): void {
+    this.usuarios.update((usuarios) =>
+      usuarios.map((usuario) =>
+        usuario.id === usuarioId ? { ...usuario, activo: !usuario.activo } : usuario
+      )
+    );
+  }
+
+  protected etiquetaRol(rol: string): string {
+    return rol;
   }
 }

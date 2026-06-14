@@ -1,0 +1,112 @@
+<section class="container py-4">
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-primary text-white">
+      <h1 class="h4 mb-0">Evidencia Angular Signal Forms</h1>
+    </div>
+
+    <div class="card-body">
+      <p class="text-muted">
+        Esta pantalla evidencia el uso de Angular 21+, Signals, Computed y Signal Forms
+        mediante <code>form()</code>, <code>FormField</code> y validaciones declarativas.
+      </p>
+
+      <form class="row g-3" (submit)="registrarEvidencia($event)">
+        <div class="col-md-4">
+          <label class="form-label" for="codigo">Código</label>
+          <input
+            id="codigo"
+            class="form-control"
+            type="text"
+            placeholder="Ej: PROD001"
+            [formField]="productoForm.codigo"
+          />
+          <small class="text-muted">Obligatorio, mínimo 3 caracteres.</small>
+        </div>
+
+        <div class="col-md-8">
+          <label class="form-label" for="nombre">Nombre del producto</label>
+          <input
+            id="nombre"
+            class="form-control"
+            type="text"
+            placeholder="Ej: Arroz Costeño 5kg"
+            [formField]="productoForm.nombre"
+          />
+          <small class="text-muted">Obligatorio, mínimo 3 caracteres.</small>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label" for="categoria">Categoría</label>
+          <input
+            id="categoria"
+            class="form-control"
+            type="text"
+            placeholder="Ej: Abarrotes"
+            [formField]="productoForm.categoria"
+          />
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label" for="stock">Stock</label>
+          <input
+            id="stock"
+            class="form-control"
+            type="number"
+            [formField]="productoForm.stock"
+          />
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label" for="stockMinimo">Stock mínimo</label>
+          <input
+            id="stockMinimo"
+            class="form-control"
+            type="number"
+            [formField]="productoForm.stockMinimo"
+          />
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label" for="precioVenta">Precio venta</label>
+          <input
+            id="precioVenta"
+            class="form-control"
+            type="number"
+            step="0.10"
+            [formField]="productoForm.precioVenta"
+          />
+        </div>
+
+        <div class="col-12">
+          <div class="alert" [class.alert-success]="puedeGuardar()" [class.alert-warning]="!puedeGuardar()">
+            Estado calculado con <strong>computed()</strong>:
+            <strong>{{ stockEstado() }}</strong>
+          </div>
+        </div>
+
+        <div class="col-12 d-flex gap-2">
+          <button class="btn btn-primary" type="submit" [disabled]="!puedeGuardar()">
+            Guardar evidencia
+          </button>
+
+          <button class="btn btn-outline-secondary" type="button" (click)="limpiar()">
+            Limpiar
+          </button>
+        </div>
+
+        @if (guardado()) {
+          <div class="col-12">
+            <div class="alert alert-success mb-0">
+              Evidencia registrada correctamente usando Signal Forms.
+            </div>
+          </div>
+        }
+      </form>
+
+      <hr />
+
+      <h2 class="h5">Modelo sincronizado automáticamente</h2>
+      <pre class="bg-light border rounded p-3 mb-0">{{ resumenTexto() }}</pre>
+    </div>
+  </div>
+</section>

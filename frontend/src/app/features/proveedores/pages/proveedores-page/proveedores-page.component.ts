@@ -1,185 +1,99 @@
-﻿import { Component, computed, inject, signal } from '@angular/core';
-import { Proveedor } from '../../models/proveedor';
-import { ProveedoresService } from '../../services/proveedores.service';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { FormField, form, maxLength, minLength, required } from '@angular/forms/signals';
 
-type ProveedorForm = {
-  nombre: string;
+interface ProveedorFormModel {
+  ruc: string;
+  razonSocial: string;
   telefono: string;
-  direccion: string;
+  categoria: string;
   activo: boolean;
-};
+}
+
+interface ProveedorItem extends ProveedorFormModel {
+  id: number;
+}
 
 @Component({
   selector: 'app-proveedores-page',
-  standalone: true,
-  imports: [],
+  imports: [FormField],
   templateUrl: './proveedores-page.component.html',
-  styleUrl: './proveedores-page.component.css'
+  styleUrl: './proveedores-page.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProveedoresPageComponent {
-
-  private proveedoresService = inject(ProveedoresService);
-
-  proveedores = this.proveedoresService.proveedoresLectura;
-
-  editandoId = signal<number | null>(null);
-  enviado = signal(false);
-  busqueda = signal('');
-  filtroEstado = signal<'TODOS' | 'ACTIVOS' | 'INACTIVOS'>('TODOS');
-
-  formulario = signal<ProveedorForm>({
-    nombre: '',
+  protected readonly proveedorModel = signal<ProveedorFormModel>({
+    ruc: '',
+    razonSocial: '',
     telefono: '',
-    direccion: '',
+    categoria: 'Abarrotes',
     activo: true
   });
 
-  totalProveedores = computed(() => this.proveedores().length);
-  activos = computed(() => this.proveedores().filter(p => p.activo).length);
-  inactivos = computed(() => this.proveedores().filter(p => !p.activo).length);
+  protected readonly proveedorForm = form(this.proveedorModel, (path) => {
+    required(path.ruc, { message: 'El RUC es obligatorio.' });
+    minLength(path.ruc, 8, { message: 'El RUC debe tener mínimo 8 caracteres.' });
+    maxLength(path.ruc, 11, { message: 'El RUC debe tener máximo 11 caracteres.' });
 
-  proveedoresFiltrados = computed(() => {
-    const texto = this.busqueda().trim().toLowerCase();
-    const estado = this.filtroEstado();
+    required(path.razonSocial, { message: 'La razón social es obligatoria.' });
+    minLength(path.razonSocial, 3, { message: 'La razón social debe tener mínimo 3 caracteres.' });
 
-    return this.proveedores().filter(proveedor => {
-      const coincideTexto =
-        texto === '' ||
-        proveedor.nombre.toLowerCase().includes(texto) ||
-        proveedor.telefono.toLowerCase().includes(texto) ||
-        proveedor.direccion.toLowerCase().includes(texto);
-
-      const coincideEstado =
-        estado === 'TODOS' ||
-        (estado === 'ACTIVOS' && proveedor.activo) ||
-        (estado === 'INACTIVOS' && !proveedor.activo);
-
-      return coincideTexto && coincideEstado;
-    });
+    required(path.categoria, { message: 'La categoría es obligatoria.' });
   });
 
-  nombreDuplicado = computed(() => {
-    const nombre = this.formulario().nombre.trim().toLowerCase();
-    const editandoId = this.editandoId();
+  protected readonly proveedores = signal<ProveedorItem[]>([
+    { id: 1, ruc: '20123456789', razonSocial: 'Distribuidora Central', telefono: '999888777', categoria: 'Abarrotes', activo: true },
+    { id: 2, ruc: '20456789123', razonSocial: 'Bebidas del Valle', telefono: '988777666', categoria: 'Bebidas', activo: true }
+  ]);
 
-    if (nombre === '') {
-      return false;
-    }
-
-    return this.proveedores().some(proveedor =>
-      proveedor.nombre.trim().toLowerCase() === nombre &&
-      proveedor.id !== editandoId
-    );
-  });
-
-  formularioValido = computed(() => {
-    const f = this.formulario();
+  protected readonly totalProveedores = computed(() => this.proveedores().length);
+  protected readonly proveedoresActivos = computed(() => this.proveedores().filter((proveedor) => proveedor.activo).length);
+  protected readonly puedeGuardar = computed(() => {
+    const proveedor = this.proveedorModel();
 
     return (
-      f.nombre.trim().length > 0 &&
-      f.telefono.trim().length > 0 &&
-      f.direccion.trim().length > 0 &&
-      !this.nombreDuplicado()
+      proveedor.ruc.trim().length >= 8 &&
+      proveedor.razonSocial.trim().length >= 3 &&
+      proveedor.categoria.trim().length > 0
     );
   });
 
-  actualizarTexto(campo: 'nombre' | 'telefono' | 'direccion', valor: string) {
-    this.formulario.update(actual => ({
-      ...actual,
-      [campo]: valor
-    }));
-  }
-
-  actualizarActivo(valor: boolean) {
-    this.formulario.update(actual => ({
-      ...actual,
-      activo: valor
-    }));
-  }
-
-  actualizarBusqueda(valor: string) {
-    this.busqueda.set(valor);
-  }
-
-  actualizarFiltroEstado(valor: 'TODOS' | 'ACTIVOS' | 'INACTIVOS') {
-    this.filtroEstado.set(valor);
-  }
-
-  guardarProveedor(event?: Event) {
-    event?.preventDefault();
-    this.enviado.set(true);
-
-    if (!this.formularioValido()) {
+  protected guardar(): void {
+    if (!this.puedeGuardar()) {
       return;
     }
 
-    const data = this.formulario();
+    const proveedor = this.proveedorModel();
 
-    if (this.editandoId() === null) {
-      const nuevoProveedor: Proveedor = {
-        id: this.proveedoresService.obtenerSiguienteId(),
-        nombre: data.nombre.trim(),
-        telefono: data.telefono.trim(),
-        direccion: data.direccion.trim(),
-        activo: data.activo
-      };
+    this.proveedores.update((proveedores) => [
+      {
+        id: Date.now(),
+        ruc: proveedor.ruc.trim(),
+        razonSocial: proveedor.razonSocial.trim(),
+        telefono: proveedor.telefono.trim(),
+        categoria: proveedor.categoria,
+        activo: proveedor.activo
+      },
+      ...proveedores
+    ]);
 
-      this.proveedoresService.agregarProveedor(nuevoProveedor);
-    } else {
-      const proveedorActualizado: Proveedor = {
-        id: this.editandoId()!,
-        nombre: data.nombre.trim(),
-        telefono: data.telefono.trim(),
-        direccion: data.direccion.trim(),
-        activo: data.activo
-      };
-
-      this.proveedoresService.actualizarProveedor(proveedorActualizado);
-    }
-
-    this.limpiarFormulario();
+    this.limpiar();
   }
 
-  editarProveedor(proveedor: Proveedor) {
-    this.editandoId.set(proveedor.id);
-    this.enviado.set(false);
-
-    this.formulario.set({
-      nombre: proveedor.nombre,
-      telefono: proveedor.telefono,
-      direccion: proveedor.direccion,
-      activo: proveedor.activo
-    });
-  }
-
-  eliminarProveedor(proveedor: Proveedor) {
-    this.proveedoresService.eliminarProveedor(proveedor.id);
-
-    if (this.editandoId() === proveedor.id) {
-      this.limpiarFormulario();
-    }
-  }
-
-  alternarEstado(proveedor: Proveedor) {
-    this.proveedoresService.alternarEstado(proveedor.id);
-
-    if (this.editandoId() === proveedor.id) {
-      this.formulario.update(actual => ({
-        ...actual,
-        activo: !actual.activo
-      }));
-    }
-  }
-
-  limpiarFormulario() {
-    this.editandoId.set(null);
-    this.enviado.set(false);
-
-    this.formulario.set({
-      nombre: '',
+  protected limpiar(): void {
+    this.proveedorModel.set({
+      ruc: '',
+      razonSocial: '',
       telefono: '',
-      direccion: '',
+      categoria: 'Abarrotes',
       activo: true
     });
+  }
+
+  protected alternarEstado(proveedorId: number): void {
+    this.proveedores.update((proveedores) =>
+      proveedores.map((proveedor) =>
+        proveedor.id === proveedorId ? { ...proveedor, activo: !proveedor.activo } : proveedor
+      )
+    );
   }
 }

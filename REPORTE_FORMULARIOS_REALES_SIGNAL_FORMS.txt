@@ -1,0 +1,230 @@
+============================================
+REPORTE DE FORMULARIOS REALES - SIGNAL FORMS
+============================================
+Proyecto: BodegaSys
+Fecha: 06/14/2026 17:47:47
+
+Objetivo:
+Detectar formularios reales que deben migrarse o reforzarse con Angular Signal Forms.
+
+============================================
+MODULO: productos
+============================================
+Archivo TS: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\productos\pages\productos-page\productos-page.component.ts
+Archivo HTML: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\productos\pages\productos-page\productos-page.component.html
+Tiene form/input HTML: True
+Usa Reactive Forms tradicional: False
+Usa signal(): True
+Usa computed(): True
+Usa Signal Forms: True
+Tiene validaciones: False
+Consume API/HTTP: False
+
+Campos detectados en HTML:
+- productoForm.codigo
+- productoForm.nombre
+- productoForm.categoria
+- productoForm.precioCompra
+- productoForm.precioVenta
+- productoForm.stockActual
+- productoForm.stockMinimo
+- productoForm.activo
+- productoForm.observacion
+- filtrosForm.busqueda
+- filtrosForm.categoria
+- filtrosForm.soloActivos
+- filtrosForm.soloCriticos
+
+Metodos posiblemente usados:
+- guardar
+- editar
+- eliminar
+- alternarEstado
+- cancelarEdicion
+- restablecerBase
+- limpiarFiltros
+- obtenerFormularioBase
+
+DIAGNOSTICO:
+[OK] Este componente ya tiene evidencia de Signal Forms.
+[MEJORA] Agregar validaciones visibles o schema de Signal Forms.
+
+============================================
+MODULO: usuarios
+============================================
+Archivo TS: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\usuarios\pages\usuarios-page\usuarios-page.component.ts
+Archivo HTML: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\usuarios\pages\usuarios-page\usuarios-page.component.html
+Tiene form/input HTML: True
+Usa Reactive Forms tradicional: False
+Usa signal(): True
+Usa computed(): True
+Usa Signal Forms: False
+Tiene validaciones: False
+Consume API/HTTP: False
+
+Campos detectados en HTML:
+- No se detectaron campos por name/formControlName/[formField]
+
+Metodos posiblemente usados:
+- etiquetaRol
+
+DIAGNOSTICO:
+[PRIORIDAD MEDIA] Este componente tiene formulario/inputs y no usa Signal Forms.
+Accion sugerida: migrar los campos principales a Signal Forms o justificar que es solo filtro/simple UI.
+[MEJORA] Agregar validaciones visibles o schema de Signal Forms.
+
+============================================
+MODULO: ventas
+============================================
+Archivo TS: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\ventas\pages\ventas-page\ventas-page.component.ts
+Archivo HTML: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\ventas\pages\ventas-page\ventas-page.component.html
+Tiene form/input HTML: True
+Usa Reactive Forms tradicional: False
+Usa signal(): True
+Usa computed(): True
+Usa Signal Forms: False
+Tiene validaciones: True
+Consume API/HTTP: False
+
+Campos detectados en HTML:
+- No se detectaron campos por name/formControlName/[formField]
+
+Metodos posiblemente usados:
+- obtenerFechaLocal
+- normalizarFecha
+
+DIAGNOSTICO:
+[PRIORIDAD MEDIA] Este componente tiene formulario/inputs y no usa Signal Forms.
+Accion sugerida: migrar los campos principales a Signal Forms o justificar que es solo filtro/simple UI.
+
+============================================
+MODULO: proveedores
+============================================
+Archivo TS: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\proveedores\pages\proveedores-page\proveedores-page.component.ts
+Archivo HTML: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\proveedores\pages\proveedores-page\proveedores-page.component.html
+Tiene form/input HTML: True
+Usa Reactive Forms tradicional: False
+Usa signal(): True
+Usa computed(): True
+Usa Signal Forms: False
+Tiene validaciones: False
+Consume API/HTTP: False
+
+Campos detectados en HTML:
+- No se detectaron campos por name/formControlName/[formField]
+
+Metodos posiblemente usados:
+- No se detectaron metodos claros
+
+DIAGNOSTICO:
+[PRIORIDAD MEDIA] Este componente tiene formulario/inputs y no usa Signal Forms.
+Accion sugerida: migrar los campos principales a Signal Forms o justificar que es solo filtro/simple UI.
+[MEJORA] Agregar validaciones visibles o schema de Signal Forms.
+
+============================================
+MODULO: inventario
+============================================
+Archivo TS: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\inventario\pages\inventario-page\inventario-page.component.ts
+Archivo HTML: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\inventario\pages\inventario-page\inventario-page.component.html
+Tiene form/input HTML: True
+Usa Reactive Forms tradicional: False
+Usa signal(): True
+Usa computed(): True
+Usa Signal Forms: True
+Tiene validaciones: False
+Consume API/HTTP: False
+
+Campos detectados en HTML:
+- inventarioForm.tipo
+- inventarioForm.cantidad
+- inventarioForm.usuario
+- inventarioForm.observacion
+
+Metodos posiblemente usados:
+- etiquetaTipo
+
+DIAGNOSTICO:
+[OK] Este componente ya tiene evidencia de Signal Forms.
+[MEJORA] Agregar validaciones visibles o schema de Signal Forms.
+
+============================================
+MODULO: compras
+============================================
+Archivo TS: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\compras\pages\compras-page\compras-page.component.ts
+Archivo HTML: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\compras\pages\compras-page\compras-page.component.html
+Tiene form/input HTML: True
+Usa Reactive Forms tradicional: False
+Usa signal(): True
+Usa computed(): True
+Usa Signal Forms: True
+Tiene validaciones: False
+Consume API/HTTP: False
+
+Campos detectados en HTML:
+- No se detectaron campos por name/formControlName/[formField]
+
+Metodos posiblemente usados:
+- No se detectaron metodos claros
+
+DIAGNOSTICO:
+[OK] Este componente ya tiene evidencia de Signal Forms.
+[MEJORA] Agregar validaciones visibles o schema de Signal Forms.
+
+============================================
+MODULO: caja
+============================================
+Archivo TS: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\caja\pages\caja-page\caja-page.component.ts
+Archivo HTML: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\caja\pages\caja-page\caja-page.component.html
+Tiene form/input HTML: True
+Usa Reactive Forms tradicional: False
+Usa signal(): True
+Usa computed(): True
+Usa Signal Forms: True
+Tiene validaciones: False
+Consume API/HTTP: False
+
+Campos detectados en HTML:
+- No se detectaron campos por name/formControlName/[formField]
+
+Metodos posiblemente usados:
+- No se detectaron metodos claros
+
+DIAGNOSTICO:
+[OK] Este componente ya tiene evidencia de Signal Forms.
+[MEJORA] Agregar validaciones visibles o schema de Signal Forms.
+
+============================================
+MODULO: auth
+============================================
+Archivo TS: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\auth\pages\login-page\login-page.component.ts
+Archivo HTML: C:\Users\clint\Downloads\bodega-system-proyecto\frontend\src\app\features\auth\pages\login-page\login-page.component.html
+Tiene form/input HTML: True
+Usa Reactive Forms tradicional: False
+Usa signal(): True
+Usa computed(): True
+Usa Signal Forms: True
+Tiene validaciones: True
+Consume API/HTTP: False
+
+Campos detectados en HTML:
+- loginForm.email
+- loginForm.password
+
+Metodos posiblemente usados:
+- No se detectaron metodos claros
+
+DIAGNOSTICO:
+[OK] Este componente ya tiene evidencia de Signal Forms.
+
+============================================
+RESUMEN PRACTICO
+============================================
+Para migracion real, prioriza:
+1. productos si aun tiene producto-formulario con Reactive Forms.
+2. ventas si registra operaciones.
+3. usuarios si registra personal/roles.
+4. proveedores si registra proveedores.
+5. inventario/compras/caja si tienen formularios operativos.
+
+No es necesario migrar modulos que solo muestran reportes, tablas o filtros simples.
+Signal Forms debe aplicarse principalmente en formularios reales con validaciones.

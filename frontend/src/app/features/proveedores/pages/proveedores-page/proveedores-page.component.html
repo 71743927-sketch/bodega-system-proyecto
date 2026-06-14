@@ -1,152 +1,100 @@
-﻿<section class="proveedores-page">
-  <div class="page-header">
+<section class="container py-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
     <div>
-      <h1>Proveedores</h1>
-      <p>Administra el directorio de proveedores para compras y abastecimiento.</p>
+      <h1 class="h3 mb-1">Gestión de proveedores</h1>
+      <p class="text-muted mb-0">Formulario real migrado a Angular Signal Forms.</p>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <span>Total</span>
-        <strong>{{ totalProveedores() }}</strong>
-      </div>
-      <div class="stat-card success">
-        <span>Activos</span>
-        <strong>{{ activos() }}</strong>
-      </div>
-      <div class="stat-card warning">
-        <span>Inactivos</span>
-        <strong>{{ inactivos() }}</strong>
-      </div>
+    <div class="d-flex gap-2">
+      <span class="badge text-bg-primary">Total: {{ totalProveedores() }}</span>
+      <span class="badge text-bg-success">Activos: {{ proveedoresActivos() }}</span>
     </div>
   </div>
 
-  <div class="layout-grid">
-    <div class="card form-card">
-      <div class="card-title">
-        <h2>
-          @if (editandoId() === null) {
-            Registrar proveedor
-          } @else {
-            Editar proveedor
-          }
-        </h2>
-        <p>Define el nombre comercial, contacto y estado del proveedor.</p>
-      </div>
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-primary text-white">Registro de proveedor con Signal Forms</div>
 
-      <form (submit)="guardarProveedor($event)">
-        <div class="form-grid">
-          <div class="campo full-width">
-            <label for="nombre">Nombre</label>
-            <input id="nombre" type="text" [value]="formulario().nombre" (input)="actualizarTexto('nombre', $any($event.target).value)" placeholder="Ej. Distribuidora Central SAC" />
-            @if (enviado() && formulario().nombre.trim() === '') {
-              <small class="error">El nombre es obligatorio.</small>
-            }
-            @if (enviado() && nombreDuplicado()) {
-              <small class="error">Ya existe un proveedor con ese nombre.</small>
-            }
-          </div>
+    <div class="card-body">
+      <form class="row g-3" (submit)="guardar(); $event.preventDefault()">
+        <div class="col-md-3">
+          <label class="form-label">RUC/DNI</label>
+          <input class="form-control" type="text" placeholder="20123456789" [formField]="proveedorForm.ruc" />
+          <small class="text-muted">Obligatorio, 8 a 11 caracteres.</small>
+        </div>
 
-          <div class="campo">
-            <label for="telefono">Teléfono</label>
-            <input id="telefono" type="text" [value]="formulario().telefono" (input)="actualizarTexto('telefono', $any($event.target).value)" placeholder="Ej. 964123456" />
-            @if (enviado() && formulario().telefono.trim() === '') {
-              <small class="error">El teléfono es obligatorio.</small>
-            }
-          </div>
+        <div class="col-md-4">
+          <label class="form-label">Razón social</label>
+          <input class="form-control" type="text" placeholder="Proveedor SAC" [formField]="proveedorForm.razonSocial" />
+          <small class="text-muted">Obligatorio, mínimo 3 caracteres.</small>
+        </div>
 
-          <div class="campo">
-            <label for="activo">Estado</label>
-            <select id="activo" [value]="formulario().activo ? 'true' : 'false'" (change)="actualizarActivo($any($event.target).value === 'true')">
-              <option value="true">Activo</option>
-              <option value="false">Inactivo</option>
-            </select>
-          </div>
+        <div class="col-md-2">
+          <label class="form-label">Teléfono</label>
+          <input class="form-control" type="text" placeholder="999888777" [formField]="proveedorForm.telefono" />
+        </div>
 
-          <div class="campo full-width">
-            <label for="direccion">Dirección</label>
-            <textarea id="direccion" rows="4" [value]="formulario().direccion" (input)="actualizarTexto('direccion', $any($event.target).value)" placeholder="Ej. Av. Ferrocarril 1200"></textarea>
-            @if (enviado() && formulario().direccion.trim() === '') {
-              <small class="error">La dirección es obligatoria.</small>
-            }
+        <div class="col-md-2">
+          <label class="form-label">Categoría</label>
+          <select class="form-select" [formField]="proveedorForm.categoria">
+            <option value="Abarrotes">Abarrotes</option>
+            <option value="Bebidas">Bebidas</option>
+            <option value="Limpieza">Limpieza</option>
+            <option value="Lácteos">Lácteos</option>
+          </select>
+        </div>
+
+        <div class="col-md-1 d-flex align-items-end">
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" [formField]="proveedorForm.activo" />
+            <label class="form-check-label">Activo</label>
           </div>
         </div>
 
-        <div class="actions">
-          <button type="submit" class="btn-primary">
-            @if (editandoId() === null) {
-              Guardar proveedor
-            } @else {
-              Actualizar proveedor
-            }
-          </button>
-
-          @if (editandoId() !== null) {
-            <button type="button" class="btn-secondary" (click)="limpiarFormulario()">Cancelar</button>
-          }
+        <div class="col-12 d-flex gap-2">
+          <button class="btn btn-primary" type="submit" [disabled]="!puedeGuardar()">Guardar proveedor</button>
+          <button class="btn btn-outline-secondary" type="button" (click)="limpiar()">Limpiar</button>
         </div>
       </form>
     </div>
+  </div>
 
-    <div class="card list-card">
-      <div class="card-title">
-        <h2>Listado de proveedores</h2>
-        <p>Consulta rápida de contactos comerciales registrados.</p>
-      </div>
+  <div class="card shadow-sm border-0">
+    <div class="card-header">Proveedores registrados</div>
 
-      <div class="toolbar">
-        <input type="text" [value]="busqueda()" (input)="actualizarBusqueda($any($event.target).value)" placeholder="Buscar por nombre, teléfono o dirección" />
-        <select [value]="filtroEstado()" (change)="actualizarFiltroEstado($any($event.target).value)">
-          <option value="TODOS">Todos</option>
-          <option value="ACTIVOS">Activos</option>
-          <option value="INACTIVOS">Inactivos</option>
-        </select>
-      </div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th>RUC/DNI</th>
+            <th>Razón social</th>
+            <th>Teléfono</th>
+            <th>Categoría</th>
+            <th>Estado</th>
+            <th class="text-end">Acción</th>
+          </tr>
+        </thead>
 
-      @if (proveedoresFiltrados().length === 0) {
-        <div class="empty-state"><p>No hay proveedores que coincidan con el filtro actual.</p></div>
-      } @else {
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Teléfono</th>
-                <th>Dirección</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (proveedor of proveedoresFiltrados(); track proveedor.id) {
-                <tr>
-                  <td>{{ proveedor.nombre }}</td>
-                  <td>{{ proveedor.telefono }}</td>
-                  <td>{{ proveedor.direccion }}</td>
-                  <td>
-                    @if (proveedor.activo) {
-                      <span class="estado activo">Activo</span>
-                    } @else {
-                      <span class="estado inactivo">Inactivo</span>
-                    }
-                  </td>
-                  <td class="acciones-tabla">
-                    <button type="button" class="btn-table edit" (click)="editarProveedor(proveedor)">Editar</button>
-                    <button type="button" class="btn-table state" (click)="alternarEstado(proveedor)">
-                      @if (proveedor.activo) {
-                        Desactivar
-                      } @else {
-                        Activar
-                      }
-                    </button>
-                    <button type="button" class="btn-table delete" (click)="eliminarProveedor(proveedor)">Eliminar</button>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      }
+        <tbody>
+          @for (proveedor of proveedores(); track proveedor.id) {
+            <tr>
+              <td>{{ proveedor.ruc }}</td>
+              <td>{{ proveedor.razonSocial }}</td>
+              <td>{{ proveedor.telefono }}</td>
+              <td>{{ proveedor.categoria }}</td>
+              <td>
+                <span class="badge" [class.text-bg-success]="proveedor.activo" [class.text-bg-secondary]="!proveedor.activo">
+                  {{ proveedor.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary" type="button" (click)="alternarEstado(proveedor.id)">
+                  Cambiar estado
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
   </div>
 </section>

@@ -1,45 +1,43 @@
-﻿# ============================================================
-# FRONTEND - Angular
-# ============================================================
-frontend/node_modules/
-frontend/dist/
-frontend/.angular/
-frontend/.firebase/
-frontend/.venv/
+﻿# Dependencias
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
 
-# ============================================================
-# BACKEND - Python / FastAPI
-# ============================================================
-backend/.venv/
-backend/venv/
-backend/env/
-backend/__pycache__/
-backend/**/__pycache__/
-backend/**/*.pyc
-backend/.pytest_cache/
-backend/.mypy_cache/
+# Builds
+dist/
+build/
 
-# ============================================================
-# VARIABLES DE ENTORNO Y CREDENCIALES PRIVADAS
-# NO SUBIR A GITHUB
-# ============================================================
+# Variables y secretos
+.env
+.env.local
+.env.*
 backend/.env
-backend/.env.*
 backend/firebase-service-account.json
 backend/serviceAccountKey.json
-backend/*.service-account.json
-backend/*.firebase-admin.json
+firebase-service-account.json
+serviceAccountKey.json
 
-# ============================================================
-# GENERAL
-# ============================================================
+# Reportes temporales
 .analysis/
-.backup/
-.script-logs/
-.sonar-local/
 *.log
-.DS_Store
-Thumbs.db
-*.bak
+_LOCAL_SECRETS_NO_SUBIR/
+
+# Carpetas pesadas / temporales
 .cleanup_quarantine/
-scripts/legacy/
+.sonar-local/
+.sonar/
+.scannerwork/
+sonarqube/
+sonar-scanner/
+
+# Dependencias y builds
+.angular/
+
+# Archivos sensibles
+
+# Logs y temporales
+*.tmp
+*.bak
+*.zip
