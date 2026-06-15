@@ -41,3 +41,11 @@ sonar-scanner/
 *.tmp
 *.bak
 *.zip
+.cleanup_quarantine/
+.sonar-local/
+.scannerwork/
+frontend/dist/
+frontend/node_modules/
+backend/.venv/
+backend/firebase-service-account.json
+_LOCAL_SECRETS_NO_SUBIR/

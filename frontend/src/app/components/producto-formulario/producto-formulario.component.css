@@ -1,15 +1,11 @@
-﻿.card {
-  border-radius: 14px;
+.card {
+  border-radius: 0.75rem;
 }
 
-.form-control,
-.form-select,
-.btn {
-  border-radius: 10px;
+.form-label {
+  font-weight: 600;
 }
 
-@media (max-width: 768px) {
-  .card-header {
-    text-align: center;
-  }
+.alert {
+  margin-bottom: 0;
 }
