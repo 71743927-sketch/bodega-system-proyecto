@@ -1,96 +1,317 @@
-<section class="container py-4">
-  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-    <div>
-      <h1 class="h3 mb-1">Registro de ventas</h1>
-      <p class="text-muted mb-0">Formulario real migrado a Angular Signal Forms.</p>
-    </div>
+<section class="ventas-page">
+  <header class="page-header">
+    <h1>Ventas</h1>
+    <p>Gestiona ventas rápidas con carrito, medios de pago, historial y control básico de stock.</p>
+  </header>
 
-    <span class="badge text-bg-success">Total acumulado: S/ {{ totalVentas() }}</span>
-  </div>
+  <section class="stats-grid">
+    <article class="stat-card">
+      <span>Ventas hoy</span>
+      <strong>{{ resumenHoy().cantidad }}</strong>
+    </article>
 
-  <div class="card shadow-sm border-0 mb-4">
-    <div class="card-header bg-primary text-white">Nueva venta con Signal Forms</div>
+    <article class="stat-card success">
+      <span>Total hoy</span>
+      <strong>{{ resumenHoy().total | currency:'PEN':'symbol':'1.2-2' }}</strong>
+    </article>
 
-    <div class="card-body">
-      <form class="row g-3" (submit)="guardar(); $event.preventDefault()">
-        <div class="col-md-4">
-          <label class="form-label">Producto</label>
-          <input class="form-control" type="text" placeholder="Ej: Arroz Costeño 5kg" [formField]="ventaForm.producto" />
-          <small class="text-muted">Obligatorio, mínimo 3 caracteres.</small>
+    <article class="stat-card info">
+      <span>Ticket promedio</span>
+      <strong>{{ resumenHoy().ticketPromedio | currency:'PEN':'symbol':'1.2-2' }}</strong>
+    </article>
+
+    <article class="stat-card accent">
+      <span>Efectivo hoy</span>
+      <strong>{{ resumenHoy().efectivoHoy | currency:'PEN':'symbol':'1.2-2' }}</strong>
+    </article>
+
+    <article class="stat-card warning">
+      <span>Ítems en carrito</span>
+      <strong>{{ totalItems() }}</strong>
+    </article>
+
+    <article class="stat-card success">
+      <span>Total carrito</span>
+      <strong>{{ total() | currency:'PEN':'symbol':'1.2-2' }}</strong>
+    </article>
+  </section>
+
+  <section class="layout-grid">
+    <article class="card">
+      <div class="card-title">
+        <h2>Productos disponibles</h2>
+        <p>Busca, filtra y agrega productos al carrito de venta.</p>
+      </div>
+
+      <div class="filters-grid">
+        <div class="campo">
+          <label for="busquedaVenta">Buscar</label>
+          <input
+            id="busquedaVenta"
+            type="text"
+            [value]="busqueda()"
+            (input)="actualizarBusqueda($any($event.target).value)"
+            placeholder="Nombre, código o categoría"
+          />
         </div>
 
-        <div class="col-md-3">
-          <label class="form-label">Cliente</label>
-          <input class="form-control" type="text" placeholder="Ej: Cliente general" [formField]="ventaForm.cliente" />
-        </div>
+        <div class="campo">
+          <label for="categoriaVenta">Categoría</label>
+          <select
+            id="categoriaVenta"
+            [value]="categoriaFiltro()"
+            (change)="actualizarCategoriaFiltro($any($event.target).value)"
+          >
+            <option value="TODOS">Todas</option>
 
-        <div class="col-md-2">
-          <label class="form-label">Cantidad</label>
-          <input class="form-control" type="number" [formField]="ventaForm.cantidad" />
-        </div>
-
-        <div class="col-md-3">
-          <label class="form-label">Precio unitario</label>
-          <input class="form-control" type="number" step="0.10" [formField]="ventaForm.precioUnitario" />
-        </div>
-
-        <div class="col-md-3">
-          <label class="form-label">Método de pago</label>
-          <select class="form-select" [formField]="ventaForm.metodoPago">
-            <option value="Efectivo">Efectivo</option>
-            <option value="Yape">Yape</option>
-            <option value="Plin">Plin</option>
-            <option value="Tarjeta">Tarjeta</option>
+            @for (item of categorias(); track item) {
+              <option [value]="item">{{ item }}</option>
+            }
           </select>
         </div>
 
-        <div class="col-md-6">
-          <label class="form-label">Observación</label>
-          <input class="form-control" type="text" placeholder="Opcional" [formField]="ventaForm.observacion" />
+        <div class="campo">
+          <label for="stockVenta">Stock</label>
+          <select
+            id="stockVenta"
+            [value]="soloConStock() ? 'SI' : 'NO'"
+            (change)="actualizarSoloConStock($any($event.target).value === 'SI')"
+          >
+            <option value="SI">Solo con stock</option>
+            <option value="NO">Todos</option>
+          </select>
         </div>
+      </div>
 
-        <div class="col-md-3">
-          <label class="form-label">Total calculado</label>
-          <div class="form-control bg-light fw-bold">S/ {{ totalVentaActual() }}</div>
+      @if (productosDisponibles().length === 0) {
+        <div class="empty-state">
+          <p>No hay productos disponibles con los filtros actuales.</p>
         </div>
+      } @else {
+        <div class="products-grid">
+          @for (item of productosDisponibles(); track item.id) {
+            <article class="product-card" [class.product-critical]="item.stockActual <= item.stockMinimo">
+              <div class="product-top">
+                <div>
+                  <h3>{{ item.nombre }}</h3>
+                  <span>{{ item.codigo }} · {{ item.categoria }}</span>
+                </div>
 
-        <div class="col-12 d-flex gap-2">
-          <button class="btn btn-primary" type="submit" [disabled]="!puedeGuardar()">Registrar venta</button>
-          <button class="btn btn-outline-secondary" type="button" (click)="limpiar()">Limpiar</button>
-        </div>
-      </form>
-    </div>
-  </div>
+                <strong>{{ item.precioVenta | currency:'PEN':'symbol':'1.2-2' }}</strong>
+              </div>
 
-  <div class="card shadow-sm border-0">
-    <div class="card-header">Ventas registradas</div>
+              <div class="product-meta">
+                <span>Stock: {{ item.stockActual }}</span>
+                <span [class.stock-critical]="item.stockActual <= item.stockMinimo">Mínimo: {{ item.stockMinimo }}</span>
+              </div>
 
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Producto</th>
-            <th>Cliente</th>
-            <th>Cantidad</th>
-            <th>Pago</th>
-            <th class="text-end">Total</th>
-          </tr>
-        </thead>
+              @if ((item.observacion ?? '') !== '') {
+                <p class="product-note">{{ item.observacion }}</p>
+              }
 
-        <tbody>
-          @for (venta of ventas(); track venta.id) {
-            <tr>
-              <td>{{ normalizarFecha(venta.fecha) }}</td>
-              <td>{{ venta.producto }}</td>
-              <td>{{ venta.cliente }}</td>
-              <td>{{ venta.cantidad }}</td>
-              <td>{{ venta.metodoPago }}</td>
-              <td class="text-end">S/ {{ venta.total }}</td>
-            </tr>
+              <div class="product-actions">
+                <input
+                  type="number"
+                  [value]="cantidadProducto(item.id)"
+                  (input)="actualizarCantidad(item.id, $any($event.target).value)"
+                />
+
+                <button
+                  type="button"
+                  class="btn-primary"
+                  (click)="agregarAlCarrito(item)"
+                  [disabled]="item.stockActual <= 0"
+                >
+                  Agregar
+                </button>
+              </div>
+            </article>
           }
-        </tbody>
-      </table>
+        </div>
+      }
+    </article>
+
+    <article class="card">
+      <div class="card-title">
+        <h2>Carrito</h2>
+        <p>Confirma cantidades, medio de pago y registra la venta.</p>
+      </div>
+
+      @if (carrito().length === 0) {
+        <div class="empty-state">
+          <p>No hay productos en el carrito.</p>
+        </div>
+      } @else {
+        <div class="cart-list">
+          @for (item of carrito(); track item.productoId) {
+            <div class="cart-item">
+              <div>
+                <strong>{{ item.nombre }}</strong>
+                <span>{{ item.codigo }} · Stock disp.: {{ item.stockDisponible }}</span>
+              </div>
+
+              <div class="cart-controls">
+                <input
+                  type="number"
+                  [value]="item.cantidad"
+                  (input)="cambiarCantidadCarrito(item.productoId, $any($event.target).value)"
+                />
+
+                <strong>{{ item.subtotal | currency:'PEN':'symbol':'1.2-2' }}</strong>
+
+                <button type="button" class="btn-link danger-link" (click)="quitarDelCarrito(item.productoId)">
+                  Quitar
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="form-grid two-cols">
+        <div class="campo">
+          <label for="clienteVenta">Cliente</label>
+          <input
+            id="clienteVenta"
+            type="text"
+            placeholder="Público general"
+            [formField]="checkoutForm.clienteNombre"
+          />
+        </div>
+
+        <div class="campo">
+          <label for="metodoPagoVenta">Método de pago</label>
+          <select id="metodoPagoVenta" [formField]="checkoutForm.metodoPago">
+            <option value="EFECTIVO">Efectivo</option>
+            <option value="YAPE">Yape</option>
+            <option value="PLIN">Plin</option>
+            <option value="TARJETA">Tarjeta</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="descuentoVenta">Descuento</label>
+          <input
+            id="descuentoVenta"
+            type="number"
+            step="0.10"
+            [formField]="checkoutForm.descuento"
+          />
+        </div>
+
+        @if (metodoPago() === 'EFECTIVO') {
+          <div class="campo">
+            <label for="montoRecibidoVenta">Monto recibido</label>
+            <input
+              id="montoRecibidoVenta"
+              type="number"
+              step="0.10"
+              [formField]="checkoutForm.montoRecibido"
+            />
+          </div>
+
+          <div class="campo">
+            <label>Vuelto</label>
+            <div class="value-box">{{ vuelto() | currency:'PEN':'symbol':'1.2-2' }}</div>
+          </div>
+        }
+
+        <div class="campo full-width">
+          <label for="observacionVenta">Observación</label>
+          <textarea
+            id="observacionVenta"
+            rows="3"
+            placeholder="Opcional"
+            [formField]="checkoutForm.observacion"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="totals-box">
+        <div>
+          <span>Subtotal</span>
+          <strong>{{ subtotal() | currency:'PEN':'symbol':'1.2-2' }}</strong>
+        </div>
+
+        <div>
+          <span>Descuento</span>
+          <strong>{{ descuento() | currency:'PEN':'symbol':'1.2-2' }}</strong>
+        </div>
+
+        <div class="total-line">
+          <span>Total</span>
+          <strong>{{ total() | currency:'PEN':'symbol':'1.2-2' }}</strong>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn-primary" (click)="finalizarVenta()">
+          Registrar venta
+        </button>
+
+        <button type="button" class="btn-secondary" (click)="vaciarCarrito()">
+          Vaciar carrito
+        </button>
+      </div>
+
+      @if (!validarPago() && metodoPago() === 'EFECTIVO') {
+        <div class="warning-box">
+          El monto recibido es menor al total de la venta.
+        </div>
+      }
+
+      @if (mensaje() !== '') {
+        <div class="message-box">
+          {{ mensaje() }}
+        </div>
+      }
+    </article>
+  </section>
+
+  <article class="card history-card">
+    <div class="card-title">
+      <h2>Ventas recientes</h2>
+      <p>Últimos registros guardados en el sistema.</p>
     </div>
-  </div>
+
+    @if (ventasRecientes().length === 0) {
+      <div class="empty-state">
+        <p>Aún no hay ventas registradas.</p>
+      </div>
+    } @else {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Método</th>
+              <th>Vendedor</th>
+              <th>Total</th>
+              <th>Detalle</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (item of ventasRecientes(); track item.id) {
+              <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.fecha | date:'medium' }}</td>
+                <td>{{ item.clienteNombre !== '' ? item.clienteNombre : 'Público general' }}</td>
+                <td>{{ item.metodoPago }}</td>
+                <td>{{ item.vendedor }}</td>
+                <td>{{ item.total | currency:'PEN':'symbol':'1.2-2' }}</td>
+                <td>
+                  @for (det of item.detalles; track det.productoId) {
+                    <small>{{ det.nombre }} x{{ det.cantidad }}</small>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </article>
 </section>

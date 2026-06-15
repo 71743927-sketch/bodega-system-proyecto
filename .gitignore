@@ -53,3 +53,7 @@ _LOCAL_SECRETS_NO_SUBIR/
 *.bak_signal_forms_real
 *.bak_signal_forms_global
 *.bak_signals_refuerzo
+*.bak_*
+REPORTE_*.txt
+REPORTE_*.csv
+frontend/.angular/
