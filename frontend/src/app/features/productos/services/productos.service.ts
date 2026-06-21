@@ -62,6 +62,24 @@ export class ProductosService {
     return ids.length ? Math.max(...ids) + 1 : 1;
   }
 
+  obtenerSiguienteCodigo(prefijo = 'PROD'): string {
+    const regex = new RegExp(`^${prefijo}-(\\d+)$`, 'i');
+
+    const numerosCodigo = this.productosLectura()
+      .map((producto: Producto) => String(producto.codigo ?? '').trim())
+      .map((codigo: string) => {
+        const match = codigo.match(regex);
+        return match ? Number(match[1]) : 0;
+      })
+      .filter((numero: number) => Number.isFinite(numero) && numero > 0);
+
+    const maxCodigo = numerosCodigo.length === 0 ? 0 : Math.max(...numerosCodigo);
+    const totalProductos = this.productosLectura().length;
+    const siguiente = Math.max(maxCodigo, totalProductos) + 1;
+
+    return `${prefijo}-${String(siguiente).padStart(3, '0')}`;
+  }
+
   obtenerCategorias(): string[] {
     const categorias = this.productosLectura()
       .map((p: Producto) => p.categoria || 'General')

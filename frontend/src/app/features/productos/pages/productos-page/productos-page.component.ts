@@ -52,6 +52,14 @@ export class ProductosPageComponent {
 
   readonly filtrosForm = form(this.filtrosModel);
 
+  readonly codigoAutomatico = computed(() => {
+    if (this.editandoId() !== null) {
+      return this.productoModel().codigo;
+    }
+
+    return this.productosService.obtenerSiguienteCodigo();
+  });
+
   readonly categorias = computed(() => this.productosService.obtenerCategorias());
 
   readonly productosFiltrados = computed(() => {
@@ -108,7 +116,7 @@ export class ProductosPageComponent {
     const model = this.productoModel();
 
     return (
-      model.codigo.trim().length > 0 &&
+      this.codigoAutomatico().trim().length > 0 &&
       model.nombre.trim().length > 0 &&
       model.categoria.trim().length > 0 &&
       Number(model.precioCompra) >= 0 &&
@@ -131,9 +139,12 @@ export class ProductosPageComponent {
     }
 
     const model = this.productoModel();
+    const codigoFinal = this.editandoId() === null
+      ? this.productosService.obtenerSiguienteCodigo()
+      : model.codigo.trim();
 
     const duplicado = this.productos().find((item: Producto) =>
-      item.codigo.trim().toLowerCase() === model.codigo.trim().toLowerCase() &&
+      item.codigo.trim().toLowerCase() === codigoFinal.trim().toLowerCase() &&
       item.id !== this.editandoId()
     );
 
@@ -144,7 +155,7 @@ export class ProductosPageComponent {
 
     const payload: Producto = {
       id: this.editandoId() ?? this.productosService.obtenerSiguienteId(),
-      codigo: model.codigo.trim(),
+      codigo: codigoFinal,
       nombre: model.nombre.trim(),
       categoria: model.categoria.trim(),
       precioCompra: Number(model.precioCompra),
@@ -222,7 +233,7 @@ export class ProductosPageComponent {
 
   private obtenerFormularioBase(): ProductoSignalFormModel {
     return {
-      codigo: '',
+      codigo: this.productosService.obtenerSiguienteCodigo(),
       nombre: '',
       categoria: 'General',
       precioCompra: 0,
