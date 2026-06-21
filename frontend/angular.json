@@ -1,4 +1,4 @@
-﻿{
+{
     "$schema":  "./node_modules/@angular/cli/lib/config/schema.json",
     "version":  1,
     "cli":  {
@@ -6,7 +6,7 @@
             },
     "newProjectRoot":  "projects",
     "projects":  {
-                     "semana06-app-nuevo":  {
+                     "bodegasys-frontend":  {
                                                 "projectType":  "application",
                                                 "schematics":  {
 
@@ -94,10 +94,10 @@
                                                                                 "builder":  "@angular/build:dev-server",
                                                                                 "configurations":  {
                                                                                                        "production":  {
-                                                                                                                          "buildTarget":  "semana06-app-nuevo:build:production"
+                                                                                                                          "buildTarget":  "bodegasys-frontend:build:production"
                                                                                                                       },
                                                                                                        "development":  {
-                                                                                                                           "buildTarget":  "semana06-app-nuevo:build:development"
+                                                                                                                           "buildTarget":  "bodegasys-frontend:build:development"
                                                                                                                        }
                                                                                                    },
                                                                                 "defaultConfiguration":  "development"

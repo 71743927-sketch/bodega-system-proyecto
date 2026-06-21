@@ -1,5 +1,5 @@
 {
-  "name": "semana06-app-nuevo",
+  "name": "bodegasys-frontend",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:semana06-app-nuevo": "node dist/semana06-app-nuevo/server/server.mjs"
+    "serve:ssr:bodegasys-frontend": "node dist/bodegasys-frontend/server/server.mjs"
   },
   "private": true,
   "packageManager": "npm@11.6.2",
