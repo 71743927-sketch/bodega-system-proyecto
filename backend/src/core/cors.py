@@ -4,13 +4,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 def configure_cors(app: FastAPI) -> None:
     """
-    Configura CORS para permitir la comunicación entre:
-    - Frontend Angular local
-    - Frontend Angular desplegado en Render
-    - Backend FastAPI desplegado en Render
+    CORS para permitir comunicación entre:
+    - Angular local
+    - Angular en Render
+    - FastAPI en Render
 
-    Es necesario permitir Authorization porque el frontend envía
-    Firebase Bearer Token hacia el backend.
+    Se permite Authorization porque el frontend envía Firebase Bearer Token.
     """
 
     allowed_origins = [
@@ -23,8 +22,8 @@ def configure_cors(app: FastAPI) -> None:
         CORSMiddleware,
         allow_origins=allowed_origins,
         allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allow_headers=["Authorization", "Content-Type", "Accept", "Origin"],
         expose_headers=["*"],
         max_age=3600,
     )
