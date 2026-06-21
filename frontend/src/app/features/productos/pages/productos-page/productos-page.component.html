@@ -38,11 +38,9 @@
     <form class="product-form" (submit)="guardar(); $event.preventDefault()" novalidate>
       <div class="field">
         <label>CÃ³digo</label>
-        <input type="text" [formField]="productoForm.codigo" placeholder="PROD-001" />
-
-        @if (enviado() && !productoModel().codigo.trim()) {
-          <small>El cÃ³digo es obligatorio.</small>
-        }
+        C?digo autom?tico
+        <input type="text" [value]="codigoAutomatico()" readonly placeholder="PROD-001" />
+        <small>Se genera autom?ticamente seg?n el orden de registro.</small>
       </div>
 
       <div class="field">
