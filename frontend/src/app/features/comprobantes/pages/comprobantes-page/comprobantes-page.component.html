@@ -1,13 +1,11 @@
-﻿<section class="comprobantes-page">
-  <div class="page-header">
-    <div>
-      <h1>Comprobantes</h1>
-      <p>Visualiza ventas emitidas y genera ticket / comprobante en texto plano y PDF.</p>
-    </div>
-  </div>
+<section class="comprobantes-page">
+  <header class="page-header">
+    <h1>Comprobantes</h1>
+    <p>Visualiza ventas emitidas y genera ticket / comprobante en texto plano y PDF.</p>
+  </header>
 
-  <div class="layout-grid">
-    <div class="card left-card">
+  <section class="layout-grid">
+    <article class="card">
       <div class="card-title">
         <h2>Ventas emitidas</h2>
         <p>Busca una venta y selecciona el comprobante a visualizar.</p>
@@ -18,9 +16,10 @@
           <label for="busquedaComprobante">Buscar</label>
           <input id="busquedaComprobante" type="text" [value]="busqueda()" (input)="actualizarBusqueda($any($event.target).value)" placeholder="ID, cliente, producto o vendedor" />
         </div>
-        <div class="campo inline-field">
-          <label>Fecha</label>
-          <select [value]="soloHoy() ? 'true' : 'false'" (change)="actualizarSoloHoy($any($event.target).value === 'true')">
+
+        <div class="campo">
+          <label for="filtroFechaComprobante">Fecha</label>
+          <select id="filtroFechaComprobante" [value]="soloHoy() ? 'true' : 'false'" (change)="actualizarSoloHoy($any($event.target).value === 'true')">
             <option value="false">Todas</option>
             <option value="true">Solo hoy</option>
           </select>
@@ -28,35 +27,42 @@
       </div>
 
       @if (ventasFiltradas().length === 0) {
-        <div class="empty-state"><p>No hay ventas para los filtros actuales.</p></div>
+        <div class="empty-state">
+          <p>No hay ventas para los filtros actuales.</p>
+        </div>
       } @else {
         <div class="sales-list">
           @for (item of ventasFiltradas(); track item.id) {
             <button type="button" class="sale-item" [class.sale-item-active]="ventaSeleccionada()?.id === item.id" (click)="seleccionarVenta(item.id)">
-              <div>
+              <span>
                 <strong>Venta #{{ item.id }}</strong>
-                <span>{{ item.fecha | date:'medium' }}</span>
+                <small>{{ item.fecha | date:'medium' }}</small>
                 <small>{{ item.clienteNombre !== '' ? item.clienteNombre : 'Público general' }} · {{ item.metodoPago }}</small>
-              </div>
+              </span>
               <strong>{{ item.total | currency:'PEN':'symbol':'1.2-2' }}</strong>
             </button>
           }
         </div>
       }
-    </div>
+    </article>
 
-    <div class="card right-card">
+    <article class="card">
       <div class="card-title">
         <h2>Vista previa del comprobante</h2>
         <p>Ticket listo para exportarse en TXT o PDF.</p>
       </div>
 
       @if (comprobanteActual() === null) {
-        <div class="empty-state"><p>No hay comprobante seleccionado.</p></div>
+        <div class="empty-state">
+          <p>No hay comprobante seleccionado.</p>
+        </div>
       } @else {
-        <div class="ticket-box">
+        <div class="ticket-preview">
           <div class="ticket-header">
-            <h3>BODEGA APP</h3>
+            <strong>{{ comprobanteActual()!.nombreNegocio }}</strong>
+            <small>RUC: {{ comprobanteActual()!.ruc }}</small>
+            <small>Tel: {{ comprobanteActual()!.telefono }}</small>
+            <small>{{ comprobanteActual()!.direccion }}</small>
             <span>{{ comprobanteActual()!.tipo }} {{ comprobanteActual()!.serie }}-{{ comprobanteActual()!.correlativo }}</span>
             <small>{{ comprobanteActual()!.emitidoEn | date:'medium' }}</small>
           </div>
@@ -65,9 +71,10 @@
             <div><span>Cliente</span><strong>{{ comprobanteActual()!.clienteNombre }}</strong></div>
             <div><span>Vendedor</span><strong>{{ comprobanteActual()!.vendedor }}</strong></div>
             <div><span>Método</span><strong>{{ comprobanteActual()!.metodoPago }}</strong></div>
+            <div><span>Moneda</span><strong>{{ comprobanteActual()!.moneda }} · {{ comprobanteActual()!.simboloMoneda }}</strong></div>
           </div>
 
-          <div class="table-wrapper compact">
+          <div class="table-wrapper">
             <table>
               <thead>
                 <tr>
@@ -85,29 +92,35 @@
                       <small>{{ item.codigo }} · {{ item.categoria }}</small>
                     </td>
                     <td>{{ item.cantidad }}</td>
-                    <td>{{ item.precioUnitario | currency:'PEN':'symbol':'1.2-2' }}</td>
-                    <td>{{ item.subtotal | currency:'PEN':'symbol':'1.2-2' }}</td>
+                    <td>{{ comprobanteActual()!.simboloMoneda }} {{ item.precioUnitario.toFixed(2) }}</td>
+                    <td>{{ comprobanteActual()!.simboloMoneda }} {{ item.subtotal.toFixed(2) }}</td>
                   </tr>
                 }
               </tbody>
             </table>
           </div>
 
-          <div class="totals-box">
-            <div><span>Subtotal</span><strong>{{ comprobanteActual()!.subtotal | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
-            <div><span>Descuento</span><strong>{{ comprobanteActual()!.descuento | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
-            <div class="total-line"><span>Total</span><strong>{{ comprobanteActual()!.total | currency:'PEN':'symbol':'1.2-2' }}</strong></div>
+          <div class="ticket-totals">
+            <div><span>Subtotal</span><strong>{{ comprobanteActual()!.simboloMoneda }} {{ comprobanteActual()!.subtotal.toFixed(2) }}</strong></div>
+            <div><span>Descuento</span><strong>{{ comprobanteActual()!.simboloMoneda }} {{ comprobanteActual()!.descuento.toFixed(2) }}</strong></div>
+            <div><span>IGV ({{ comprobanteActual()!.igvPorcentaje }}%)</span><strong>{{ comprobanteActual()!.simboloMoneda }} {{ comprobanteActual()!.igvMonto.toFixed(2) }}</strong></div>
+            <div class="total-line"><span>Total</span><strong>{{ comprobanteActual()!.simboloMoneda }} {{ comprobanteActual()!.total.toFixed(2) }}</strong></div>
           </div>
 
           @if (comprobanteActual()!.observacion !== '') {
-            <div class="note-box">
+            <div class="ticket-note">
               <span>Observación</span>
               <p>{{ comprobanteActual()!.observacion }}</p>
             </div>
           }
 
-          <div class="note-box qr-box">
-            <span>QR Payload</span>
+          <div class="ticket-message">
+            <p>{{ comprobanteActual()!.mensajeTicket }}</p>
+            <small>{{ comprobanteActual()!.pieTicket }}</small>
+          </div>
+
+          <div class="qr-box">
+            <span>Payload QR / Control</span>
             <p>{{ comprobanteActual()!.qrPayload }}</p>
           </div>
 
@@ -119,8 +132,10 @@
       }
 
       @if (mensaje() !== '') {
-        <div class="message-box">{{ mensaje() }}</div>
+        <div class="message-box">
+          {{ mensaje() }}
+        </div>
       }
-    </div>
-  </div>
+    </article>
+  </section>
 </section>
