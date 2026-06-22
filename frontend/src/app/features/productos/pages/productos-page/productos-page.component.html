@@ -1,4 +1,4 @@
-﻿<section class="productos-page">
+<section class="productos-page">
   <header class="page-header">
     <div>
       <h1>Productos</h1>
@@ -37,10 +37,9 @@
 
     <form class="product-form" (submit)="guardar(); $event.preventDefault()" novalidate>
       <div class="field">
-        <label>CÃ³digo</label>
-        C?digo autom?tico
+        <label>Código automático</label>
         <input type="text" [value]="codigoAutomatico()" readonly placeholder="PROD-001" />
-        <small>Se genera autom?ticamente seg?n el orden de registro.</small>
+        <small>Se genera automáticamente según el orden de registro.</small>
       </div>
 
       <div class="field">
