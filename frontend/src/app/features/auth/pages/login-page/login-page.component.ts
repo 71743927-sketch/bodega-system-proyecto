@@ -1,5 +1,4 @@
-﻿import { Component, computed, inject, signal } from '@angular/core';
-import { JsonPipe } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { form, FormField } from '@angular/forms/signals';
 
@@ -15,12 +14,11 @@ interface LoginSignalFormModel {
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [FormField, JsonPipe],
+  imports: [FormField],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.css'
 })
 export class LoginPageComponent {
-
   readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly backendAuth = inject(BackendAuthService);
@@ -36,6 +34,8 @@ export class LoginPageComponent {
   readonly enviado = signal(false);
   readonly cargando = signal(false);
   readonly mensaje = signal('');
+  readonly mostrarPassword = signal(false);
+  readonly recordarSesion = signal(true);
 
   readonly emailValue = computed(() => this.loginModel().email.trim());
   readonly passwordValue = computed(() => this.loginModel().password.trim());
@@ -62,7 +62,7 @@ export class LoginPageComponent {
   );
 
   constructor() {
-    console.log('Login con Signal Forms cargado');
+    console.log('Login premium BodegaSys cargado');
 
     this.backendHealth.health().subscribe({
       next: (res) => console.log('Backend OK:', res),
@@ -74,12 +74,20 @@ export class LoginPageComponent {
     }
   }
 
-  async login() {
+  toggleMostrarPassword(): void {
+    this.mostrarPassword.update((actual) => !actual);
+  }
+
+  toggleRecordarSesion(): void {
+    this.recordarSesion.update((actual) => !actual);
+  }
+
+  async login(): Promise<void> {
     this.enviado.set(true);
     this.mensaje.set('');
 
     if (!this.formularioValido()) {
-      this.mensaje.set('Ingresa un correo valido y una contraseÃ±a de minimo 6 caracteres.');
+      this.mensaje.set('Ingresa un correo válido y una contraseña de mínimo 6 caracteres.');
       return;
     }
 
@@ -107,4 +115,3 @@ export class LoginPageComponent {
     }
   }
 }
-
