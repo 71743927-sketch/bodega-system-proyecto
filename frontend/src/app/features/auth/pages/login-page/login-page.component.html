@@ -8,23 +8,22 @@
 
         <div class="brand-copy">
           <h1>Plataforma Bodega</h1>
-          <p>Inicia sesiÃ³n para acceder al sistema</p>
+          <p>Accede a la plataforma de inventario, ventas y control operativo</p>
         </div>
       </div>
 
       <form class="login-form" (submit)="login(); $event.preventDefault()" novalidate>
         <div class="field">
-          <label for="email">Correo electrÃ³nico</label>
+          <label for="email">Correo electronico</label>
 
           <div class="input-shell">
-            <span class="input-icon">âœ‰</span>
+            <span class="input-icon">@</span>
             <input
               id="email"
               type="email"
               [formField]="loginForm.email"
               placeholder="usuario@empresa.com"
-              autocomplete="email"
-            />
+              autocomplete="email" />
           </div>
 
           @if (enviado() && emailRequerido()) {
@@ -32,37 +31,37 @@
           }
 
           @if (enviado() && emailFormatoInvalido()) {
-            <small class="error-text">Ingresa un correo vÃ¡lido.</small>
+            <small class="error-text">Ingresa un correo valido.</small>
           }
         </div>
 
         <div class="field">
-          <label for="password">ContraseÃ±a</label>
+          <label for="password">Contrasena</label>
 
           <div class="input-shell">
-            <span class="input-icon">ðŸ”’</span>
+            <span class="input-icon">#</span>
             <input
               id="password"
               [type]="mostrarPassword() ? 'text' : 'password'"
               [formField]="loginForm.password"
-              placeholder="Ingresa tu contraseÃ±a"
-              autocomplete="current-password"
-            />
+              placeholder="Ingresa tu contrasena"
+              autocomplete="current-password" />
+
             <button
               type="button"
               class="toggle-password"
               (click)="toggleMostrarPassword()"
-              [attr.aria-label]="mostrarPassword() ? 'Ocultar contraseÃ±a' : 'Mostrar contraseÃ±a'">
-              {{ mostrarPassword() ? 'ðŸ™ˆ' : 'ðŸ‘' }}
+              [attr.aria-label]="mostrarPassword() ? 'Ocultar contrasena' : 'Mostrar contrasena'">
+              {{ mostrarPassword() ? 'Ocultar' : 'Ver' }}
             </button>
           </div>
 
           @if (enviado() && passwordRequerido()) {
-            <small class="error-text">La contraseÃ±a es obligatoria.</small>
+            <small class="error-text">La contrasena es obligatoria.</small>
           }
 
           @if (enviado() && passwordCorto()) {
-            <small class="error-text">La contraseÃ±a debe tener mÃ­nimo 6 caracteres.</small>
+            <small class="error-text">La contrasena debe tener minimo 6 caracteres.</small>
           }
         </div>
 
@@ -71,12 +70,11 @@
             <input
               type="checkbox"
               [checked]="recordarSesion()"
-              (change)="toggleRecordarSesion()"
-            />
+              (change)="toggleRecordarSesion()" />
             <span>Recordarme</span>
           </label>
 
-          <a href="javascript:void(0)" class="forgot-link">Â¿Olvidaste tu contraseÃ±a?</a>
+          <a href="#" class="forgot-link" (click)="$event.preventDefault()">Olvidaste tu contrasena?</a>
         </div>
 
         @if (mensaje()) {
@@ -85,14 +83,20 @@
 
         <button type="submit" class="primary-button" [disabled]="cargando()">
           <span>{{ cargando() ? 'Ingresando...' : 'Ingresar' }}</span>
-          <span class="button-arrow">â†’</span>
+          <span class="button-arrow">></span>
         </button>
 
-        <p class="copy-note">Â© 2025 Plataforma Bodega. Todos los derechos reservados.</p>
+        <p class="copy-note">© 2025 Plataforma Bodega. Todos los derechos reservados.</p>
       </form>
     </div>
 
     <div class="login-panel login-visual-panel">
+      <div class="visual-top">
+        <div class="mini-chip">Inventario</div>
+        <div class="mini-chip">Ventas</div>
+        <div class="mini-chip">Panel</div>
+      </div>
+
       <div class="visual-dashboard">
         <div class="monitor">
           <div class="monitor-topbar">
@@ -125,7 +129,7 @@
             <div class="chart-card">
               <div class="pie-chart"></div>
               <div class="legend">
-                <span>ElectrÃ³nicos</span>
+                <span>Electronicos</span>
                 <span>Alimentos</span>
                 <span>Hogar</span>
                 <span>Otros</span>
@@ -163,23 +167,23 @@
         <h2>Control total de tu bodega</h2>
         <p>
           Gestiona tu inventario, ventas y operaciones desde un solo lugar,
-          de forma rÃ¡pida y eficiente.
+          de forma rapida y eficiente.
         </p>
 
         <div class="benefits">
           <div class="benefit">
-            <div class="benefit-icon">â—«</div>
+            <div class="benefit-icon">INV</div>
             <span>Inventario en tiempo real</span>
           </div>
 
           <div class="benefit">
-            <div class="benefit-icon">ðŸ›’</div>
-            <span>GestiÃ³n de ventas</span>
+            <div class="benefit-icon">VTA</div>
+            <span>Gestion de ventas</span>
           </div>
 
           <div class="benefit">
-            <div class="benefit-icon">â–¤</div>
-            <span>Reportes y estadÃ­sticas</span>
+            <div class="benefit-icon">REP</div>
+            <span>Reportes y estadisticas</span>
           </div>
         </div>
       </div>

@@ -62,7 +62,7 @@ export class LoginPageComponent {
   );
 
   constructor() {
-    console.log('Login premium BodegaSys cargado');
+    console.log('Login Plataforma Bodega cargado');
 
     this.backendHealth.health().subscribe({
       next: (res) => console.log('Backend OK:', res),
@@ -87,7 +87,7 @@ export class LoginPageComponent {
     this.mensaje.set('');
 
     if (!this.formularioValido()) {
-      this.mensaje.set('Ingresa un correo válido y una contraseña de mínimo 6 caracteres.');
+      this.mensaje.set('Ingresa un correo valido y una contrasena de minimo 6 caracteres.');
       return;
     }
 
